@@ -34,3 +34,5 @@
 *.out
 *.app
 *_exe
+
+*.log
