@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <algorithm>
 #include "random.h"
 
 class CCP {
@@ -19,9 +20,9 @@ private:
    std::vector<std::vector<double>> centroides;
    std::map<std::pair<int,int>,int> restricciones;
    std::vector<std::vector<int>> clusters;
-   std::vector<int> d_intracluster;
+   std::vector<double> d_intracluster;
    std::vector<int> solucion;
-   int desv_gen;
+   double desv_gen;
 
    void cargar_posiciones(const std::string archivo);
    void cargar_restricciones(const std::string archivo);
@@ -31,11 +32,16 @@ private:
    void generar_vecino();
    void leer_solucion();
    void generar_solucion();
+   int cluster_cercano(int n);
+   void asignar_cluster(int n, int c);
+   bool comprueba_restriccion(int n, int c);
+   void limpiar_clusters();
+   bool solucion_factible();
 
 public:
    CCP(const int n, const std::string p, const std::string r);
    void mostrar_datos();
-   void mostrar_solucion();
+   void mostrar_solucion(int i);
    void copkm();
    void busqueda_local();
 };
