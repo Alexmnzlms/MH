@@ -1,7 +1,6 @@
 #include "cc.h"
 
 CCP::CCP(const int n, const std::string p, const std::string r){
-   Set_random(20061999);
    n_cluster = n;
    desv_gen = 0;
    cargar_posiciones(p);
@@ -26,6 +25,9 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    }
    d_intracluster.resize(n_cluster);
    solucion.resize(posiciones.size());
+   for(int i = 0; i < solucion.size(); i++){
+      solucion[i] = -1;
+   }
 }
 
 void CCP::cargar_posiciones(const std::string archivo){
@@ -54,7 +56,7 @@ void CCP::cargar_restricciones(const std::string archivo){
       while(getline(iss,restriccion,',')){
          std::pair<int,int> pareja(i,j);
          valor = atof(restriccion.c_str());
-         if (valor != 0){
+         if (valor != 0 && i != j){
             restricciones.insert(std::pair<std::pair<int,int>,int>(pareja,valor));
          }
          j++;
@@ -66,7 +68,7 @@ void CCP::cargar_restricciones(const std::string archivo){
 }
 
 void CCP::mostrar_datos(){
-   std::cout << posiciones.size() << std::endl;
+   /*std::cout << posiciones.size() << std::endl;
    for(int i = 0; i < posiciones.size(); i++){
       for(int j = 0; j < posiciones[i].size(); j++){
          std::cout << posiciones[i][j] << " ";
@@ -77,7 +79,7 @@ void CCP::mostrar_datos(){
    std::map<std::pair<int,int>,int>::iterator it = restricciones.begin();
    for(it; it != restricciones.end(); it++){
       std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
-   }
+   }*/
 
    for(int i = 0; i < centroides.size(); i++){
       for(int j = 0; j < centroides[i].size(); j++){
@@ -89,7 +91,7 @@ void CCP::mostrar_datos(){
 
 void CCP::mostrar_solucion(int i){
    if(i == 0){ //solucion greedy
-      if(solucion_factible()){
+      if(solucion_completa()){
          std::cout << "Desviacion general: " << desv_gen << std::endl;
          for(int j = 0; j < n_cluster; j++){
             std::cout << "Cluster " << j << " : ";
@@ -140,6 +142,7 @@ void CCP::distancia_intracluster(int i){
 
 void CCP::desviacion_general(){
    for(int i = 0; i < n_cluster; i++){
+      distancia_intracluster(i);
       desv_gen += (1.0/n_cluster)*d_intracluster[i];
    }
 }
@@ -155,6 +158,9 @@ void CCP::leer_solucion(){
 }
 
 void CCP::generar_solucion(){
+   for(int i = 0; i < solucion.size(); i++){
+      solucion[i] = -1;
+   }
    for(int i = 0; i < n_cluster; i++){
       for(int j = 0; j < clusters[i].size(); j++){
          solucion[clusters[i][j]] = i;
@@ -239,6 +245,15 @@ bool CCP::solucion_factible(){
    return true;
 }
 
+bool CCP::solucion_completa(){
+   for(int i = 0; i < solucion.size(); i++){
+      if(solucion[i] == -1){
+         return false;
+      }
+   }
+   return true;
+}
+
 void CCP::copkm(){
    bool cambio_c;
    std::vector<int> rsi;
@@ -271,6 +286,7 @@ void CCP::copkm(){
             cambio_c = true;
          }
       }
+
       /*for(int j = 0; j < n_cluster; j++){
          std::cout << "Cluster " << j << " : ";
          for(int k = 0; k < clusters[j].size(); k++){
@@ -278,11 +294,14 @@ void CCP::copkm(){
          }
          std::cout << std::endl;
       }*/
+
+      generar_solucion();
+
       if(cambio_c){
          limpiar_clusters();
       }
-   } while(cambio_c);
-   generar_solucion();
+   } while(cambio_c && !solucion_completa());
+
    desviacion_general();
 }
 

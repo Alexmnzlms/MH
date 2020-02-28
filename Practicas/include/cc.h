@@ -37,6 +37,7 @@ private:
    bool comprueba_restriccion(int n, int c);
    void limpiar_clusters();
    bool solucion_factible();
+   bool solucion_completa();
 
 public:
    CCP(const int n, const std::string p, const std::string r);
