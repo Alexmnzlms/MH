@@ -21,7 +21,7 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    }
    for(int i = 0; i < n_cluster; i++){
       for(int j = 0; j < posiciones[0].size(); j++){
-         centroides[i].push_back(Randfloat(min,max));
+         centroides[i].push_back(Randfloat(min,max-1));
       }
    }
    d_intracluster.resize(n_cluster);
