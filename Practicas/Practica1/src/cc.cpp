@@ -70,7 +70,7 @@ void CCP::cargar_restricciones(const std::string archivo){
 }
 
 void CCP::mostrar_datos(){
-   /*std::cout << posiciones.size() << std::endl;
+   std::cout << posiciones.size() << std::endl;
    for(int i = 0; i < posiciones.size(); i++){
       for(int j = 0; j < posiciones[i].size(); j++){
          std::cout << posiciones[i][j] << " ";
@@ -81,7 +81,7 @@ void CCP::mostrar_datos(){
    std::map<std::pair<int,int>,int>::iterator it = restricciones.begin();
    for(it; it != restricciones.end(); it++){
       std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
-   }*/
+   }
 
    std::cout << "Restricciones: " << restricciones.size() << std::endl;
 
@@ -138,7 +138,7 @@ void CCP::distancia_intracluster(int i){
    }
    for(int j = 0; j < clusters[i].size(); j++){
       for(int k = 0; k < posiciones[clusters[i][j]].size(); k++){
-         d_euclidea =  (posiciones[clusters[i][j]][k] - centroides[i][k]);
+         d_euclidea =  std::abs(posiciones[clusters[i][j]][k] - centroides[i][k]);
          d_euclidea *= d_euclidea;
          d_intracluster[i] += (1.0/clusters[i].size()) * d_euclidea;
       }
@@ -176,7 +176,7 @@ void CCP::generar_solucion(){
 double CCP::distancia_nodo_cluster(int n, int c){
    double d_euclidea = 0, componente = 0;
    for(int i = 0; i < posiciones[n].size(); i++){
-      componente = posiciones[n][i] - centroides[c][i];
+      componente = std::abs(posiciones[n][i] - centroides[c][i]);
       componente *= componente;
       d_euclidea += componente;
    }
@@ -198,8 +198,8 @@ int CCP::restricciones_incumplidas(int n, int c){
    }
    for(int i = 0; i < n_cluster; i++){
       if(i != c){
-         for(int j = 0; j < clusters[c].size(); j++){
-            pareja.second = clusters[c][j];
+         for(int j = 0; j < clusters[i].size(); j++){
+            pareja.second = clusters[i][j];
             auto it = restricciones.find(pareja);
             if(it->second == 1){
                incumplidas++;
@@ -264,7 +264,6 @@ void CCP::greedy(){
    std::vector<int> rsi;
    generar_solucion();
    std::vector<int> solucion_ant = solucion;
-   int infactibilidad_ant = restricciones.size();
 
    for(int i = 0; i < posiciones.size(); i++){
       rsi.push_back(i);
@@ -273,7 +272,6 @@ void CCP::greedy(){
    std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
 
    do {
-      std::cout << "-------" << std::endl;
       cambio_c = false;
       for(int i = 0; i < rsi.size(); i++){
          asignar_cluster(rsi[i]);
