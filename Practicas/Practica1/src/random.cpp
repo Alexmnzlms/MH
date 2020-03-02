@@ -33,6 +33,12 @@ int Randint(int low, int high)
     return (int) (low + (high-(low)+1) * Rand());
 }
 
+int Randint_shuffle(int high)
+/* Genera un numero aleatorio entero en {low,...,high} */
+{
+    return (int) (high * Rand());
+}
+
 float Randfloat(float low, float high)
 /* Genera un numero aleatorio real en el intervalo [low,...,high[
    (incluyendo 'low' pero sin incluir 'high') */

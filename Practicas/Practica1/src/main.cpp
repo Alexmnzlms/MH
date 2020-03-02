@@ -4,13 +4,15 @@
 using namespace std;
 
 int main(){
-   Set_random(20061999);
    cout << "Ejecutando programa CCP" << endl;
    //par.mostrar_datos();
-   for(int i = 0; i < 200; i++){
-      CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
+   std::srand((unsigned) 15091999);
+   Set_random(15091999);
+   for(int i = 0; i < 1; i++){
+      CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
       par.mostrar_datos();
-      par.copkm();
+      par.greedy();
       par.mostrar_solucion(0);
+      cout << "-------------------------------------------------------" << endl;
    }
 }
