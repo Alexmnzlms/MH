@@ -93,7 +93,7 @@ void CCP::mostrar_datos(){
    }
 }
 
-void CCP::mostrar_solucion(int i){
+void CCP::mostrar_solucion(const int i){
    if(i == 0){ //solucion greedy
       std::cout << "Desviacion general: " << desv_gen << std::endl;
       std::cout << "Infactibilidad: " << infactibilidad << std::endl;
@@ -103,24 +103,25 @@ void CCP::mostrar_solucion(int i){
             std::cout << clusters[j][k] << " ";
          }
          std::cout << std::endl;
-      }
+      }/*
       std::cout << std::endl;
       for(int j = 0; j < solucion.size(); j++){
          std::cout << solucion[j] << " ";
       }
       std::cout << std::endl;
 
-      for(int i = 0; i < n_cluster; i++){
+      */for(int i = 0; i < n_cluster; i++){
          std::cout << "Centroide: " << i << std::endl;
          for(int j = 0; j < centroides[i].size(); j++){
             std::cout << centroides[i][j] << " ";
          }
          std::cout << std::endl;
       }
+      std::cout << std::endl;
    }
 }
 
-void CCP::calcular_centroide(int i){
+void CCP::calcular_centroide(const int i){
    for(int j = 0; j < centroides[i].size(); j++){
       centroides[i][j] = 0;
    }
@@ -131,7 +132,7 @@ void CCP::calcular_centroide(int i){
    }
 }
 
-void CCP::distancia_intracluster(int i){
+void CCP::distancia_intracluster(const int i){
    double d_euclidea;
    for(int j = 0; j < n_cluster; j++){
       d_intracluster[j] = 0;
@@ -173,7 +174,7 @@ void CCP::generar_solucion(){
    }
 }
 
-double CCP::distancia_nodo_cluster(int n, int c){
+double CCP::distancia_nodo_cluster(const int n, const int c){
    double d_euclidea = 0, componente = 0;
    for(int i = 0; i < posiciones[n].size(); i++){
       componente = std::abs(posiciones[n][i] - centroides[c][i]);
@@ -185,7 +186,7 @@ double CCP::distancia_nodo_cluster(int n, int c){
 
 
 
-int CCP::restricciones_incumplidas(int n, int c){
+int CCP::restricciones_incumplidas(const int n, const int c){
    int incumplidas = 0;
    std::pair<int,int> pareja;
    pareja.first = n;
@@ -215,7 +216,7 @@ void CCP::asignar_cluster(const int n){
    std::vector<std::pair<int,int>> r;
 
    int cluster = -1, r_min;
-   double d, d_min = 1000000.0;
+   double d_min, d;
 
    for(int i = 0; i < n_cluster; i++){
       pareja.first = restricciones_incumplidas(n,i);
@@ -231,9 +232,11 @@ void CCP::asignar_cluster(const int n){
    std::cout << "----------------------------------" << std::endl;*/
 
    r_min = r[0].first;
+   d_min = 1000000.0;
    for(int i = 0; i < r.size() && r[i].first == r_min; i++){
-      if(distancia_nodo_cluster(n,r[i].second) < d_min){
-         d_min = distancia_nodo_cluster(n,r[i].second);
+      d = distancia_nodo_cluster(n,r[i].second);
+      if(d < d_min){
+         d_min = d;
          cluster = r[i].second;
       }
    }
@@ -241,6 +244,22 @@ void CCP::asignar_cluster(const int n){
    infactibilidad += r_min;
    clusters[cluster].push_back(n);
 }
+
+/*void CCP::infactibilidad_total(){
+   for(auto it = restricciones.begin(); it != restricciones.end(); it++){
+      if(it->first.second > it->first.second){
+         if(it->second == 1){
+            for(int i = 0; i < n_cluster; i++){
+               auto primero = std::find(clusters[i].begin(), clusters[i].end(), it->first.first);
+               auto segundo = std::find(clusters[i].begin(), clusters[i].end(), it->first.second);
+               if(primero != clusters[i].end() && segundo != clusters[i].end()){
+                  infactibilidad++;
+               }
+            }
+         }
+      }
+   }
+}*/
 
 void CCP::limpiar_clusters(){
    for(int i = 0; i < n_cluster; i++){
@@ -260,6 +279,7 @@ bool CCP::solucion_factible(){
 }
 
 void CCP::greedy(){
+   int i = 0;
    bool cambio_c;
    std::vector<int> rsi;
    generar_solucion();
@@ -288,8 +308,11 @@ void CCP::greedy(){
       if(cambio_c){
          limpiar_clusters();
       }
-
-   } while(cambio_c);
+      i++;
+   } while(cambio_c && i < 1000);
+   if(i >= 1000){
+      std::cout << "F" << std::endl;
+   }
    desviacion_general();
 }
 

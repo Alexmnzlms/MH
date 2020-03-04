@@ -27,16 +27,17 @@ private:
 
    void cargar_posiciones(const std::string archivo);
    void cargar_restricciones(const std::string archivo);
-   void calcular_centroide(int i);
-   void distancia_intracluster(int i);
+   void calcular_centroide(const int i);
+   void distancia_intracluster(const int i);
    void desviacion_general();
    void generar_vecino();
    void leer_solucion();
    void generar_solucion();
    void asignar_cluster(const int n);
-   double distancia_nodo_cluster(int n, int c);
-   int restricciones_incumplidas(int n, int c);
+   double distancia_nodo_cluster(const int n, const int c);
+   int restricciones_incumplidas(const int n, const int c);
    void limpiar_clusters();
+   //void infactibilidad_total();
    bool solucion_factible();
 
 public:
