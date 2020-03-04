@@ -279,11 +279,9 @@ bool CCP::solucion_factible(){
 }
 
 void CCP::greedy(){
-   int i = 0;
    bool cambio_c;
    std::vector<int> rsi;
-   generar_solucion();
-   std::vector<int> solucion_ant = solucion;
+   std::vector<std::vector<int>> solucion_ant = clusters;
 
    for(int i = 0; i < posiciones.size(); i++){
       rsi.push_back(i);
@@ -297,22 +295,18 @@ void CCP::greedy(){
          asignar_cluster(rsi[i]);
       }
       for(int i = 0; i < n_cluster; i++){
-         calcular_centroide(i);
+         if(solucion_ant[i] != clusters[i]){
+            calcular_centroide(i);
+            cambio_c = true;
+         }
       }
-      generar_solucion();
-      if(solucion != solucion_ant){
-         cambio_c = true;
-         solucion_ant = solucion;
-      }
+      solucion_ant = clusters;
       mostrar_solucion(0);
       if(cambio_c){
          limpiar_clusters();
       }
-      i++;
-   } while(cambio_c && i < 1000);
-   if(i >= 1000){
-      std::cout << "F" << std::endl;
-   }
+   } while(cambio_c);
+   generar_solucion();
    desviacion_general();
 }
 
