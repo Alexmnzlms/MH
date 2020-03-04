@@ -6,8 +6,7 @@ using namespace std;
 int main(){
    cout << "Ejecutando programa CCP" << endl;
    //par.mostrar_datos();
-   std::srand((unsigned) 15091999);
-   Set_random(15091999);
+   Set_random(987563214569);
    /*for(int i = 0; i < 5; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
       //par.mostrar_datos();
@@ -26,10 +25,10 @@ int main(){
       cout << "-------------------------------------------------------" << endl;
    }
    //Set_random(19031999);*/
-   for(int i = 0; i < 1; i++){
+   for(int i = 0; i < 5; i++){
       CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_20.const");
       //par.mostrar_datos();
-      cout << "-------------------Iteracion: " << i << "--------------------" << endl;
+      cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
       par.mostrar_solucion(0);
       cout << "-------------------------------------------------------" << endl;

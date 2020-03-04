@@ -301,7 +301,7 @@ void CCP::greedy(){
          }
       }
       solucion_ant = clusters;
-      mostrar_solucion(0);
+      //mostrar_solucion(0);
       if(cambio_c){
          limpiar_clusters();
       }
