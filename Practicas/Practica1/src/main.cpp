@@ -6,8 +6,8 @@ using namespace std;
 
 int main(){
    cout << "Ejecutando programa CCP" << endl;
-   //par.mostrar_datos();
-   /*Set_random(20061999);
+/*
+   Set_random(20061999);
    cout << "Rand_set 10%" << endl;
    for(int i = 0; i < 5; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
@@ -29,11 +29,11 @@ int main(){
    }
    Set_random(03032020);
    cout << "Iris_set 10%" << endl;
-   for(int i = 0; i < 5; i++){
       CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
+      for(int i = 0; i < 5; i++){
       par.mostrar_solucion(0);
       cout << "-------------------------------------------------------" << endl;
    }
@@ -67,12 +67,13 @@ int main(){
       par.greedy();
       par.mostrar_solucion(0);
       cout << "-------------------------------------------------------" << endl;
-   }*/
-
+   }
+*/
+/*
    bool salir = false;
    bool fallo = false;
    int n;
-   int n_max = 500;
+   int n_max = 100;
    unsigned seed;
    while(!salir){
       seed = std::time(0);
@@ -114,8 +115,8 @@ int main(){
          salir = true;
       }
    }
-
-   /*Set_random(20061999);
+*/
+   Set_random(21061999);
    cout << "Rand_set 10%" << endl;
    for(int i = 0; i < 1; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
@@ -124,5 +125,5 @@ int main(){
       par.busqueda_local();
       //par.mostrar_solucion(0);
       cout << "-------------------------------------------------------" << endl;
-   }*/
+   }
 }

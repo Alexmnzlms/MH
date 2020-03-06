@@ -268,7 +268,7 @@ bool CCP::solucion_factible(){
 }
 
 int CCP::greedy(){
-   int i = 0, n_max = 500;
+   int i = 0, n_max = 100;
    bool cambio_c;
    std::vector<int> rsi;
    std::vector<std::vector<int>> solucion_ant = clusters;
@@ -299,6 +299,7 @@ int CCP::greedy(){
    } while(cambio_c && i < n_max);
    generar_solucion();
    desviacion_general();
+   std::cout << "Iteraciones: " << i << std::endl;
    return i;
 }
 
@@ -306,7 +307,9 @@ std::vector<int> CCP::generar_vecino(){
    int pos = Randint(0,solucion.size()-1);
    int clus = Randint(0, n_cluster-1);
    std::vector<int> sol = solucion;
+   std::cout << "Cambio " << pos << " de " << sol[pos] << " a " << clus << std::endl;
    sol[pos] = clus;
+
    return sol;
 }
 
@@ -345,6 +348,20 @@ double CCP::funcion_objetivo(const std::vector<int>& sol){
    return 0.0;
 }
 
+double CCP::ditancia_nodo_nodo(const int n, const int n){
+   double d_euclidea = 0, componente = 0;
+   for( unsigned i = 0; i < posiciones[n].size(); i++){
+      componente = std::abs(posiciones[n][i] - centroides[c][i]);
+      componente *= componente;
+      d_euclidea += componente;
+   }
+   return d_euclidea;
+}
+
+void CCP::calcular_lambda(){
+
+}
+
 
 void CCP::busqueda_local(){
    solucion = solucion_inicial();
@@ -352,6 +369,13 @@ void CCP::busqueda_local(){
       std::cout << solucion[i] << " ";
    }
    std::cout << std::endl;
+   solucion = generar_vecino();
+   for( unsigned i = 0; i < solucion.size(); i++){
+      std::cout << solucion[i] << " ";
+   }
+   std::cout << std::endl;
+   leer_solucion();
+   desviacion_general();
 
 
 }
