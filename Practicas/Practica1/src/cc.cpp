@@ -154,7 +154,7 @@ void CCP::desviacion_general(){
 }
 
 void CCP::generar_vecino(){
-
+   //int cambio = Randint(0,)
 }
 
 void CCP::leer_solucion(){
@@ -278,7 +278,8 @@ bool CCP::solucion_factible(){
    return true;
 }
 
-void CCP::greedy(){
+int CCP::greedy(){
+   int i = 0;
    bool cambio_c;
    std::vector<int> rsi;
    std::vector<std::vector<int>> solucion_ant = clusters;
@@ -305,9 +306,11 @@ void CCP::greedy(){
       if(cambio_c){
          limpiar_clusters();
       }
-   } while(cambio_c);
+      i++;
+   } while(cambio_c && i < 1000);
    generar_solucion();
    desviacion_general();
+   return i;
 }
 
 void CCP::busqueda_local(){

@@ -44,7 +44,7 @@ public:
    CCP(const int n, const std::string p, const std::string r);
    void mostrar_datos();
    void mostrar_solucion(int i);
-   void greedy();
+   int greedy();
    void busqueda_local();
 };
 
