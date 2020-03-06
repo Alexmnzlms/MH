@@ -7,7 +7,7 @@ using namespace std;
 int main(){
    cout << "Ejecutando programa CCP" << endl;
    //par.mostrar_datos();
-   Set_random(20061999);
+   /*Set_random(20061999);
    cout << "Rand_set 10%" << endl;
    for(int i = 0; i < 5; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
@@ -69,9 +69,10 @@ int main(){
       cout << "-------------------------------------------------------" << endl;
    }*/
 
-   /*bool salir = false;
+   bool salir = false;
    bool fallo = false;
    int n;
+   int n_max = 500;
    unsigned seed;
    while(!salir){
       seed = std::time(0);
@@ -84,9 +85,27 @@ int main(){
          //par.mostrar_datos();
          //cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
          n = par.greedy();
-         if(n >= 1000){
+         if(n >= n_max){
             fallo = true;
-            cout << "Fallo en la iteracion " << i+1 << endl;
+            cout << "Fallo en la iteracion " << i+1 << " de 10%" << endl;
+         }
+         else{
+            cout << "Conseguida iteracion " << i+1 << " de 10%" << endl;
+         }
+         //par.mostrar_solucion(0);
+         //cout << "-------------------------------------------------------" << endl;
+      }
+      for(int i = 0; i < 5 && !fallo; i++){
+         CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_20.const");
+         //par.mostrar_datos();
+         //cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
+         n = par.greedy();
+         if(n >= n_max){
+            fallo = true;
+            cout << "Fallo en la iteracion " << i+1 << " de 20%" << endl;
+         }
+         else{
+            cout << "Conseguida iteracion " << i+1 << " de 20%" << endl;
          }
          //par.mostrar_solucion(0);
          //cout << "-------------------------------------------------------" << endl;
@@ -94,9 +113,9 @@ int main(){
       if(!fallo){
          salir = true;
       }
-   }*/
+   }
 
-   Set_random(20061999);
+   /*Set_random(20061999);
    cout << "Rand_set 10%" << endl;
    for(int i = 0; i < 1; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
@@ -105,5 +124,5 @@ int main(){
       par.busqueda_local();
       //par.mostrar_solucion(0);
       cout << "-------------------------------------------------------" << endl;
-   }
+   }*/
 }
