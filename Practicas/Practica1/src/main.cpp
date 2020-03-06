@@ -7,7 +7,7 @@ using namespace std;
 int main(){
    cout << "Ejecutando programa CCP" << endl;
    //par.mostrar_datos();
-   /*Set_random(20061999);
+   Set_random(20061999);
    cout << "Rand_set 10%" << endl;
    for(int i = 0; i < 5; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");

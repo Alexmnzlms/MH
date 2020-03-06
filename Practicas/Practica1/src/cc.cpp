@@ -353,5 +353,5 @@ void CCP::busqueda_local(){
    }
    std::cout << std::endl;
 
-   std::cout << funcion_objetivo(solucion) << std::endl;
+   
 }
