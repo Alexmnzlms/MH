@@ -1,25 +1,34 @@
-\RequirePackage[title=Prácticas,
-                subtitle=Metaheurísticas,
-                author=Alejandro\ Manzanares\ Lemus\ -\ 77393031D,
-                organization=Grupo\ 2\ -\ Miércoles\ 17:30\ -\ 19:30,
-                repository=,
-                language=spanish,
-                chapter=Práctica~,
-                subsection=,
-                showsubtitle,
-                toc
-               ]{aqademia}
+\documentclass[10pt]{report}
+
+% Language and input encoding
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+
+% Document settings
+
+\usepackage{titling}
+	\author{Alejandro Manzanares Lemus}
+	\title{Aqademia}
+	\date{\today}
+
+\usepackage{hologo}
+\usepackage[title=\thetitle]{aqademia}
 
 % Document composition
 
 \begin{document}
 
-\aqtitle%
+\aqtitlepage{p1}
+            {p2}
+            {p3}
 
-\newpage
+\tableofcontents
+
+% Document files
+
+\chapter{P1}
 
 \input{../Practica1/doc/memoria1.tex}
-
-
 
 \end{document}
