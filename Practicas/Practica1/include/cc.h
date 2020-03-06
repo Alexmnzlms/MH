@@ -30,15 +30,19 @@ private:
    void calcular_centroide(const int i);
    void distancia_intracluster(const int i);
    void desviacion_general();
-   void generar_vecino();
    void leer_solucion();
    void generar_solucion();
    void asignar_cluster(const int n);
    double distancia_nodo_cluster(const int n, const int c);
    int restricciones_incumplidas(const int n, const int c);
    void limpiar_clusters();
-   //void infactibilidad_total();
+
+   std::vector<int> generar_vecino();
    bool solucion_factible();
+   int buscar_cluster(const int n);
+   double funcion_objetivo(const std::vector<int>& sol);
+   std::vector<int> solucion_inicial();
+
 
 public:
    CCP(const int n, const std::string p, const std::string r);

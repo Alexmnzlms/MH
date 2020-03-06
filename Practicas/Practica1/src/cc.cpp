@@ -153,8 +153,15 @@ void CCP::desviacion_general(){
    }
 }
 
-void CCP::generar_vecino(){
-   //int cambio = Randint(0,)
+int CCP::buscar_cluster(const int n){
+   for(int i = 0; i < n_cluster; i++){
+      for(int j = 0; j < clusters[i].size(); j++){
+         if(clusters[i][j] == n){
+            return i;
+         }
+      }
+   }
+   return -1;
 }
 
 void CCP::leer_solucion(){
@@ -183,8 +190,6 @@ double CCP::distancia_nodo_cluster(const int n, const int c){
    }
    return d_euclidea;
 }
-
-
 
 int CCP::restricciones_incumplidas(const int n, const int c){
    int incumplidas = 0;
@@ -245,22 +250,6 @@ void CCP::asignar_cluster(const int n){
    clusters[cluster].push_back(n);
 }
 
-/*void CCP::infactibilidad_total(){
-   for(auto it = restricciones.begin(); it != restricciones.end(); it++){
-      if(it->first.second > it->first.second){
-         if(it->second == 1){
-            for(int i = 0; i < n_cluster; i++){
-               auto primero = std::find(clusters[i].begin(), clusters[i].end(), it->first.first);
-               auto segundo = std::find(clusters[i].begin(), clusters[i].end(), it->first.second);
-               if(primero != clusters[i].end() && segundo != clusters[i].end()){
-                  infactibilidad++;
-               }
-            }
-         }
-      }
-   }
-}*/
-
 void CCP::limpiar_clusters(){
    for(int i = 0; i < n_cluster; i++){
       clusters[i].clear();
@@ -313,6 +302,56 @@ int CCP::greedy(){
    return i;
 }
 
-void CCP::busqueda_local(){
+std::vector<int> CCP::generar_vecino(){
+   int pos = Randint(0,solucion.size()-1);
+   int clus = Randint(0, n_cluster-1);
+   std::vector<int> sol = solucion;
+   sol[pos] = clus;
+   return sol;
+}
 
+std::vector<int> CCP::solucion_inicial(){
+   std::vector<int> index;
+   std::vector<int> sol;
+   sol.resize(posiciones.size());
+   std::vector<std::vector<int>> c;
+   c.resize(n_cluster);
+
+   for(int i = 0; i < posiciones.size(); i++){
+      index.push_back(i);
+   }
+   std::random_shuffle(index.begin(), index.end(), Randint_shuffle);
+   auto it = index.begin();
+   for(int i = 0; i < n_cluster; i++, it++){
+      c[i].push_back(*it);
+   }
+   int random;
+   for(it; it != index.end(); it++){
+      random = Randint(0,n_cluster-1);
+      c[random].push_back(*it);
+   }
+
+   for(int i = 0; i < n_cluster; i++){
+      for(int j = 0; j < c[i].size(); j++){
+         sol[c[i][j]] = i;
+      }
+   }
+
+   return sol;
+
+}
+
+double CCP::funcion_objetivo(const std::vector<int>& sol){
+   return 0.0;
+}
+
+
+void CCP::busqueda_local(){
+   solucion = solucion_inicial();
+   for(int i = 0; i < solucion.size(); i++){
+      std::cout << solucion[i] << " ";
+   }
+   std::cout << std::endl;
+
+   std::cout << funcion_objetivo(solucion) << std::endl;
 }
