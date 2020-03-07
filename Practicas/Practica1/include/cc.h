@@ -25,6 +25,7 @@ private:
    double desv_gen;
    int infactibilidad;
    double lambda;
+   double f_objetivo;
 
    void cargar_posiciones(const std::string archivo);
    void cargar_restricciones(const std::string archivo);
@@ -41,10 +42,9 @@ private:
    std::vector<int> generar_vecino();
    bool solucion_factible();
    int buscar_cluster(const int n);
-   double funcion_objetivo(const std::vector<int>& sol);
-   std::vector<int> solucion_inicial();
+   void solucion_inicial();
    void calcular_lambda();
-   double ditancia_nodo_nodo(const int n, const int n);
+   double distancia_nodo_nodo(const int n, const int m);
 
 
 public:

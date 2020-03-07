@@ -116,7 +116,7 @@ int main(){
       }
    }
 */
-   Set_random(21061999);
+   Set_random(20061999);
    cout << "Rand_set 10%" << endl;
    for(int i = 0; i < 1; i++){
       CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");

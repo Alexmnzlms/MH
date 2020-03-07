@@ -4,6 +4,8 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    n_cluster = n;
    desv_gen = 0;
    infactibilidad = 0;
+   lambda = 0;
+   f_objetivo = 0;
    cargar_posiciones(p);
    cargar_restricciones(r);
    centroides.resize(n_cluster);
@@ -94,31 +96,31 @@ void CCP::mostrar_datos(){
 }
 
 void CCP::mostrar_solucion(const int i){
-   if(i == 0){ //solucion greedy
-      std::cout << "Desviacion general: " << desv_gen << std::endl;
-      std::cout << "Infactibilidad: " << infactibilidad << std::endl;
-      for( int j = 0; j < n_cluster; j++){
-         std::cout << "Cluster " << j << " : ";
-         for( unsigned k = 0; k < clusters[j].size(); k++){
-            std::cout << clusters[j][k] << " ";
-         }
-         std::cout << std::endl;
-      }/*
-      std::cout << std::endl;
-      for( unsigned j = 0; j < solucion.size(); j++){
-         std::cout << solucion[j] << " ";
-      }
-      std::cout << std::endl;
-
-      */for( int i = 0; i < n_cluster; i++){
-         std::cout << "Centroide: " << i << std::endl;
-         for( unsigned j = 0; j < centroides[i].size(); j++){
-            std::cout << centroides[i][j] << " ";
-         }
-         std::cout << std::endl;
+   std::cout << "Desviacion general: " << desv_gen << std::endl;
+   std::cout << "Infactibilidad: " << infactibilidad << std::endl;
+   std::cout << "Lambda: " << lambda << std::endl;
+   std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
+   for( int j = 0; j < n_cluster; j++){
+      std::cout << "Cluster " << j << " : ";
+      for( unsigned k = 0; k < clusters[j].size(); k++){
+         std::cout << clusters[j][k] << " ";
       }
       std::cout << std::endl;
    }
+   std::cout << std::endl;
+   for( unsigned j = 0; j < solucion.size(); j++){
+      std::cout << solucion[j] << " ";
+   }
+   std::cout << std::endl;
+
+   for( int i = 0; i < n_cluster; i++){
+      std::cout << "Centroide: " << i << std::endl;
+      for( unsigned j = 0; j < centroides[i].size(); j++){
+         std::cout << centroides[i][j] << " ";
+      }
+      std::cout << std::endl;
+   }
+   std::cout << std::endl;
 }
 
 void CCP::calcular_centroide(const int i){
@@ -147,6 +149,7 @@ void CCP::distancia_intracluster(const int i){
 }
 
 void CCP::desviacion_general(){
+   desv_gen = 0;
    for( int i = 0; i < n_cluster; i++){
       distancia_intracluster(i);
       desv_gen += (1.0/n_cluster)*d_intracluster[i];
@@ -162,12 +165,6 @@ int CCP::buscar_cluster(const int n){
       }
    }
    return -1;
-}
-
-void CCP::leer_solucion(){
-   for( unsigned i = 0; i < solucion.size(); i++){
-      clusters[solucion[i]].push_back(i);
-   }
 }
 
 void CCP::generar_solucion(){
@@ -313,10 +310,8 @@ std::vector<int> CCP::generar_vecino(){
    return sol;
 }
 
-std::vector<int> CCP::solucion_inicial(){
+void CCP::solucion_inicial(){
    std::vector<int> index;
-   std::vector<int> sol;
-   sol.resize(posiciones.size());
    std::vector<std::vector<int>> c;
    c.resize(n_cluster);
 
@@ -336,22 +331,15 @@ std::vector<int> CCP::solucion_inicial(){
 
    for( int i = 0; i < n_cluster; i++){
       for( unsigned j = 0; j < c[i].size(); j++){
-         sol[c[i][j]] = i;
+         solucion[c[i][j]] = i;
       }
    }
-
-   return sol;
-
 }
 
-double CCP::funcion_objetivo(const std::vector<int>& sol){
-   return 0.0;
-}
-
-double CCP::ditancia_nodo_nodo(const int n, const int n){
+double CCP::distancia_nodo_nodo(const int n, const int m){
    double d_euclidea = 0, componente = 0;
    for( unsigned i = 0; i < posiciones[n].size(); i++){
-      componente = std::abs(posiciones[n][i] - centroides[c][i]);
+      componente = std::abs(posiciones[n][i] - posiciones[m][i]);
       componente *= componente;
       d_euclidea += componente;
    }
@@ -359,23 +347,50 @@ double CCP::ditancia_nodo_nodo(const int n, const int n){
 }
 
 void CCP::calcular_lambda(){
+   lambda = 0;
+   double d, d_max = 0.0;
+   int cluster;
+   for( unsigned i = 0; i < posiciones.size(); i++){
+      cluster = buscar_cluster(i);
+      for(int j = 0; j < n_cluster; j++){
+         if(j != cluster){
+            for( unsigned k = 0; k < clusters.size(); k++){
+               d = distancia_nodo_nodo(i,clusters[j][k]);
+               if(d > d_max){
+                  d_max = d;
+               }
+            }
+         }
+      }
+   }
+   lambda = d_max / restricciones.size();
+}
 
+void CCP::leer_solucion(){
+   infactibilidad = 0;
+   for( unsigned i = 0; i < solucion.size(); i++){
+      clusters[solucion[i]].push_back(i);
+      infactibilidad += restricciones_incumplidas(i,solucion[i]);
+      std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
+   }
+   calcular_lambda();
+   desviacion_general();
+   f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 
 
 void CCP::busqueda_local(){
-   solucion = solucion_inicial();
-   for( unsigned i = 0; i < solucion.size(); i++){
-      std::cout << solucion[i] << " ";
-   }
-   std::cout << std::endl;
-   solucion = generar_vecino();
-   for( unsigned i = 0; i < solucion.size(); i++){
-      std::cout << solucion[i] << " ";
-   }
-   std::cout << std::endl;
+   double f_objetivo_ant;
+   std::vector<int> solucion_ant;
+   solucion_inicial();
    leer_solucion();
-   desviacion_general();
+   f_objetivo_ant = f_objetivo;
+   solucion_ant = solucion;
 
+   mostrar_solucion(0);
 
+   solucion = generar_vecino();
+   leer_solucion();
+
+   mostrar_solucion(0);
 }
