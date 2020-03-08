@@ -19,7 +19,7 @@ private:
    std::vector<std::vector<double>> posiciones;
    std::vector<std::vector<double>> centroides;
    std::map<std::pair<int,int>,int> restricciones;
-   std::map<std::pair<int,int>,int> vecindario;
+   std::multimap<int,int> vecindario;
    std::vector<std::vector<int>> clusters;
    std::vector<double> d_intracluster;
    std::vector<int> solucion;

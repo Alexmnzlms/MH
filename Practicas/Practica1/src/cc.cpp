@@ -296,21 +296,16 @@ int CCP::greedy(){
 void CCP::generar_vecino(){
    bool salir = false;
    int pos, n;
-   std::pair<int,int> busca;
    while(!salir && quedan_vecinos()){
       salir = false;
       pos = Randint(0,solucion.size()-1);
       n = Randint(0,n_cluster-1);
-      busca.first = pos;
-      busca.second = n;
-      auto it = vecindario.find(busca);
+      auto it = vecindario.find(pos);
       if(it != vecindario.end()){
          //std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
-         if(it->second != 1){
-            salir = true;
-            it->second = 1;
-            solucion[pos] = n;
-         }
+         salir = true;
+         vecindario.erase(it);
+         solucion[pos] = n;
       }
    }
    //std::cout << "Cambio " << pos << " de " << solucion[pos] << " a " << n << std::endl;
@@ -319,23 +314,18 @@ void CCP::generar_vecino(){
 
 void CCP::generar_vecindario(){
    vecindario.clear();
-   std::pair<int,int> pareja;
    for(unsigned i = 0; i < posiciones.size(); i++){
       for(int j = 0; j < n_cluster; j++){
          if(j != buscar_cluster(i) && clusters[buscar_cluster(i)].size() > (unsigned) 1){
-            pareja.first = i;
-            pareja.second = j;
-            vecindario.insert(std::pair<std::pair<int,int>,int>(pareja,0));
+            vecindario.insert(std::pair<int,int>(i,j));
          }
       }
    }
 }
 
 bool CCP::quedan_vecinos(){
-   for(auto it = vecindario.begin(); it != vecindario.end(); it++){
-      if(it->second == 0){
-         return true;
-      }
+   if(vecindario.size() > 0){
+      return true;
    }
    return false;
 }
@@ -426,16 +416,17 @@ void CCP::busqueda_local(){
    do{
       /*auto it = vecindario.begin();
       for(; it != vecindario.end(); it++){
-         std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
+         std::cout << it->first << ", " << it->second << std::endl;
       }*/
+      //std::cout << "Vecinos posibles: " << vecindario.size() << std::endl;
       generar_vecino();
       leer_solucion();
 
-      //std::cout << " FObj_ant: " << f_objetivo_ant << " FObj: " << f_objetivo << std::endl;
+      //td::cout << " FObj_ant: " << f_objetivo_ant << " FObj: " << f_objetivo << std::endl;
 
       if(f_objetivo < f_objetivo_ant){
          //std::cout << "Reinicio BL" << std::endl;
-         //mostrar_solucion(0);
+         mostrar_solucion(0);
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          i = 0;
