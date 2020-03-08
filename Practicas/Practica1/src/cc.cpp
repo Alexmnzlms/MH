@@ -96,10 +96,10 @@ void CCP::mostrar_datos(){
 }
 
 void CCP::mostrar_solucion(const int i){
+   std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
    std::cout << "Desviacion general: " << desv_gen << std::endl;
    std::cout << "Infactibilidad: " << infactibilidad << std::endl;
    std::cout << "Lambda: " << lambda << std::endl;
-   std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
    for( int j = 0; j < n_cluster; j++){
       std::cout << "Cluster " << j << " : ";
       for( unsigned k = 0; k < clusters[j].size(); k++){
@@ -296,18 +296,19 @@ int CCP::greedy(){
    } while(cambio_c && i < n_max);
    generar_solucion();
    desviacion_general();
+   f_objetivo = desv_gen + infactibilidad;
    std::cout << "Iteraciones: " << i << std::endl;
    return i;
 }
 
-std::vector<int> CCP::generar_vecino(){
+void CCP::generar_vecino(){
    int pos = Randint(0,solucion.size()-1);
-   int clus = Randint(0, n_cluster-1);
-   std::vector<int> sol = solucion;
-   std::cout << "Cambio " << pos << " de " << sol[pos] << " a " << clus << std::endl;
-   sol[pos] = clus;
-
-   return sol;
+   int clus;
+   do{
+      clus = Randint(0, n_cluster-1);
+   }while(solucion[pos] == clus && clusters[clus].size() > (unsigned) 1);
+   //std::cout << "Cambio " << pos << " de " << solucion[pos] << " a " << clus << std::endl;
+   solucion[pos] = clus;
 }
 
 void CCP::solucion_inicial(){
@@ -367,13 +368,12 @@ void CCP::calcular_lambda(){
 }
 
 void CCP::leer_solucion(){
-   infactibilidad = 0;
+   limpiar_clusters();
    for( unsigned i = 0; i < solucion.size(); i++){
       clusters[solucion[i]].push_back(i);
       infactibilidad += restricciones_incumplidas(i,solucion[i]);
-      std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
+      //std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
    }
-   calcular_lambda();
    desviacion_general();
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
@@ -381,16 +381,31 @@ void CCP::leer_solucion(){
 
 void CCP::busqueda_local(){
    double f_objetivo_ant;
+   int i = 0;
    std::vector<int> solucion_ant;
    solucion_inicial();
    leer_solucion();
+   calcular_lambda();
    f_objetivo_ant = f_objetivo;
    solucion_ant = solucion;
 
    mostrar_solucion(0);
 
-   solucion = generar_vecino();
-   leer_solucion();
+   do{
+      generar_vecino();
+      leer_solucion();
+      if(f_objetivo < f_objetivo_ant){
+         //mostrar_solucion(0);
+         f_objetivo_ant = f_objetivo;
+         solucion_ant = solucion;
+         i = 0;
+      }
+      else{
+         solucion = solucion_ant;
+         leer_solucion();
+         i++;
+      }
+   }while(i < 100000);
 
    mostrar_solucion(0);
 }

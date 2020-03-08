@@ -118,8 +118,8 @@ int main(){
 */
    Set_random(20061999);
    cout << "Rand_set 10%" << endl;
-   for(int i = 0; i < 1; i++){
-      CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
+   for(int i = 0; i < 5; i++){
+      CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.busqueda_local();

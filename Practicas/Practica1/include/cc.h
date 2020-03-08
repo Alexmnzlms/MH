@@ -19,6 +19,7 @@ private:
    std::vector<std::vector<double>> posiciones;
    std::vector<std::vector<double>> centroides;
    std::map<std::pair<int,int>,int> restricciones;
+   std::map<std::pair<int,int>,int> vecindario;
    std::vector<std::vector<int>> clusters;
    std::vector<double> d_intracluster;
    std::vector<int> solucion;
@@ -39,7 +40,7 @@ private:
    int restricciones_incumplidas(const int n, const int c);
    void limpiar_clusters();
 
-   std::vector<int> generar_vecino();
+   void generar_vecino();
    bool solucion_factible();
    int buscar_cluster(const int n);
    void solucion_inicial();
