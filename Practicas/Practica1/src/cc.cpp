@@ -112,15 +112,16 @@ void CCP::mostrar_solucion(const int i){
       std::cout << solucion[j] << " ";
    }
    std::cout << std::endl;
+   std::cout << std::endl;
 
-   for( int i = 0; i < n_cluster; i++){
+   /*for( int i = 0; i < n_cluster; i++){
       std::cout << "Centroide: " << i << std::endl;
       for( unsigned j = 0; j < centroides[i].size(); j++){
          std::cout << centroides[i][j] << " ";
       }
       std::cout << std::endl;
    }
-   std::cout << std::endl;
+   std::cout << std::endl;*/
 }
 
 void CCP::calcular_centroide(const int i){
@@ -188,8 +189,8 @@ double CCP::distancia_nodo_cluster(const int n, const int c){
    return d_euclidea;
 }
 
-int CCP::restricciones_incumplidas(const int n, const int c){
-   int incumplidas = 0;
+double CCP::restricciones_incumplidas(const int n, const int c){
+   double incumplidas = 0;
    std::pair<int,int> pareja;
    pareja.first = n;
    for( unsigned i = 0; i < clusters[c].size(); i++){
@@ -217,8 +218,8 @@ void CCP::asignar_cluster(const int n){
    std::pair<int,int> pareja;
    std::vector<std::pair<int,int>> r;
 
-   int cluster = -1, r_min;
-   double d_min, d;
+   int cluster = -1;
+   double d_min, d, r_min;
 
    for( int i = 0; i < n_cluster; i++){
       pareja.first = restricciones_incumplidas(n,i);
@@ -253,15 +254,6 @@ void CCP::limpiar_clusters(){
    }
    infactibilidad = 0;
 
-}
-
-bool CCP::solucion_factible(){
-   for( int i = 0; i < n_cluster; i++){
-      if(clusters[i].size() == 0){
-         return false;
-      }
-   }
-   return true;
 }
 
 int CCP::greedy(){
@@ -303,12 +295,44 @@ int CCP::greedy(){
 
 void CCP::generar_vecino(){
    int pos = Randint(0,solucion.size()-1);
-   int clus;
-   do{
-      clus = Randint(0, n_cluster-1);
-   }while(solucion[pos] == clus && clusters[clus].size() > (unsigned) 1);
-   //std::cout << "Cambio " << pos << " de " << solucion[pos] << " a " << clus << std::endl;
+   auto it = vecindario.begin();
+   if(pos > 0){
+      for(int i = 0; i < pos; i++){
+         it++;
+      }
+   }
+   int clus = it->first.second;
+   std::cout << "Cambio " << pos << " de " << solucion[pos] << " a " << clus << std::endl;
    solucion[pos] = clus;
+
+   std::pair<int,int> busca;
+   busca.first = pos;
+   busca.second = clus;
+   auto ite = vecindario.find(busca);
+   ite->second = 1;
+}
+
+void CCP::generar_vecindario(){
+   vecindario.clear();
+   std::pair<int,int> pareja;
+   for(unsigned i = 0; i < posiciones.size(); i++){
+      for(int j = 0; j < n_cluster; j++){
+         if(j != buscar_cluster(i) && clusters[buscar_cluster(i)].size() > (unsigned) 1){
+            pareja.first = i;
+            pareja.second = j;
+            vecindario.insert(std::pair<std::pair<int,int>,int>(pareja,0));
+         }
+      }
+   }
+}
+
+bool CCP::quedan_vecinos(){
+   for(auto it = vecindario.begin(); it != vecindario.end(); it++){
+      if(it->second == 0){
+         return true;
+      }
+   }
+   return false;
 }
 
 void CCP::solucion_inicial(){
@@ -385,6 +409,7 @@ void CCP::busqueda_local(){
    std::vector<int> solucion_ant;
    solucion_inicial();
    leer_solucion();
+   generar_vecindario();
    calcular_lambda();
    f_objetivo_ant = f_objetivo;
    solucion_ant = solucion;
@@ -392,20 +417,29 @@ void CCP::busqueda_local(){
    mostrar_solucion(0);
 
    do{
+      /*auto it = vecindario.begin();
+      for(; it != vecindario.end(); it++){
+         std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
+      }*/
       generar_vecino();
       leer_solucion();
+
+      //std::cout << " FObj_ant: " << f_objetivo_ant << " FObj: " << f_objetivo << std::endl;
+
       if(f_objetivo < f_objetivo_ant){
-         //mostrar_solucion(0);
+         mostrar_solucion(0);
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          i = 0;
+         generar_vecindario();
+         std::cout << "Reinicio BL" << std::endl;
       }
       else{
          solucion = solucion_ant;
          leer_solucion();
          i++;
       }
-   }while(i < 100000);
+   }while(i < 100000 && quedan_vecinos());
 
    mostrar_solucion(0);
 }

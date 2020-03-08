@@ -24,7 +24,7 @@ private:
    std::vector<double> d_intracluster;
    std::vector<int> solucion;
    double desv_gen;
-   int infactibilidad;
+   double infactibilidad;
    double lambda;
    double f_objetivo;
 
@@ -37,15 +37,16 @@ private:
    void generar_solucion();
    void asignar_cluster(const int n);
    double distancia_nodo_cluster(const int n, const int c);
-   int restricciones_incumplidas(const int n, const int c);
+   double restricciones_incumplidas(const int n, const int c);
    void limpiar_clusters();
 
    void generar_vecino();
-   bool solucion_factible();
    int buscar_cluster(const int n);
    void solucion_inicial();
    void calcular_lambda();
    double distancia_nodo_nodo(const int n, const int m);
+   void generar_vecindario();
+   bool quedan_vecinos();
 
 
 public:
