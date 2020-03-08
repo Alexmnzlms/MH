@@ -95,7 +95,7 @@ void CCP::mostrar_datos(){
    }
 }
 
-void CCP::mostrar_solucion(const int i){
+void CCP::mostrar_solucion(){
    std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
    std::cout << "Desviacion general: " << desv_gen << std::endl;
    std::cout << "Infactibilidad: " << infactibilidad << std::endl;
@@ -280,7 +280,7 @@ int CCP::greedy(){
          }
       }
       solucion_ant = clusters;
-      //mostrar_solucion(0);
+      //mostrar_solucion();
       if(cambio_c){
          limpiar_clusters();
       }
@@ -411,7 +411,7 @@ void CCP::busqueda_local(){
    f_objetivo_ant = f_objetivo;
    solucion_ant = solucion;
 
-   mostrar_solucion(0);
+   mostrar_solucion();
 
    do{
       /*auto it = vecindario.begin();
@@ -426,14 +426,14 @@ void CCP::busqueda_local(){
 
       if(f_objetivo < f_objetivo_ant){
          //std::cout << "Reinicio BL" << std::endl;
-         mostrar_solucion(0);
+         mostrar_solucion();
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          i = 0;
          generar_vecindario();
       }
       else{
-         //mostrar_solucion(0);
+         //mostrar_solucion();
          //std::cout << "Vecino no mejora" << std::endl;
          solucion = solucion_ant;
          leer_solucion();
@@ -447,5 +447,5 @@ void CCP::busqueda_local(){
       }
    }while(i < 100000 && quedan_vecinos());
 
-   mostrar_solucion(0);
+   mostrar_solucion();
 }

@@ -52,7 +52,7 @@ private:
 public:
    CCP(const int n, const std::string p, const std::string r);
    void mostrar_datos();
-   void mostrar_solucion(int i);
+   void mostrar_solucion();
    int greedy();
    void busqueda_local();
 };

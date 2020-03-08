@@ -14,7 +14,7 @@ int main(){
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
-      par.mostrar_solucion(0);
+      par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
    Set_random(20061999);
@@ -24,7 +24,7 @@ int main(){
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
-      par.mostrar_solucion(0);
+      par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
    Set_random(03032020);
@@ -34,7 +34,7 @@ int main(){
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
       for(int i = 0; i < 5; i++){
-      par.mostrar_solucion(0);
+      par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
    Set_random(03032020);
@@ -44,7 +44,7 @@ int main(){
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
-      par.mostrar_solucion(0);
+      par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
    Set_random(1583493671);
@@ -54,7 +54,7 @@ int main(){
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
-      par.mostrar_solucion(0);
+      par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
 
@@ -65,7 +65,7 @@ int main(){
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.greedy();
-      par.mostrar_solucion(0);
+      par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
 */
@@ -93,7 +93,7 @@ int main(){
          else{
             cout << "Conseguida iteracion " << i+1 << " de 10%" << endl;
          }
-         //par.mostrar_solucion(0);
+         //par.mostrar_solucion();
          //cout << "-------------------------------------------------------" << endl;
       }
       for(int i = 0; i < 5 && !fallo; i++){
@@ -108,7 +108,7 @@ int main(){
          else{
             cout << "Conseguida iteracion " << i+1 << " de 20%" << endl;
          }
-         //par.mostrar_solucion(0);
+         //par.mostrar_solucion();
          //cout << "-------------------------------------------------------" << endl;
       }
       if(!fallo){
@@ -123,7 +123,7 @@ int main(){
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
       par.busqueda_local();
-      //par.mostrar_solucion(0);
+      //par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
 }
