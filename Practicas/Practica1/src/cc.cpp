@@ -294,22 +294,27 @@ int CCP::greedy(){
 }
 
 void CCP::generar_vecino(){
-   int pos = Randint(0,solucion.size()-1);
-   auto it = vecindario.begin();
-   if(pos > 0){
-      for(int i = 0; i < pos; i++){
-         it++;
+   bool salir = false;
+   int pos, n;
+   std::pair<int,int> busca;
+   while(!salir && quedan_vecinos()){
+      salir = false;
+      pos = Randint(0,solucion.size()-1);
+      n = Randint(0,n_cluster-1);
+      busca.first = pos;
+      busca.second = n;
+      auto it = vecindario.find(busca);
+      if(it != vecindario.end()){
+         //std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
+         if(it->second != 1){
+            salir = true;
+            it->second = 1;
+            solucion[pos] = n;
+         }
       }
    }
-   int clus = it->first.second;
-   std::cout << "Cambio " << pos << " de " << solucion[pos] << " a " << clus << std::endl;
-   solucion[pos] = clus;
+   //std::cout << "Cambio " << pos << " de " << solucion[pos] << " a " << n << std::endl;
 
-   std::pair<int,int> busca;
-   busca.first = pos;
-   busca.second = clus;
-   auto ite = vecindario.find(busca);
-   ite->second = 1;
 }
 
 void CCP::generar_vecindario(){
@@ -399,6 +404,9 @@ void CCP::leer_solucion(){
       //std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
    }
    desviacion_general();
+   if(lambda == 0){
+      calcular_lambda();
+   }
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 
@@ -410,7 +418,6 @@ void CCP::busqueda_local(){
    solucion_inicial();
    leer_solucion();
    generar_vecindario();
-   calcular_lambda();
    f_objetivo_ant = f_objetivo;
    solucion_ant = solucion;
 
@@ -427,17 +434,25 @@ void CCP::busqueda_local(){
       //std::cout << " FObj_ant: " << f_objetivo_ant << " FObj: " << f_objetivo << std::endl;
 
       if(f_objetivo < f_objetivo_ant){
-         mostrar_solucion(0);
+         //std::cout << "Reinicio BL" << std::endl;
+         //mostrar_solucion(0);
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          i = 0;
          generar_vecindario();
-         std::cout << "Reinicio BL" << std::endl;
       }
       else{
+         //mostrar_solucion(0);
+         //std::cout << "Vecino no mejora" << std::endl;
          solucion = solucion_ant;
          leer_solucion();
          i++;
+      }
+      if(!quedan_vecinos()){
+         std::cout << "No quedan vecinos con los que probar" << std::endl;
+      }
+      if(i >= 100000){
+         std::cout << "Num Max Iteraciones" << std::endl;
       }
    }while(i < 100000 && quedan_vecinos());
 
