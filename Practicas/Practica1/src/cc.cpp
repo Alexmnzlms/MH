@@ -426,7 +426,7 @@ void CCP::busqueda_local(){
 
       if(f_objetivo < f_objetivo_ant){
          //std::cout << "Reinicio BL" << std::endl;
-         mostrar_solucion();
+         //mostrar_solucion();
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          i = 0;
@@ -447,5 +447,5 @@ void CCP::busqueda_local(){
       }
    }while(i < 100000 && quedan_vecinos());
 
-   mostrar_solucion();
+   //mostrar_solucion();
 }
