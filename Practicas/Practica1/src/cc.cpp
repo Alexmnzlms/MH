@@ -282,7 +282,10 @@ int CCP::greedy(){
          }
       }
       solucion_ant = clusters;
-      //mostrar_solucion();
+
+      generar_solucion();
+      mostrar_solucion();
+
       if(cambio_c){
          limpiar_clusters();
       }
@@ -478,7 +481,7 @@ void CCP::busqueda_greedy(){
 
       if(f_objetivo < f_objetivo_ant){
          //std::cout << "Reinicio BL" << std::endl;
-         //mostrar_solucion();
+         mostrar_solucion();
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          i = 0;
