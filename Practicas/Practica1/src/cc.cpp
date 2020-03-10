@@ -257,6 +257,8 @@ void CCP::limpiar_clusters(){
 }
 
 int CCP::greedy(){
+   mostrar_solucion();
+
    int i = 0, n_max = 100;
    bool cambio_c;
    std::vector<int> rsi;
@@ -290,6 +292,7 @@ int CCP::greedy(){
    desviacion_general();
    f_objetivo = desv_gen + infactibilidad;
    std::cout << "Iteraciones: " << i << std::endl;
+   mostrar_solucion();
    return i;
 }
 
@@ -406,6 +409,55 @@ void CCP::busqueda_local(){
    int i = 0;
    std::vector<int> solucion_ant;
    solucion_inicial();
+   leer_solucion();
+   generar_vecindario();
+   f_objetivo_ant = f_objetivo;
+   solucion_ant = solucion;
+
+   mostrar_solucion();
+
+   do{
+      /*auto it = vecindario.begin();
+      for(; it != vecindario.end(); it++){
+         std::cout << it->first << ", " << it->second << std::endl;
+      }*/
+      //std::cout << "Vecinos posibles: " << vecindario.size() << std::endl;
+      generar_vecino();
+      leer_solucion();
+
+      //td::cout << " FObj_ant: " << f_objetivo_ant << " FObj: " << f_objetivo << std::endl;
+
+      if(f_objetivo < f_objetivo_ant){
+         //std::cout << "Reinicio BL" << std::endl;
+         //mostrar_solucion();
+         f_objetivo_ant = f_objetivo;
+         solucion_ant = solucion;
+         i = 0;
+         generar_vecindario();
+      }
+      else{
+         //mostrar_solucion();
+         //std::cout << "Vecino no mejora" << std::endl;
+         solucion = solucion_ant;
+         leer_solucion();
+         i++;
+      }
+      if(!quedan_vecinos()){
+         std::cout << "No quedan vecinos con los que probar" << std::endl;
+      }
+      if(i >= 100000){
+         std::cout << "Num Max Iteraciones" << std::endl;
+      }
+   }while(i < 100000 && quedan_vecinos());
+
+   //mostrar_solucion();
+}
+
+void CCP::busqueda_greedy(){
+   double f_objetivo_ant;
+   int i = 0;
+   std::vector<int> solucion_ant;
+   greedy();
    leer_solucion();
    generar_vecindario();
    f_objetivo_ant = f_objetivo;

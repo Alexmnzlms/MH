@@ -55,6 +55,7 @@ public:
    void mostrar_solucion();
    int greedy();
    void busqueda_local();
+   void busqueda_greedy();
 };
 
 
