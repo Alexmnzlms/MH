@@ -436,7 +436,7 @@ void CCP::busqueda_local(){
          //mostrar_solucion();
          //std::cout << "Vecino no mejora" << std::endl;
          solucion = solucion_ant;
-         leer_solucion();
+         //leer_solucion();
          i++;
       }
       if(!quedan_vecinos()){
