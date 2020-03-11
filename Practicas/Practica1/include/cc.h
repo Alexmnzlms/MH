@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <map>
+#include <set>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -19,7 +20,7 @@ private:
    std::vector<std::vector<double>> posiciones;
    std::vector<std::vector<double>> centroides;
    std::map<std::pair<int,int>,int> restricciones;
-   std::multimap<int,int> vecindario;
+   std::set<std::pair<int,int>> vecindario;
    std::vector<std::vector<int>> clusters;
    std::vector<double> d_intracluster;
    std::vector<int> solucion;
@@ -34,6 +35,7 @@ private:
    void distancia_intracluster(const int i);
    void desviacion_general();
    void leer_solucion();
+   void leer_vecino();
    void generar_solucion();
    void asignar_cluster(const int n);
    double distancia_nodo_cluster(const int n, const int c);
