@@ -1,4 +1,5 @@
 *.xls*
+*.txt
 
 # Prerequisites
 *.d
