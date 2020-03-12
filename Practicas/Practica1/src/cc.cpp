@@ -203,7 +203,7 @@ double CCP::restricciones_incumplidas(const int n, const int c){
       pareja.second = clusters[c][i];
          auto it = restricciones.find(pareja);
          if(it->second == -1 && it != restricciones.end()){
-            std::cout << "Incumplido CL" << it->first.first << " con " << it->first.second << std::endl;
+            //std::cout << "Incumplido CL" << it->first.first << " con " << it->first.second << std::endl;
             incumplidas++;
          }
    }
@@ -213,7 +213,7 @@ double CCP::restricciones_incumplidas(const int n, const int c){
             pareja.second = clusters[i][j];
                auto it = restricciones.find(pareja);
                if(it->second == 1 && it != restricciones.end()){
-                  std::cout << "Incumplido ML" << it->first.first << " con " << it->first.second << std::endl;
+                  //std::cout << "Incumplido ML" << it->first.first << " con " << it->first.second << std::endl;
                   incumplidas++;
                }
          }
@@ -303,7 +303,6 @@ int CCP::greedy(){
 void CCP::generar_vecino(){
    bool salir = false;
    int pos, n, c;
-   int a, b;
    while(!salir && quedan_vecinos()){
       salir = false;
       pos = Randint(0,solucion.size()-1);
@@ -323,17 +322,13 @@ void CCP::generar_vecino(){
                clusters[solucion[j]].push_back(j);
             }
          }
-         a = restricciones_incumplidas(pos,c);
-         infactibilidad -= a;
-         std::cout << "Resto una infactibilidad de " << a << ", " << pos << " " << c << std::endl;
-         b = restricciones_incumplidas(pos,n);
-         infactibilidad += b;
-         std::cout << "Sumo una infactibilidad de " << b << ", " << pos << " " << n << std::endl;
+         infactibilidad -= restricciones_incumplidas(pos,c);
+         infactibilidad += restricciones_incumplidas(pos,n);
          solucion[pos] = n;
          clusters[solucion[pos]].push_back(pos);
          //std::cout << infactibilidad << std::endl;
          //std::cout << infactibilidad << std::endl;
-         std::cout << "Cambio " << pos << " de " << c << " a " << n << std::endl;
+         //std::cout << "Cambio " << pos << " de " << c << " a " << n << std::endl;
          desviacion_general();
          f_objetivo = desv_gen + (infactibilidad*lambda);
          //std::cout << infactibilidad << std::endl;
@@ -437,40 +432,14 @@ void CCP::leer_solucion(){
       clusters[solucion[i]].push_back(i);
       //std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
    }
-   int cluster;
    for( unsigned i = 0; i < solucion.size(); i++){
-      std::pair<int,int> pareja;
-      pareja.first = i;
-      cluster = buscar_cluster(i);
-      for( unsigned j = 0; j < clusters[cluster].size(); i++){
-         pareja.second = clusters[cluster][j];
-         if(pareja.first < pareja.second){
-            auto it = restricciones.find(pareja);
-            if(it->second == -1 && it != restricciones.end()){
-               std::cout << "Incumplido CL" << it->first.first << " con " << it->first.second << std::endl;
-               infactibilidad++;
-            }
-         }
-      }
-      for( int j = 0; j < n_cluster; j++){
-         if(j != cluster){
-            for( unsigned k = 0; k < clusters[j].size(); k++){
-               pareja.second = clusters[j][k];
-               if(pareja.first < pareja.second){
-                  auto it = restricciones.find(pareja);
-                  if(it->second == 1 && it != restricciones.end()){
-                     std::cout << "Incumplido ML" << it->first.first << " con " << it->first.second << std::endl;
-                     infactibilidad++;
-                  }
-               }
-            }
-         }
-      }
+      infactibilidad += restricciones_incumplidas(i,solucion[i]);
    }
    desviacion_general();
    if(lambda == 0){
       calcular_lambda();
    }
+   infactibilidad /= 2;
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 
@@ -518,9 +487,9 @@ void CCP::busqueda_local(){
 
       if(f_objetivo < f_objetivo_ant){
          //std::cout << "Reinicio BL" << std::endl;
-         std::cout << "Infactibilidad: " << infactibilidad << std::endl;
-         std::cout << "Num Evaluaciones: " << i << std::endl;
-         mostrar_solucion();
+         //std::cout << "Infactibilidad: " << infactibilidad << std::endl;
+         //std::cout << "Num Evaluaciones: " << i << std::endl;
+         //mostrar_solucion();
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          infactibilidad_ant = infactibilidad;
@@ -530,9 +499,9 @@ void CCP::busqueda_local(){
          //mostrar_solucion();
          //std::cout << "Vecino no mejora" << std::endl;
          solucion = solucion_ant;
-         std::cout << "Nueva infactibilidad: " << infactibilidad << std::endl;
+         //std::cout << "Nueva infactibilidad: " << infactibilidad << std::endl;
          infactibilidad = infactibilidad_ant;
-         std::cout << "Me quedo con: " << infactibilidad << std::endl;
+         //std::cout << "Me quedo con: " << infactibilidad << std::endl;
          //leer_solucion();
       }
       if(!quedan_vecinos()){
