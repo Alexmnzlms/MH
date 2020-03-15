@@ -17,7 +17,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.greedy();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -30,7 +30,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.greedy();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -43,7 +43,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.greedy();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -56,7 +56,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.greedy();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -69,7 +69,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.greedy();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -83,7 +83,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.greedy();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -97,7 +97,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.busqueda_local();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -110,7 +110,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.busqueda_local();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -123,7 +123,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.busqueda_local();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -136,7 +136,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.busqueda_local();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -149,7 +149,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.busqueda_local();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
@@ -163,7 +163,7 @@ int main(){
       tini= clock(); // Tiempo inicial
       par.busqueda_local();
       tfin= clock(); // Tiempo final
-      cout << "--------------------T (ms.): " << 1000.0*(tfin-tini)/(double)CLOCKS_PER_SEC << endl;
+      cout << "--------------------T (ms.): " << (tfin-tini)/(double)CLOCKS_PER_SEC << endl;
       par.mostrar_solucion();
       cout << "-------------------------------------------------------" << endl;
    }
