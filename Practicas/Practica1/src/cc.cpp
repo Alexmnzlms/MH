@@ -99,11 +99,6 @@ void CCP::mostrar_solucion(){
    std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
    std::cout << "Desviacion general: " << desv_gen << std::endl;
    std::cout << "Infactibilidad: " << infactibilidad << std::endl;
-   double infactibilidad_aux = 0;
-   /*for( unsigned i = 0; i < solucion.size(); i++){
-      infactibilidad_aux += restricciones_incumplidas(i,solucion[i]) / 2;
-   }*/
-   std::cout << "Infactibilidad calculada: " << infactibilidad_aux << std::endl;
    std::cout << "Lambda: " << lambda << std::endl;
    std::cout << "Restricciones: " << restricciones.size() << std::endl;
    for( int j = 0; j < n_cluster; j++){
@@ -119,15 +114,6 @@ void CCP::mostrar_solucion(){
    }
    std::cout << std::endl;
    std::cout << std::endl;
-
-   /*for( int i = 0; i < n_cluster; i++){
-      std::cout << "Centroide: " << i << std::endl;
-      for( unsigned j = 0; j < centroides[i].size(); j++){
-         std::cout << centroides[i][j] << " ";
-      }
-      std::cout << std::endl;
-   }
-   std::cout << std::endl;*/
 }
 
 void CCP::calcular_centroide(const int i){
@@ -203,7 +189,6 @@ double CCP::restricciones_incumplidas(const int n, const int c){
       pareja.second = clusters[c][i];
          auto it = restricciones.find(pareja);
          if(it->second == -1 && it != restricciones.end()){
-            //std::cout << "Incumplido CL" << it->first.first << " con " << it->first.second << std::endl;
             incumplidas++;
          }
    }
@@ -213,7 +198,6 @@ double CCP::restricciones_incumplidas(const int n, const int c){
             pareja.second = clusters[i][j];
                auto it = restricciones.find(pareja);
                if(it->second == 1 && it != restricciones.end()){
-                  //std::cout << "Incumplido ML" << it->first.first << " con " << it->first.second << std::endl;
                   incumplidas++;
                }
          }
@@ -236,11 +220,6 @@ void CCP::asignar_cluster(const int n){
    }
 
    std::sort(r.begin(),r.end());
-
-   /*for( unsigned i = 0; i < r.size(); i++){
-      std::cout << r[i]. first << " " << r[i].second << std::endl;
-   }
-   std::cout << "----------------------------------" << std::endl;*/
 
    r_min = r[0].first;
    d_min = 1000000.0;
@@ -309,7 +288,6 @@ void CCP::generar_vecino(){
       n = Randint(0,n_cluster-1);
       auto it = vecindario.find(std::make_pair(pos,n));
       if(it != vecindario.end()){
-         //std::cout << it->first.first << " " << it->first.second << " " << it->second << std::endl;
          salir = true;
          vecindario.erase(it);
          c = solucion[pos];
@@ -326,12 +304,8 @@ void CCP::generar_vecino(){
          infactibilidad += restricciones_incumplidas(pos,n);
          solucion[pos] = n;
          clusters[solucion[pos]].push_back(pos);
-         //std::cout << infactibilidad << std::endl;
-         //std::cout << infactibilidad << std::endl;
-         //std::cout << "Cambio " << pos << " de " << c << " a " << n << std::endl;
          desviacion_general();
          f_objetivo = desv_gen + (infactibilidad*lambda);
-         //std::cout << infactibilidad << std::endl;
       }
    }
 }
@@ -342,8 +316,6 @@ void CCP::leer_vecino(){
    infactibilidad = infactibilidad_aux;
    for( unsigned i = 0; i < solucion.size(); i++){
       clusters[solucion[i]].push_back(i);
-      //infactibilidad += restricciones_incumplidas(i,solucion[i]);
-      //std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
    }
    for(int i = 0; i < n_cluster; i++){
       calcular_centroide(i);
@@ -436,7 +408,6 @@ void CCP::leer_solucion(){
    limpiar_clusters();
    for( unsigned i = 0; i < solucion.size(); i++){
       clusters[solucion[i]].push_back(i);
-      //std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
    }
    for( unsigned i = 0; i < solucion.size(); i++){
       infactibilidad += restricciones_incumplidas(i,solucion[i]);
@@ -459,56 +430,20 @@ void CCP::busqueda_local(){
    f_objetivo_ant = f_objetivo;
    solucion_ant = solucion;
    infactibilidad_ant = infactibilidad;
-   //mostrar_solucion();
 
    do{
-      /*auto it = vecindario.begin();
-      for(; it != vecindario.end(); it++){
-         std::cout << it->first << ", " << it->second << std::endl;
-      }
-      //std::cout << "Vecinos posibles: " << vecindario.size() << std::endl;
-      infactibilidad_aux = infactibilidad_pos = 0;
-      for( unsigned i = 0; i < solucion.size(); i++){
-         infactibilidad_pos += restricciones_incumplidas(i,solucion[i]);
-      }*/
-
       generar_vecino();
       i++;
 
-      /*for( unsigned i = 0; i < solucion.size(); i++){
-         infactibilidad_aux += restricciones_incumplidas(i,solucion[i]);
-      }
-      //if(infactibilidad <= infactibilidad_aux){
-         std::cout << i << std::endl;
-         std::cout << "Infactibilidad anterior al vecino: " << infactibilidad_pos << std::endl;
-         std::cout << "Infactibilidad posterior al vecino: " << infactibilidad_aux << std::endl;
-         std::cout << "Infactibilidad: " << infactibilidad << std::endl;
-         //mostrar_solucion();
-         //exit(1);
-      //}
-      */
-      //mostrar_solucion();
-
-      //std::cout << " FObj_ant: " << f_objetivo_ant << " FObj: " << f_objetivo << std::endl;
-
       if(f_objetivo < f_objetivo_ant){
-         //std::cout << "Reinicio BL" << std::endl;
-         //std::cout << "Infactibilidad: " << infactibilidad << std::endl;
-         //std::cout << "Num Evaluaciones: " << i << std::endl;
-         //mostrar_solucion();
          f_objetivo_ant = f_objetivo;
          solucion_ant = solucion;
          infactibilidad_ant = infactibilidad;
          generar_vecindario();
       }
       else{
-         //mostrar_solucion();
-         //std::cout << "Vecino no mejora" << std::endl;
          solucion = solucion_ant;
-         //std::cout << "Nueva infactibilidad: " << infactibilidad << std::endl;
          infactibilidad = infactibilidad_ant;
-         //std::cout << "Me quedo con: " << infactibilidad << std::endl;
-         //leer_solucion();
       }
       if(!quedan_vecinos()){
          std::cout << "No quedan vecinos con los que probar" << std::endl;
