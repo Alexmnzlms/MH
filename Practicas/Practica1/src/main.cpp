@@ -36,7 +36,7 @@ int main(){
    }
    Set_random(03032020);
    cout << "Iris_set 10%" << endl;
-   for(int i = 0; i < 1; i++){
+   for(int i = 0; i < 5; i++){
       CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
@@ -116,7 +116,7 @@ int main(){
    }
    Set_random(03032020);
    cout << "Iris_set 10%" << endl;
-   for(int i = 0; i < 1; i++){
+   for(int i = 0; i < 5; i++){
       CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
@@ -156,7 +156,7 @@ int main(){
 
    Set_random(987563214569);
    cout << "Ecoli_set 20%" << endl;
-   for(int i = 0; i < 1; i++){
+   for(int i = 0; i < 5; i++){
       CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_20.const");
       //par.mostrar_datos();
       cout << "-------------------Iteracion: " << i+1 << "--------------------" << endl;
