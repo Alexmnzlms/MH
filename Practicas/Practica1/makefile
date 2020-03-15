@@ -8,7 +8,7 @@ exe             := bin/clustering_exe
 units_CCP        := $(wildcard $(addprefix $(SRC), *.cpp))
 units_o         := $(addprefix $(OBJ), $(addsuffix .o, $(notdir $(basename $(units_CCP)))))
 headers         := $(wildcard $(addprefix $(INC), *.h*))
-compiler        := g++
+compiler        := g++ -pg
 CCP_flags        := -std=c++11 -Wall -g -I/usr/include -I$(INC)
 
 
