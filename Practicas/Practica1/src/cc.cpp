@@ -345,6 +345,9 @@ void CCP::leer_vecino(){
       //infactibilidad += restricciones_incumplidas(i,solucion[i]);
       //std::cout << i << ", " << solucion[i] << ", " << infactibilidad << std::endl;
    }
+   for(int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
+   }
    desviacion_general();
    if(lambda == 0){
       calcular_lambda();
@@ -393,6 +396,9 @@ void CCP::solucion_inicial(){
       for( unsigned j = 0; j < c[i].size(); j++){
          solucion[c[i][j]] = i;
       }
+   }
+   for(int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
    }
 }
 
@@ -453,7 +459,7 @@ void CCP::busqueda_local(){
    f_objetivo_ant = f_objetivo;
    solucion_ant = solucion;
    infactibilidad_ant = infactibilidad;
-   mostrar_solucion();
+   //mostrar_solucion();
 
    do{
       /*auto it = vecindario.begin();
