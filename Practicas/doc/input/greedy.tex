@@ -2,15 +2,15 @@
 %Descripción en pseudocódigo de los algoritmos de comparación.
 \section{K-medias Restringido Débil}
 \subsection{Función objetivo}
-El objetivo del algoritmo K-medias Restringido Débil --- de heuristica greedy --- Es minimizar tanto la desviación general del problema como el numero de restricciones que no se satisfacen (infactibilidad). \\
+El objetivo del algoritmo K-medias Restringido Débil --- de heurística greedy --- Es minimizar tanto la desviación general del problema como el numero de restricciones que no se satisfacen (infactibilidad). \\
 $ F_{objetivo} = \bar{C} + infeasibility $
 
 \subsection{Descripción del algoritmo}
 El funcionamiento de este algoritmo funciona de la siguiente manera:\\
 Se presupone que los valores de los centroides antes de comenzar con la ejecución son aleatorios.\\
-Se establece un orden aleatorio para recorrer los nodos, pero que se mantenga en todas las iteraciones del algoritmo. Por cada iteracion, se asigna a cada elemento $ x_{i} \in X $ un cluster $ c_{i} $. El criterio de asignación es siempre el mismo: se asigna al cluster que menos infactibilidad provoque y en caso de todas las asignaciones provoquen la misma infactibilidad, se asignará al cluster cuyo centroide  $ \mu_{i} $ sea más cercano.
+Se establece un orden aleatorio para recorrer los nodos, pero que se mantenga en todas las iteraciones del algoritmo. Por cada iteración, se asigna a cada elemento $ x_{i} \in X $ un cluster $ c_{i} $. El criterio de asignación es siempre el mismo: se asigna al cluster que menos infactibilidad provoque y en caso de todas las asignaciones provoquen la misma infactibilidad, se asignará al cluster cuyo centroide  $ \mu_{i} $ sea más cercano.
 El algoritmo iterara hasta que no se produzca un cambio en el estado de la solución --- en la matriz de clusters --- y entonces terminará.\\
-Es importante remarcar que es posible que el algoritmo se quede iterando de manera infinita si entra en un ciclo de asignaciones, esto se puede evitar eligiendo la semilla de generación de numeros aleatorios de manera correcta.
+Es importante remarcar que es posible que el algoritmo se quede iterando de manera infinita si entra en un ciclo de asignaciones, esto se puede evitar eligiendo la semilla de generación de números aleatorios de manera correcta.
 
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
