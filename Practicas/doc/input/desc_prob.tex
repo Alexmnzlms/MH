@@ -1,5 +1,5 @@
 \newpage
-\section{Descripción del problema}
+\chapter{Descripción del problema}
 %MAX 1 PAGS
 El problema elegido es el \textbf{Problema del Agrupamiento con Restricciones}, a partir de ahora \textbf{PAR}, es una variante del problema de agrupamiento clásico.
 El problema de agrupamiento clásico consiste en que dado un conjunto $ X $ de datos con \emph{n} caracteristicas, hay que encontrar una particion \emph{C} de tal manera que se minimice la desviación general de cada $ c_{i} \in C $.\\
@@ -9,7 +9,7 @@ En la variante \textbf{PAR}, se introduce el concepto de restricción. Nosotros 
    \item Restricciones \textbf{CL}(\emph{Cannot-link}): Dos elementos $ x_{i} \in X $ que posean una resticcion CL, deben pertenecer a $ c_{i} \in C $ distintos.
 \end{itemize}
 Además, estas restricciones serán débiles, es decir, el objetivo es minimizar tanto el número de restricciones incumplidas --- una solucion factible puede incumplir restricciones --- como la desviación general de cada $ c_{i} \in C $.
-\subsection{Formalización de los datos}
+\section{Formalización de los datos}
 \begin{itemize}
    \item Los \textbf{datos} se repretan en una matriz $ i \times n $ siendo \emph{i} el numero de datos que tenemos y \emph{n} el numero de caracteristicas que tiene cada $ x_{i} \in X $ \\
    $ \vec{x_{i}} = \{x_{i0}\ ...\ x_{in}\} $ donde cada $ x_{ij} \in \mathbb{R} $
