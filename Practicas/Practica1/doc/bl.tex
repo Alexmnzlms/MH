@@ -5,6 +5,14 @@
 %Descripción en pseudocódigo de la estructura del método de búsqueda y de todas aquellas operaciones relevantes de cada algoritmo. Este contenido, específico a cada algoritmo se detallará en los correspondientes guiones de prácticas. El pseudocódigo deberá forzosamente reflejar la implementación/ el desarrollo realizados y no ser una descripción genérica extraída de las transparencias de clase o de cualquier otra fuente. La descripción de cada algoritmo no deberá ocupar más de 2 páginas.
 %Para esta primera práctica se incluirá la descripción en pseudocódigo del método de exploración del entorno, el operador de generación de vecino y la generación de soluciones aleatorias empleadas en el algoritmo de BL.
 \subsection{Datos propios}
+En la búsqueda local es necesario controlar de alguna manera que vecinos se han generado y cuáles puede generar aún, por tanto, almaceno en un set el \textbf{vecindario} correspondiente a la solucion que se está evaluando actualmente.
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+   Pareja(int,int): set vecindario
+\end{minted}
+
+\subsection{Función objetivo}
 
 
 \subsection{Pseudocódigo del algoritmo}
