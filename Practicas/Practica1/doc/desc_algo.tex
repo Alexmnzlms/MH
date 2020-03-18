@@ -19,40 +19,28 @@ Los datos comunes a ambos algoritmos se repesentan de la siguiente manera:
    {cpp}
       double: matriz[i][n] posiciones
    \end{minted}
-\end{itemize}
 
-
-\begin{itemize}
    \item Para los \textbf{centroides} de cada cluster utilizo una matriz \emph{centroides} de dimensión $ k \times n $.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
       double: matriz[k][n] centroides
    \end{minted}
-\end{itemize}
 
-
-\begin{itemize}
    \item Para las \textbf{restricciones}, he elegido no utlizar las representación en forma de matriz, porque es muy costoso recorrerla secuencialmente, y la representación en forma de lista no te permite acceder a un elemento en concreto, por eso he decidido utilizar un map \emph{restricciones}. Este tipo de estructura se puede recorrer secuencialmete de forma eficiente y ademas, existe un operador de búsqueda para poder acceder a un elemento concreto. El map se compone de dos elementos: la clave y el valor. La clave es la pareja de elementos $ x_{i}, x_{j}$ y el valor es 1 si la resticcion es de tipo \textbf{ML} o -1 si es de tipo \textbf{CL}.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
       Pareja(int,int),int: map restricciones
    \end{minted}
-\end{itemize}
 
-
-\begin{itemize}
    \item Los elementos $ x_{i} $ que pertenecen a los distintos \textbf{clusters} los almaceno en una matriz \emph{clusters} de dimensión $ k \times i $.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
       double: matriz[k][i] clusters
    \end{minted}
-\end{itemize}
 
-
-\begin{itemize}
    \item Finalmente la \textbf{particion} \emph{C} la represnto en un vector de enteros \emph{solucion}, en los que posicion del vector \emph{i} indica el elemento $ x_{i} $ y el contenido de la posicion \emph{i}, \emph{solucion[i]} indica el cluster $ c_{i} $ al que pertenece.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
@@ -69,61 +57,61 @@ Hay una serie de operadores que son comunes a los dos algoritmos, los describo a
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-      Para cada caracteristica u del centroide i:
-         u = 0
+   Para cada caracteristica u del centroide i:
+      u = 0
 
-      Para cada elemento j del cluster i:
-         Para cada caracteristica c, u del elemento j, centroide i:
-            u += 1/k * c
+   Para cada elemento j del cluster i:
+      Para cada caracteristica c, u del elemento j, centroide i:
+         u += 1/k * c
    \end{minted}
    \item Operador \textbf{distancia\_intracluster(cluster i)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-      Para todos los clusters:
-         d_intracluster = 0
+   Para todos los clusters:
+      d_intracluster = 0
 
-      Para cada elemento j del cluster i:
-         Para cada caracteristica c, u del elemento j, centroide i :
-            d_intracluster += 1/k * abs(c - u) * abs(c - u)
+   Para cada elemento j del cluster i:
+      Para cada caracteristica c, u del elemento j, centroide i :
+         d_intracluster += 1/k * abs(c - u) * abs(c - u)
    \end{minted}
    \item Operador \textbf{desviación\_general()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-      desv_gen = 0
+   desv_gen = 0
 
-      Para cada distancia_intracluster i del cluster i:
-         desv_gen += 1/k * i
+   Para cada distancia_intracluster i del cluster i:
+      desv_gen += 1/k * i
    \end{minted}
 
    \item Operador \textbf{limpiar\_clusters()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-      Para cada cluster i:
-         Eliminar elementos de i
+   Para cada cluster i:
+      Eliminar elementos de i
 
-      infactibilidad = 0
+   infactibilidad = 0
    \end{minted}
    \item Operador \textbf{restricciones\_incumplidas(elemento n, cluster c)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-      incumplidas = 0
+   incumplidas = 0
 
-      Para cada elemento i del cluster c:
+   Para cada elemento i del cluster c:
+      Buscar en restricciones la pareja (n,elemento i)
+      Si existe Y valor es -1:
+         incumplidas++
+
+   Para los cluster del conjunto distintos de c:
+      Para cada elemento i del cluster j:
          Buscar en restricciones la pareja (n,elemento i)
-         Si existe Y valor es -1:
+         Si existe Y valor es 1:
             incumplidas++
 
-      Para los cluster del conjunto distintos de c:
-         Para cada elemento i del cluster j:
-            Buscar en restricciones la pareja (n,elemento i)
-            Si existe Y valor es 1:
-               incumplidas++
-
-      Devolver incumplidas
+   Devolver incumplidas
 
    \end{minted}
 \end{itemize}

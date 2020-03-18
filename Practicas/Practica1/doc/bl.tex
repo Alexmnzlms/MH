@@ -4,39 +4,42 @@
 %MAX 2 PAGS
 %Descripción en pseudocódigo de la estructura del método de búsqueda y de todas aquellas operaciones relevantes de cada algoritmo. Este contenido, específico a cada algoritmo se detallará en los correspondientes guiones de prácticas. El pseudocódigo deberá forzosamente reflejar la implementación/ el desarrollo realizados y no ser una descripción genérica extraída de las transparencias de clase o de cualquier otra fuente. La descripción de cada algoritmo no deberá ocupar más de 2 páginas.
 %Para esta primera práctica se incluirá la descripción en pseudocódigo del método de exploración del entorno, el operador de generación de vecino y la generación de soluciones aleatorias empleadas en el algoritmo de BL.
+\subsubsection{Datos propios}
+
+
 \subsubsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
-   double: f_objetivo_ant, infactibilidad_ant
-   int: vector[] solucion_ant
-   int: i
+double: f_objetivo_ant, infactibilidad_ant
+int: vector[] solucion_ant
+int: i
 
-   solucion_inicial()
-   generar_vecindario()
+solucion_inicial()
+generar_vecindario()
 
-   f_objetivo_ant = f_objetivo
-   solucion_ant = solucion
-   infactibilidad_ant = infactibilidad
+f_objetivo_ant = f_objetivo
+solucion_ant = solucion
+infactibilidad_ant = infactibilidad
 
-   do:
-      generar_vecino()
-      i++
+Hacer:
+   generar_vecino()
+   i++
 
-      Si nueva f_objetivo es menor que f_objetivo_ant:
-         f_objetivo_ant = f_objetivo
-         solucion_ant = solucion
-         infactibilidad_ant = infactibilidad
-         generar_vecindario()
+   Si nueva f_objetivo es menor que f_objetivo_ant:
+      f_objetivo_ant = f_objetivo
+      solucion_ant = solucion
+      infactibilidad_ant = infactibilidad
+      generar_vecindario()
 
-      Si no:
-         solucion = solucion_ant
-         infactibilidad = infactibilidad_ant
+   Si no:
+      solucion = solucion_ant
+      infactibilidad = infactibilidad_ant
 
-      Si no quedan vecinos que generar:
-         leer_vecino()
+   Si no quedan vecinos que generar:
+      leer_vecino()
 
-   while: i menor que 100000 Y quedan vecinos que explorar
+Mientras: i menor que 100000 Y quedan vecinos que explorar
 \end{minted}
 
 \subsubsection{Operadores propios}
@@ -45,41 +48,93 @@
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   \end{minted}
-   \item Operador \textbf{leer\_solucion()}:
-   \begin{minted}
-   [fontsize=\footnotesize, linenos]
-   {cpp}
+   int: vector[] index
+   int: matriz[][] c
+
+   Para numero n de 0...i:
+      Añadir n a index
+
+   Ordenar index aleatoriamente
+
+   Para cada fila j en c:
+      Añadir a j elemento de index
+      Pasar al siguiente elemento
+
+   Para los elementos restantes en index:
+      Añadir a fila aleatoria 0...k de c elemento de index
+      Pasar al siguiente elemento
+
+   Para cada numero n de 0...k:
+      Para los elementos e de la fila n de c:
+         Añadir n a solucion en la posicion c[n][e]
+
+   Para cada numero n de 0...k:
+      calcular_centroide(n)
    \end{minted}
    \item Operador \textbf{calcular\_lambda()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   \end{minted}
-   \item Operador \textbf{distancia\_nodo\_nodo()}:
-   \begin{minted}
-   [fontsize=\footnotesize, linenos]
-   {cpp}
+   lambda = 0
+   double: d, d_max = 0
+   int: cluster
+
+   Para cada elemento e en posiciones:
+      cluster = Cluster al que pertenece e
+      Para cada numero n de 0...k:
+         Si n != cluster:
+            Para cada elemento c de cluster n:
+               d = Distancia entre n y e
+               Si d es mayor que d_max:
+                  d_max = d
+
+   lambda = d_max / restricciones
+
    \end{minted}
    \item Operador \textbf{generar\_vecindario()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   \end{minted}
-   \item Operador \textbf{buscar\_cluster(elemento n)}:
-   \begin{minted}
-   [fontsize=\footnotesize, linenos]
-   {cpp}
+   Vaciar vecindario
+
+   Para cada elemento e en posiciones:
+      Para cada numero n de 0...k:
+         Si n es disitinto al cluster al que pertenece e
+         Y en el cluster al que pertenece e hay al menos 1 elemento:
+            Insertar en vecindario Pareja (e,n)
    \end{minted}
    \item Operador \textbf{generar\_vecino()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   \end{minted}
-   \item Operador \textbf{leer\_vecino()}:
-   \begin{minted}
-   [fontsize=\footnotesize, linenos]
-   {cpp}
+   bool: salir = falso
+   int: pos, n, c
+
+   Mientras no salir Y quedan vecinos que explorar:
+      salir = falso
+      pos = numero aleatorio 0...i
+      n = numero aleatorio 0...k
+      Buscar Pareja (pos,n) en vecindario
+
+      Si Pareja (pos,n) existe en vecindario:
+         salir = verdadero
+         Borrar Pareja (pos,n) de vecindario
+         c = solucion[pos]
+         Marcar solucion[pos] como invalido
+
+         Para cada cluster j en el conjunto de cluster:
+            Vaciar j
+
+         Para cada elemento e de la solucion:
+            Si e es valido:
+               Introducir e en el cluster solucion[e]
+
+         infactibilidad -= restricciones_incumplidas(pos,c)
+         infactibilidad += restricciones_incumplidas(pos,n)
+         solucion[pos] = n
+         Añadir pos al cluster n
+         desviacion_general()
+         f_objetivo = desv_gen + (infactibilidad*lambda)
    \end{minted}
 
 \end{itemize}
