@@ -392,7 +392,7 @@ void CCP::calcular_lambda(){
       cluster = buscar_cluster(i);
       for(int j = 0; j < n_cluster; j++){
          if(j != cluster){
-            for( unsigned k = 0; k < clusters.size(); k++){
+            for( unsigned k = 0; k < clusters[j].size(); k++){
                d = distancia_nodo_nodo(i,clusters[j][k]);
                if(d > d_max){
                   d_max = d;
