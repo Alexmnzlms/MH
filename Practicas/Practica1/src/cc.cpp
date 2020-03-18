@@ -243,7 +243,7 @@ void CCP::limpiar_clusters(){
 }
 
 int CCP::greedy(){
-   int i = 0, n_max = 100;
+   int i = 0, n_max = 1000;
    bool cambio_c;
    std::vector<int> rsi;
    std::vector<std::vector<int>> solucion_ant = clusters;
