@@ -1,0 +1,77 @@
+\newpage
+\section{Descripción de los algoritmos de comparación}
+%Descripción en pseudocódigo de los algoritmos de comparación.
+K-medias Restringido Débil
+\subsection{Pseudocódigo del algoritmo}
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+   int: i = 0
+   bool: cambio_c
+   int: vector[] rsi
+   double: matriz[][] solucion_ant
+
+   Guardar en solucion_ant la matriz cluster
+
+   Para cada numero de 0...i:
+      Añadir numero a vector rsi
+   Ordenar rsi aleatoriamente
+
+   do:
+      cambio_c = falso
+      Para cada indice j en rsi:
+         asignar_cluster(j)
+      Para cada cluster c:
+         Si fila c de solucion_ant es distinta a la fila c de clusters:
+            calcular_centroide(c)
+            cambio_c = verdadero
+      Guardar en solucion_ant la matriz cluster
+
+      Si cambio_c:
+         limpiar_clusters()
+
+      i++
+   while: cambio_c
+
+   desviacion_general()
+   f_objetivo = desv_gen + infactibilidad
+\end{minted}
+
+\subsection{Operadores propios}
+\begin{itemize}
+   \item Operador \textbf{asignar\_cluster(elemento n)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      int: c, r_min, d_min, d = 0
+      Pareja(int,int): vector[] r
+
+      Para cada cluster i:
+         Añadir la pareja (restricciones_incumplidas(n,i) , i) a r
+
+      Ordenar r en orden ascendente
+
+      r_min = r[0]
+      d_min = Infinito
+      Para cada indice j de 0...tamaño(r)
+         d = distancia_nodo_cluster(n, r[j].segundo)
+         Si d < d_min:
+            d_min = d
+            c = r[j].segundo
+
+      infactibilidad += r_min
+      Añadir n al cluster c
+   \end{minted}
+   \item Operador \textbf{distancia\_nodo\_cluster(elemento n, cluster c)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      double: d_euclidea, componente = 0
+
+      Para cada caracteristica c, u del elemento n, centroide c:
+         componente = abs(c - u) * abs(c - u)
+         d_euclidea += componente
+
+      Devolver d_euclidea
+   \end{minted}
+\end{itemize}

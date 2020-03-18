@@ -1,0 +1,28 @@
+\newpage
+\section{Descripción del problema}
+%MAX 1 PAGS
+El problema elegido es el \textbf{Problema del Agrupamiento con Restricciones}, a partir de ahora \textbf{PAR}, es una variante del problema de agrupamiento clásico.
+El problema de agrupamiento clásico consiste en que dado un conjunto $ X $ de datos con \emph{n} caracteristicas, hay que encontrar una particion \emph{C} de tal manera que se minimice la desviación general de cada $ c_{i} \in C $.\\
+En la variante \textbf{PAR}, se introduce el concepto de restricción. Nosotros utilizamos las restricciones de instancia que pueden ser dos tipos:
+\begin{itemize}
+   \item Restricciones \textbf{ML}(\emph{Must-link}): Dos elementos $ x_{i} \in X $ que posean una resticcion ML, deben pertenecer al mismo $ c_{i} \in C $.
+   \item Restricciones \textbf{CL}(\emph{Cannot-link}): Dos elementos $ x_{i} \in X $ que posean una resticcion CL, deben pertenecer a $ c_{i} \in C $ distintos.
+\end{itemize}
+Además, estas restricciones serán débiles, es decir, el objetivo es minimizar tanto el número de restricciones incumplidas --- una solucion factible puede incumplir restricciones --- como la desviación general de cada $ c_{i} \in C $.
+\subsection{Formalización de los datos}
+\begin{itemize}
+   \item Los \textbf{datos} se repretan en una matriz $ i \times n $ siendo \emph{i} el numero de datos que tenemos y \emph{n} el numero de caracteristicas que tiene cada $ x_{i} \in X $ \\
+   $ \vec{x_{i}} = \{x_{i0}\ ...\ x_{in}\} $ donde cada $ x_{ij} \in \mathbb{R} $
+   \item Una \textbf{particion} \emph{C} consiste en un conjunto de k clusters. $ C = \{c_{0}\ ...\ c_{k}\} $. Cada $ c_{i} $ contiene un conjunto de elementos $ x_{i} $. El numero de elementos de $ c_{i} $ es $ \left | c_{i} \right | $ y normalmente un cluster $ c_{i} $ tiene asociada una etiqueta $ l_{i} $ --- Esto no lo utilizaremos en la implementación del problema ---.
+   \item Para cada cluster $ c_{i} $ se puede calcular su \textbf{centroide} $ \vec{\mu_{i}} $ como el promedio de los elementos $ x_{i} \in c_{i} $.\\
+   $ \vec{\mu_{i}} = \frac{1}{\left | c_{i} \right |}\sum_{\vec{x_{j}} \in c_{i}} \vec{x_{j}} $.
+   \item La \textbf{distancia media intra-cluster} $ \bar{c_{i}} $ se define como la media de las ditancias de cada $ x_{i} \in c_{i} $ a su centroide $ \mu_{i} $.\\
+   $ \bar{c_{i}} = \frac{1}{\left | c_{i} \right |}\sum_{\vec{x_{j}} \in c_{i}} \left \| \vec{x_{j}} - \vec{\mu_{i}} \right \|_{2} $
+   \item La \textbf{desviación general} de la partición \emph{C} se calcula como la media de las distancias medias intra-\\cluster $ \bar{c_{i}} $.\\
+   $ \bar{C} = \frac{1}{k}\sum_{c_{i} \in C} \bar{c_i} $.
+   \item El \textbf{conjunto de restricciones totales} \emph{R} se calcula como la union entre el conjunto de restricciones \emph{ML} y el conjunto de restricciones \emph{CL}.\\
+   $ \left | R \right | $ es el numero de restricciones total $ \left | R \right | = \left | ML \right | + \left | Cl \right | $.
+   \item La \textbf{infactibilidad} --- \emph{infeasibility} --- se calcula como el numero de restricciones que incumple una partición \emph{C} del conjunto \emph{X} dado un conunto de restricciones \emph{R}. Se define $ V(\vec{x_{i}},\vec{x_{j}}) $ como una funcion que devuelve 1 si la pareja $ (\vec{x_{i}},\vec{x_{j}}) $ incumple alguna restricción.\\
+   $ infeasibility = \sum_{i=0}^{n} \sum_{j=i+1}^{n} V(\vec{x_{i}},\vec{x_{j}}) $
+\end{itemize}
+\newpage
