@@ -4,16 +4,25 @@
 %MAX 2 PAGS
 %Descripción en pseudocódigo de la estructura del método de búsqueda y de todas aquellas operaciones relevantes de cada algoritmo. Este contenido, específico a cada algoritmo se detallará en los correspondientes guiones de prácticas. El pseudocódigo deberá forzosamente reflejar la implementación/ el desarrollo realizados y no ser una descripción genérica extraída de las transparencias de clase o de cualquier otra fuente. La descripción de cada algoritmo no deberá ocupar más de 2 páginas.
 %Para esta primera práctica se incluirá la descripción en pseudocódigo del método de exploración del entorno, el operador de generación de vecino y la generación de soluciones aleatorias empleadas en el algoritmo de BL.
+\subsection{Función objetivo}
+Como ya he explicado anteriormente, el objetivo de la bísqueda local es minimizar tanto la desviación general de los elementos, como el número de restricciones incumplidas, si embargo se introduce un parametro de escalado $ \lambda $ como una manera de dar relevancia a la infactibilidad.\\
+$ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $\\
+En nuestro caso $ \lambda = \frac{\left \lceil D \right \rceil}{\left | R \right |} $ donde D es la maxima distancia entre dos elementos de \emph{X}
+
 \subsection{Datos propios}
-En la búsqueda local es necesario controlar de alguna manera que vecinos se han generado y cuáles puede generar aún, por tanto, almaceno en un set el \textbf{vecindario} correspondiente a la solucion que se está evaluando actualmente.
+En la búsqueda local es necesario controlar de alguna manera que vecinos se han generado y cuáles puede generar aún, por tanto, almaceno en un set el \textbf{vecindario} correspondiente a la solución que se está evaluando actualmente. El vecindario no es más que las posibles cambios que se pueden realizar en el vector solución, partiendo de un estado determinado.
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
    Pareja(int,int): set vecindario
 \end{minted}
 
-\subsection{Función objetivo}
-
+\subsection{Descripción del algoritmo}
+Lo primero es general la solución inicial de la que partirá la búsqueda local. Esta solución es completamente aleatoria. Una vez generada, generamos tambien el vecindario. Almacenamos los valores de función objetivo e infactibilidad asi como el vector solución en variables auxiliares.\\
+Comenzamos a generar vecinos, cada vez que se explora uno nuevo, se elimina del vecindario y si la función objetivo actual no mejora a la que almacenamos previamente, descartamos la función objetivo y la infactibilidad, recuperando las que teniamos almacenadas y generamos otro vecino.\\
+Continuaremos así hasta que encontremos un vecino cuya función objetivo mejore a la almacenada, volvemos a guardar una copia de la infactibilidad, la función objetivo así cómo una copia del vector solución.
+Continuaremos generando vecinos hasta que o bien las evaluaciones superen las 100000 o bien que no queden vecinos que explorar --- el vecindario esta vacío---.\\
+Como consideración, antes de salir del bucle principal leemos el estado de la solución para el ultimo vecino generado.
 
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
@@ -45,14 +54,14 @@ Hacer:
       infactibilidad = infactibilidad_ant
 
    Si no quedan vecinos que generar:
-      leer_vecino()
+      Leer solcion acceder
 
 Mientras: i menor que 100000 Y quedan vecinos que explorar
 \end{minted}
 
 \subsection{Operadores propios}
 \begin{itemize}
-   \item Operador \textbf{solucion\_inicial()}:
+   \item Operador \textbf{solucion\_inicial()}: Genera una solucion inicial aleatoria. Rellena la matriz de clusters aleatoriamente asegurandose de que al menos hay mínimo un elemento en cada fila de la matriz y después carga estos datos en el vector solucion.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -79,7 +88,7 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
    Para cada numero n de 0...k:
       calcular_centroide(n)
    \end{minted}
-   \item Operador \textbf{calcular\_lambda()}:
+   \item Operador \textbf{calcular\_lambda()}: Calcula el parámetro $ \lambda $
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -99,7 +108,7 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
    lambda = d_max / restricciones
 
    \end{minted}
-   \item Operador \textbf{generar\_vecindario()}:
+   \item Operador \textbf{generar\_vecindario()}: Genera el vecindario correspondiente a una solución determinada. Genera todos los posibles cambios que se pueden hacer en el vector solucion y almacena las parejas (elemento, cluster) en el set vecindario.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -111,7 +120,7 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
          Y en el cluster al que pertenece e hay al menos 1 elemento:
             Insertar en vecindario Pareja (e,n)
    \end{minted}
-   \item Operador \textbf{generar\_vecino()}:
+   \item Operador \textbf{generar\_vecino()}: Generar un vecino se basa en generar una pareja aleatoria (elemento, cluster) y comprobar si exite en el vecindario, si no existe, se prueba con otra. Si existe, se elimina el elemento de la matriz de clusters, se resta a la infactibilidad total, la infactibilidad producida por la antigua asignación y se suma la infactibilidad producida por la nueva, por último se añade el elemento a la fila correspondiente de la matriz de cluster y se actualiza el vector solucion.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}

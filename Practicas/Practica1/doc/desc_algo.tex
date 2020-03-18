@@ -53,7 +53,7 @@ Los datos comunes a ambos algoritmos se repesentan de la siguiente manera:
 \section{Operadores comunes}
 Hay una serie de operadores que son comunes a los dos algoritmos, los describo a continuación:
 \begin{itemize}
-   \item Operador \textbf{calcular\_centroide(cluster i)}:
+   \item Operador \textbf{calcular\_centroide(cluster i)} Calcula el centroide de un cluster i:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -64,7 +64,7 @@ Hay una serie de operadores que son comunes a los dos algoritmos, los describo a
       Para cada caracteristica c, u del elemento j, centroide i:
          u += 1/k * c
    \end{minted}
-   \item Operador \textbf{distancia\_intracluster(cluster i)}:
+   \item Operador \textbf{distancia\_intracluster(cluster i)}: Calcula la distancia intracluster de un cluster i.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -75,7 +75,7 @@ Hay una serie de operadores que son comunes a los dos algoritmos, los describo a
       Para cada caracteristica c, u del elemento j, centroide i :
          d_intracluster += 1/k * abs(c - u) * abs(c - u)
    \end{minted}
-   \item Operador \textbf{desviación\_general()}:
+   \item Operador \textbf{desviación\_general()}: Calcula la desviación general del problema.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -84,7 +84,7 @@ Hay una serie de operadores que son comunes a los dos algoritmos, los describo a
    Para cada distancia_intracluster i del cluster i:
       desv_gen += 1/k * i
    \end{minted}
-   \item Operador \textbf{restricciones\_incumplidas(elemento n, cluster c)}:
+   \item Operador \textbf{restricciones\_incumplidas(elemento n, cluster c)}: Este operador calcula el número de restricciones incumplidas que provoca la asignación del elemento n al cluster c.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
