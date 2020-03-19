@@ -1,6 +1,7 @@
 *.xls
 *.ods
 *.txt
+*.zip
 
 # Prerequisites
 *.d
