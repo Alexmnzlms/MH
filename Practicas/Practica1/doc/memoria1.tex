@@ -1,4 +1,3 @@
-\newpage
 \chapter{Procedimiento}
 \section{Estructura de datos}
 %Breve explicación del procedimiento considerado para desarrollar la práctica: implementación a partir del código proporcionado en prácticas o a partir de cualquier otro, o uso de un framework de metaheurísticas concreto. Inclusión de un pequeño manual de usuario describiendo el proceso para que el profesor de prácticas pueda replicarlo.
@@ -21,48 +20,53 @@ double lambda;
 double f_objetivo;
 \end{minted}
 
-He utilizado las clases map, set y vector de la STL, ya que son muy eficientes y tienen implementados funciones muy utiles.\\
-Tambien los operadores de los algoritmos se han implementado como metodos de la clase CCP:
-\begin{minted}
-[fontsize=\footnotesize, linenos]
-{cpp}
-void cargar_posiciones(const std::string archivo);
-void cargar_restricciones(const std::string archivo);
-void calcular_centroide(const int i);
-void distancia_intracluster(const int i);
-void desviacion_general();
-void leer_solucion();
-void leer_vecino();
-void generar_solucion();
-void asignar_cluster(const int n);
-double distancia_nodo_cluster(const int n, const int c);
-double restricciones_incumplidas(const int n, const int c);
-void limpiar_clusters();
-void generar_vecino();
-int buscar_cluster(const int n);
-void solucion_inicial();
-void calcular_lambda();
-double distancia_nodo_nodo(const int n, const int m);
-void generar_vecindario();
-bool quedan_vecinos();
-\end{minted}
+He utilizado las clases map, set y vector de la STL. \\
+Las restricciones se almacenan en un map debido a que al ser una estructura de datos de la STL, es posible recorrerlo de forma secuencial con un iterador y ademas, cuenta con el operador find, que permite saber si existe determinada combinacion de elementos $ x_{i} $ y si la restricción es de tipo ML o CL. Por tanto me parecio mejor implementación que la propuesta de matriz y lista.\\
+El vecindario se utiliza como una manera para poder saber cuando ha terminado el algoritmo de busqueda local y no volver a explorar vecinos que ya he explorado previamente. Utilizo un set porque a diferencia del vector, no permite que existan parejas (elemento, cluster) duplicadas y ademas estas se ordenan automaticamente en orden ascendente.\\
+\\
+Los operadores de los algortimos descritos anteriormente se implementan como metodos de la clase CCP.
+
 
 \section{Guía de Uso}
 
-El problema el muy sencillo de compilar. Con la orden \textbf{make} el programa se compila y se ejecuta autimaticamente. Los datos se cargan automaticamente desde los ficheros siempre que se encuentren en una carpeta data/\\
+El programa el muy sencillo de compilar. Con la orden \textbf{make} el programa se compila y se ejecuta. Los datos se cargan automaticamente desde los ficheros.\\
 La estructura de ficheros es la siguiente:
 \begin{itemize}
    \item cc.h: Cabecera de la clase CCP.
    \item cc.p: implementación de los metodos de la clase CCP.
    \item main.cpp: Implentación de la ejecución de los algoritmos greedy y BL.
+   \item random.h y random.cpp : Cabeceras e implementación del generador de aleatorios.
 \end{itemize}
 
-
-
-\newpage
 \chapter{Experimentos y analisis de resultados}
-\section{Semillas y otros parámetros}
+\section{Semillas}
 %Descripción de los casos del problema empleados y de los valores de los parámetros considerados en las ejecuciones de cada algoritmo (incluyendo las semillas utilizadas).
+Para la ejecución de los algoritmos se han seleccionado las siguientes semillas, utilizando un algoritmo para probar que no producen ciclos en ninguna de las ejecuciones del algoritmo greedy para ninguno de los conjuntos de datos. Toda semilla que en menos de 1000 iteraciones del algoritmo greedy no obtenga resultado es rechazada. \\
+La busqueda de las semillas ha sido relativamente compleja ya que la mayoria de las primeras semillas que probe no obtenian resultados para el data set \emph{Ecoli}.
+\begin{itemize}
+   \item 1584565171
+   \item 1584764782
+   \item 1584565259
+   \item 1584564539
+   \item 1522565615
+\end{itemize}
+
+El codigo utilizado para encontrar semillas se encuentra en la funcion \textbf{buscar\_semilla()} que se incluye en el fichero main.cpp
+
+
+\section{Análisis}
+%Análisis de resultados. El análisis deberá estar orientado a justificar (según el comportamiento de cada algoritmo) los resultados obtenidos en lugar de realizar una mera “lectura” de las tablas. Se valorará la inclusión de otros elementos de comparación tales como gráficas de convergencia, boxplots, análisis comparativo de las soluciones obtenidas, representación gráfica de las soluciones, etc.
+Primero empezare analizando los resultados de los data sets \emph{Iris} y \emph{Rand}, porque considero que son similares entre ellos y ambos difieren bastante de \emph{Ecoli}.\\
+\\
+Para un conjunto de restricciones del 10\% del data set \emph{Iris} se puede notar que las soluciones que aporta el algoritmo greedy no convergen a la solución óptima --- debido a las semillas utilizadas --- sin embargo la desviacion general es bastante homogenea, nunca superando un valor de 1. La infactibilidad de estas soluciones si es bastante elevada sobre todo en la segunda ejecución, cosa que perjudica enormemente a la función objetivo, que en greedy se calcula como la suma de la desviacion general y la infactibilidad. \\
+Podemos notar asi que cuando comparamos las solciones greedy contra las soluciones BL ---para \emph{Iris} 10\%--- el agregado de las solucione BL es mucho menor, cuando la infactibilidad de las mismas es muy elevada. Aqui entra en juego el parametro de escalado $ \lambda $. Las soluciones BL para \emph{Iris} 10\% obtienen una desviacion general menor y mas homogenea que las soluciones greedy. Como resultado la BL obtiene clara ventaja sobre greedy, porque en BL a coste de disminuir la desviación general se ha aumentado la infactibilidad, que al ser escalada por $ \lambda $ disminuye considerablemente su efecto en la función objetivo. Notar tambien, que los resultados de greedy dependen enormemente de como de buena sea la colocación inicial de los centroides, cosa que depende de la semilla escogida, para un ajuste mejor de los centroides, es probable que greedy supere o iguale a los resultados ofrecidos por BL.\\
+Para un conjunto de restricciones del 20\% si vemos que algunas soluciones convergen a la optima ---probablemente por lo que ya hemos comentado de la buena colocacion inicial de los centroides--- o se quedan muy cerca de estas, aunque hay ejecuciones con un agregado muy alto, debido a la infactibilidad elevada. Para BL los resultados de desviacion general y sobre todo de infactibilidad empeoran notablemente (casi se duplican) pero ya vemos que el agregado no se resiente en gran medida por el efecto escalado de $ \lambda $\\
+Como conclusion para ambos conjuntos de restricciones, las soluciones BL superan bastante a las solciones greedy, no tanto porque obtengan un buen reparto de datos si no por como se calcula la función objetivo de ambos algoritmos.\\
+\\
+El data set \emph{Rand} sin embargo es todo lo contrario a \emph{Iris}.\\
+Las soluciones greedy convergen ---Para conjuntos de 10\% y 20\% de restricciones--- a la solucion optima casi en todas las ejecuciones, podria deberse quiza a que exista una mayor distribución de los datos y los centroides se posicionen favorablemente con mayor posibilidad en \emph{Rand} que en \emph{Iris}. El agregado en \emph{Rand} es muy bueno, porque al converger a la solución optima o quedarse muy cerca, este no aumenta debido a la infactibilidad nula.\\
+En las soluciones ofredias por BL sin embargo, podemos ver que tanto para conjuntos de 10\% y 20\% de restricciones, la solución parace estancarse en un minimo local, ya que ni la desviación general ni la infactibilidad mejoran a las aportadas por greedy. Las soluciones aportadas por BL depende en gran medida del punto de partida, es decir, de como de buena o mala sea la solución inicial aleatoria ---lo lejos que se encuentre de un optimo local o global---.\\
+Parece que en esta ocasion ---por las semillas escogidas--- la solución inicial de BL hace que las soluciones finales no converjan en la optima, si no en un optimo local.
 
 \section{Resultados}
 % Please add the following required packages to your document preamble:
@@ -74,12 +78,13 @@ La estructura de ficheros es la siguiente:
 \multicolumn{13}{c}{Tabla 1: Resultados obtenidos por el algoritmo greedy en el PAR con 10\% de restricciones} \\
 \multicolumn{1}{c}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
 \multicolumn{1}{c}{} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
-\textbf{Ejecución 1} & 0,60 & 0 & 0,60 & 0,01 & 1768,21 & 171 & 1.939,21 & 0,78 & 1,40 & 39 & 40,40 & 0,00 \\
-\textbf{Ejecución 2} & 1,30 & 160 & 161,30 & 0,01 & 1.765,04 & 180 & 1.945,04 & 0,19 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Ejecución 3} & 0,57 & 24 & 24,57 & 0,01 & 1.576,34 & 196 & 1.772,34 & 0,15 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Ejecución 4} & 0,60 & 0 & 0,60 & 0,01 & 1.494,08 & 271 & 1.765,08 & 0,39 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Ejecución 5} & 0,59 & 8 & 8,59 & 0,01 & 1.557,95 & 238 & 1.795,95 & 0,45 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Media} & 0,73 & 38 & 39,13 & 0,01 & 1.632,32 & 211 & 1.843,52 & 0,39 & 0,96 & 8 & 8,76 & 0,00 \\ \hline
+\textbf{Ejecución 1} & 0,77 & 25 & 25,77 & 0,004 & 1.644,41 & 232 & 1.876,41 & 0,239 & 0,95 & 19 & 19,95 & 0,017 \\
+\textbf{Ejecución 2} & 0,78 & 70 & 70,78 & 0,005 & 1.583,88 & 206 & 1.789,88 & 0,068 & 0,85 & 0 & 0,85 & 0,006 \\
+\textbf{Ejecución 3} & 0,71 & 54 & 54,71 & 0,005 & 1.574,02 & 133 & 1.707,02 & 0,192 & 0,85 & 0 & 0,85 & 0,006 \\
+\textbf{Ejecución 4} & 0,66 & 29 & 29,66 & 0,005 & 1.666,63 & 152 & 1.818,63 & 0,102 & 0,84 & 11 & 11,84 & 0,004 \\
+\textbf{Ejecución 5} & 0,59 & 4 & 4,59 & 0,005 & 1.528,26 & 225 & 1.753,26 & 0,165 & 0,85 & 0 & 0,85 & 0,004 \\
+\textbf{Media} & 0,70 & 36 & 37,10 & 0,005 & 1.599,44 & 190 & 1.789,04 & 0,153 & 0,87 & 6 & 6,87 & 0,007 \\
+\hline
 \end{tabular}%
 }
 
@@ -90,12 +95,13 @@ La estructura de ficheros es la siguiente:
 \multicolumn{13}{c}{Tabla 2: Resultados obtenidos por el algoritmo greedy en el PAR con 20\% de restricciones} \\
 \multicolumn{1}{c}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
 \multicolumn{1}{c}{} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
-\textbf{Ejecución 1} & 0,60 & 0 & 0,60 & 0,01 & 1801,25 & 187 & 1.988,25 & 0,20 & 0,85 & 0 & 0,85 & 0,01 \\
-\textbf{Ejecución 2} & 0,59 & 27 & 27,59 & 0,01 & 1.630,67 & 429 & 2.059,67 & 0,15 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Ejecución 3} & 0,58 & 21 & 21,58 & 0,01 & 1.414,97 & 240 & 1.654,97 & 0,16 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Ejecución 4} & 0,60 & 0 & 0,60 & 0,00 & 1.688,15 & 192 & 1.880,15 & 0,13 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Ejecución 5} & 0,60 & 0 & 0,60 & 0,00 & 1.446,66 & 243 & 1.689,66 & 0,11 & 0,85 & 0 & 0,85 & 0,00 \\
-\textbf{Media} & 0,59 & 10 & 10,19 & 0,01 & 1.596,34 & 258,20 & 1.854,54 & 0,15 & 0,85 & 0 & 0,85 & 0,00 \\ \hline
+\textbf{Ejecución 1} & 0,60 & 0 & 0,60 & 0,004 & 1.742,61 & 511 & 2.253,61 & 0,877 & 0,85 & 0 & 0,85 & 0,004 \\
+\textbf{Ejecución 2} & 0,60 & 33 & 33,60 & 0,006 & 1.519,48 & 75 & 1.594,48 & 0,087 & 0,85 & 0 & 0,85 & 0,004 \\
+\textbf{Ejecución 3} & 0,62 & 80 & 80,62 & 0,004 & 1.717,16 & 180 & 1.897,16 & 0,328 & 0,85 & 0 & 0,85 & 0,004 \\
+\textbf{Ejecución 4} & 0,60 & 10 & 10,60 & 0,006 & 1.633,66 & 162 & 1.795,66 & 0,321 & 0,84 & 18 & 18,84 & 0,004 \\
+\textbf{Ejecución 5} & 0,59 & 32 & 32,59 & 0,006 & 1.683,96 & 130 & 1.813,96 & 0,140 & 0,85 & 0 & 0,85 & 0,004 \\
+\textbf{Media} & 0,60 & 31 & 31,60 & 0,005 & 1.659,37 & 211,60 & 1.870,97 & 0,351 & 0,85 & 4 & 4,45 & 0,004 \\
+\hline
 \end{tabular}%
 }
 
@@ -106,12 +112,13 @@ La estructura de ficheros es la siguiente:
 \multicolumn{13}{c}{Tabla 3: Resultados obtenidos por el algoritmo BL en el PAR con 10\% de restricciones} \\
  & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
  & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
-\textbf{Ejecución 1} & 0,60 & 268 & 6,63 & 0,02 & 722,95 & 459 & 1.652,70 & 1,02 & 1,97 & 259 & 9,49 & 0,03 \\
-\textbf{Ejecución 2} & 0,60 & 268 & 6,63 & 0,02 & 641,01 & 482 & 1.617,34 & 1,10 & 1,97 & 259 & 9,49 & 0,03 \\
-\textbf{Ejecución 3} & 0,60 & 268 & 6,63 & 0,02 & 718,64 & 469 & 1.668,65 & 1,19 & 1,97 & 259 & 9,49 & 0,03 \\
-\textbf{Ejecución 4} & 0,60 & 268 & 6,63 & 0,03 & 647,17 & 481 & 1.621,48 & 1,11 & 1,97 & 259 & 9,49 & 0,04 \\
-\textbf{Ejecución 5} & 0,60 & 268 & 6,63 & 0,03 & 726,67 & 457 & 1.652,37 & 1,08 & 4,29 & 242 & 11,31 & 0,03 \\
-\textbf{Media} & 0,60 & 268 & 6,63 & 0,03 & 691,29 & 470 & 1.642,51 & 1,10 & 2,43 & 256 & 9,85 & 0,03 \\ \hline
+ \textbf{Ejecución 1} & 0,60 & 268 & 6,63 & 0,034 & 644,71 & 474 & 1.604,84 & 1,149 & 1,97 & 259 & 9,49 & 0,036 \\
+ \textbf{Ejecución 2} & 2,71 & 231 & 7,90 & 0,033 & 656,85 & 481 & 1.631,16 & 1,259 & 1,97 & 259 & 9,49 & 0,035 \\
+ \textbf{Ejecución 3} & 0,60 & 268 & 6,63 & 0,040 & 694,25 & 470 & 1.646,27 & 1,710 & 1,97 & 259 & 9,49 & 0,031 \\
+ \textbf{Ejecución 4} & 0,60 & 268 & 6,63 & 0,030 & 718,13 & 459 & 1.647,88 & 1,264 & 3,99 & 241 & 10,99 & 0,037 \\
+ \textbf{Ejecución 5} & 0,60 & 268 & 6,63 & 0,033 & 644,71 & 474 & 1.604,84 & 1,370 & 1,97 & 259 & 9,49 & 0,037 \\
+ \textbf{Media} & 1,03 & 261 & 6,88 & 0,034 & 671,73 & 472 & 1.627,00 & 1,350 & 2,37 & 255 & 9,79 & 0,036 \\
+\hline
 \end{tabular}%
 }
 
@@ -122,12 +129,13 @@ La estructura de ficheros es la siguiente:
 \multicolumn{13}{c}{Tabla 4: Resultados obtenidos por el algoritmo greedy en el PAR con 20\% de restricciones} \\
 \multicolumn{1}{c}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
 \multicolumn{1}{c}{} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
-\textbf{Ejecución 1} & 0,56 & 517 & 6,36 & 0,03 & 658,114 & 1.116 & 1.746,60 & 1,14 & 1,97 & 543 & 9,85 & 0,03 \\
-\textbf{Ejecución 2} & 0,56 & 517 & 6,36 & 0,03 & 657,953 & 1.124 & 1.745,24 & 1,63 & 3,77 & 500 & 11,03 & 0,05 \\
-\textbf{Ejecución 3} & 2,59 & 502 & 8,23 & 0,04 & 658,114 & 1.116 & 1.746,60 & 1,04 & 1,97 & 543 & 9,85 & 0,03 \\
-\textbf{Ejecución 4} & 0,56 & 517 & 6,36 & 0,03 & 643,756 & 1.067 & 1.684,45 & 1,33 & 1,97 & 543 & 9,85 & 0,03 \\
-\textbf{Ejecución 5} & 0,56 & 517 & 6,36 & 0,03 & 736,222 & 1.006 & 1.717,42 & 1,74 & 4,03 & 504 & 11,34 & 0,05 \\
-\textbf{Media} & 0,97 & 514 & 6,74 & 0,03 & 670,832 & 1.086 & 1.729,86 & 1,38 & 2,74 & 527 & 10,38 & 0,04 \\ \hline
+\textbf{Ejecución 1} & 0,56 & 517 & 6,36 & 0,033 & 640,20 & 1.059 & 1.673,09 & 1,295 & 3,77 & 500 & 11,03 & 0,055 \\
+\textbf{Ejecución 2} & 2,59 & 502 & 8,23 & 0,042 & 737,17 & 999 & 1.711,54 & 1,159 & 3,78 & 499 & 11,02 & 0,042 \\
+\textbf{Ejecución 3} & 2,59 & 500 & 8,21 & 0,038 & 736,22 & 1.006 & 1.717,42 & 1,528 & 1,97 & 543 & 9,85 & 0,029 \\
+\textbf{Ejecución 4} & 0,56 & 517 & 6,36 & 0,031 & 739,16 & 1.003 & 1.717,44 & 1,182 & 4,11 & 502 & 11,40 & 0,042 \\
+\textbf{Ejecución 5} & 0,56 & 517 & 6,36 & 0,037 & 724,361 & 1.009 & 1.708,49 & 1,850 & 3,87 & 501 & 11,14 & 0,052 \\
+\textbf{Media} & 1,37 & 511 & 7,11 & 0,036 & 715,42 & 1.015 & 1.705,59 & 1,403 & 3,50 & 509 & 10,89 & 0,044 \\
+\hline
 \end{tabular}%
 }
 
@@ -138,8 +146,8 @@ La estructura de ficheros es la siguiente:
 \multicolumn{13}{c}{Tabla 5: Resultados globales en el PAR con 10\% de restricciones} \\
  & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
  & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
-\textbf{K-medias Restringido Débil} & 0,73 & 38 & 39,13 & 0,006 & 1.632,32 & 211 & 1.843,52 & 0,389 & 0,96 & 8 & 8,76 & 0,004 \\
-\textbf{Búsqueda Local} & 0,60 & 268 & 6,63 & 0,026 & 691,29 & 470 & 1.642,51 & 1,101 & 2,43 & 256 & 9,85 & 0,033 \\ \hline
+ \textbf{K-medias Restringido Débil} & 0,70 & 36 & 37,10 & 0,005 & 1.599,44 & 190 & 1.789,04 & 0,153 & 0,87 & 6 & 6,87 & 0,007 \\
+ \textbf{Búsqueda Local} & 1,03 & 261 & 6,88 & 0,034 & 671,73 & 472 & 1.627,00 & 1,350 & 2,37 & 255 & 9,79 & 0,036 \\ \hline
 \end{tabular}%
 }
 
@@ -150,11 +158,8 @@ La estructura de ficheros es la siguiente:
 \multicolumn{13}{c}{Tabla 6: Resultados globales en el PAR con 20\% de restricciones} \\
  & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
  & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
-\textbf{K-medias Restringido Débil} & 0,59 & 10 & 10,19 & 0,006 & 1.596,34 & 258 & 1854,54 & 0,152 & 0,85 & 0 & 0,85 & 0,005 \\
-\textbf{Búsqueda Local} & 0,97 & 514 & 6,74 & 0,033 & 670,83 & 1086 & 1.729,86 & 1,377 & 2,74 & 526 & 10,38 & 0,039 \\ \hline
+ \textbf{K-medias Restringido Débil} & 0,60 & 31 & 31,60 & 0,005 & 1.659,37 & 211,60 & 1.870,97 & 0,351 & 0,85 & 4 & 4,45 & 0,004 \\
+ \textbf{Búsqueda Local} & 1,37 & 511 & 7,11 & 0,036 & 715,42 & 1.015 & 1.705,59 & 1,403 & 3,50 & 509 & 10,89 & 0,044 \\ \hline
 \end{tabular}%
 }
 \end{table}
-
-\section{Análisis}
-%Análisis de resultados. El análisis deberá estar orientado a justificar (según el comportamiento de cada algoritmo) los resultados obtenidos en lugar de realizar una mera “lectura” de las tablas. Se valorará la inclusión de otros elementos de comparación tales como gráficas de convergencia, boxplots, análisis comparativo de las soluciones obtenidas, representación gráfica de las soluciones, etc.

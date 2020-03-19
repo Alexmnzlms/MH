@@ -5,7 +5,9 @@
 %Para esta primera práctica se incluirá la descripción en pseudocódigo del método de exploración del entorno, el operador de generación de vecino y la generación de soluciones aleatorias empleadas en el algoritmo de BL.
 \subsection{Función objetivo}
 Como ya he explicado anteriormente, el objetivo de la búsqueda local es minimizar tanto la desviación general de los elementos, como el número de restricciones incumplidas, si embargo se introduce un parametro de escalado $ \lambda $ como una manera de dar relevancia a la infactibilidad.\\
+\\
 $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $\\
+\\
 En nuestro caso $ \lambda = \frac{\left \lceil D \right \rceil}{\left | R \right |} $ donde D es la maxima distancia entre dos elementos de \emph{X}
 
 \subsection{Datos propios}
