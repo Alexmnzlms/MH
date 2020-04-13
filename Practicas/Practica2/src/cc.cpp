@@ -130,20 +130,26 @@ void CCP::calcular_lambda(){
 }
 
 void CCP::infactibilidad_solucion(){
-   int j = 0;
+   //std::cout << "-----------------------" << std::endl;
    infactibilidad = 0;
    for(int i = 0; i < (int) solucion.size(); i++){
-      j = i+1;
-      std::pair<int,int> pareja = std::make_pair(i,j);
-      auto it = restricciones.find(pareja);
-      if(it != restricciones.end()){
-         if(it->second == -1 && solucion[i] == solucion[j]){
-            infactibilidad++;
-         } else if(it->second == 1 && solucion[i] != solucion[j]){
-            infactibilidad++;
+      for(int j = i+1; j < (int) solucion.size(); j++){
+         if(i < j){
+            std::pair<int,int> pareja = std::make_pair(i,j);
+            auto it = restricciones.find(pareja);
+            if(it != restricciones.end()){
+               if(it->second == -1 && solucion[i] == solucion[j]){
+                  //std::cout << "Infactibilidad CL " << i << " " << j << " detectada" << std::endl;
+                  infactibilidad++;
+               } else if(it->second == 1 && solucion[i] != solucion[j]){
+                  //std::cout << "Infactibilidad ML " << i << " " << j << " detectada" << std::endl;
+                  infactibilidad++;
+               }
+            }
          }
       }
    }
+   //std::cout << "-----------------------" << std::endl;
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -237,7 +243,6 @@ void CCP::limpiar_clusters(){
    for( int i = 0; i < n_cluster; i++){
       clusters[i].clear();
    }
-   infactibilidad = 0;
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -281,7 +286,7 @@ void CCP::generar_solucion(){
 
 void CCP::generar_vecino(){
    bool salir = false;
-   int pos, n, c;
+   int pos, n;
    while(!salir && quedan_vecinos()){
       salir = false;
       pos = Randint(0,solucion.size()-1);
@@ -290,21 +295,19 @@ void CCP::generar_vecino(){
       if(it != vecindario.end()){
          salir = true;
          vecindario.erase(it);
-         c = solucion[pos];
-         solucion[pos] = -1;
          for( int i = 0; i < n_cluster; i++){
             clusters[i].clear();
          }
          for(unsigned j = 0; j < solucion.size(); j++){
-            if(solucion[j] != -1){
                clusters[solucion[j]].push_back(j);
-            }
          }
-         infactibilidad -= restricciones_incumplidas(pos,c);
-         infactibilidad += restricciones_incumplidas(pos,n);
          solucion[pos] = n;
          clusters[solucion[pos]].push_back(pos);
+         for( int i = 0; i < n_cluster; i++){
+            calcular_centroide(i);
+         }
          desviacion_general();
+         infactibilidad_solucion();
          f_objetivo = desv_gen + (infactibilidad*lambda);
       }
    }
@@ -326,21 +329,17 @@ void CCP::leer_solucion(){
    for( unsigned i = 0; i < solucion.size(); i++){
       clusters[solucion[i]].push_back(i);
    }
-   for( unsigned i = 0; i < solucion.size(); i++){
-      infactibilidad += restricciones_incumplidas(i,solucion[i]);
+   for( int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
    }
    desviacion_general();
-   if(lambda == 0){
-      calcular_lambda();
-   }
-   infactibilidad /= 2;
+   infactibilidad_solucion();
+   calcular_lambda();
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 
 void CCP::leer_vecino(){
-   double infactibilidad_aux = infactibilidad;
    limpiar_clusters();
-   infactibilidad = infactibilidad_aux;
    for( unsigned i = 0; i < solucion.size(); i++){
       clusters[solucion[i]].push_back(i);
    }
@@ -348,9 +347,6 @@ void CCP::leer_vecino(){
       calcular_centroide(i);
    }
    desviacion_general();
-   if(lambda == 0){
-      calcular_lambda();
-   }
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 
@@ -400,7 +396,6 @@ int CCP::greedy(){
    infactibilidad_solucion();
 
    f_objetivo = desv_gen + infactibilidad * lambda;
-   std::cout << "Lambda: " << lambda << std::endl;
    return i;
 }
 
@@ -437,8 +432,7 @@ void CCP::busqueda_local(){
          //std::cout << "Num Max Evaluaciones" << std::endl;
       }
    }while(i < 100000 && quedan_vecinos());
-   //std::cout << "Num Evaluaciones: " << i << std::endl;
-   std::cout << "Lambda: " << lambda << std::endl;
+   std::cout << "Num Evaluaciones: " << i << std::endl;
 
 }
 /////////////////////////////////////////////////////////////////////////////////
