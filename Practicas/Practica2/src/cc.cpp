@@ -129,6 +129,25 @@ void CCP::calcular_lambda(){
    lambda = d_max / restricciones.size();
 }
 
+void CCP::infactibilidad_solucion(){
+   int j = 0;
+   infactibilidad = 0;
+   for(int i = 0; i < (int) solucion.size(); i++){
+      j = i+1;
+      std::pair<int,int> pareja = std::make_pair(i,j);
+      auto it = restricciones.find(pareja);
+      if(it != restricciones.end()){
+         if(it->second == -1 && solucion[i] == solucion[j]){
+            infactibilidad++;
+         } else if(it->second == 1 && solucion[i] != solucion[j]){
+            infactibilidad++;
+         }
+      }
+   }
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
 double CCP::distancia_nodo_cluster(const int n, const int c){
    double d_euclidea = 0, componente = 0;
    for( unsigned i = 0; i < posiciones[n].size(); i++){
@@ -200,8 +219,6 @@ void CCP::asignar_cluster(const int n){
          cluster = r[i].second;
       }
    }
-
-   infactibilidad += r_min;
    clusters[cluster].push_back(n);
 }
 
@@ -255,9 +272,6 @@ void CCP::solucion_inicial(){
 }
 
 void CCP::generar_solucion(){
-   for( unsigned i = 0; i < solucion.size(); i++){
-      solucion[i] = -1;
-   }
    for( int i = 0; i < n_cluster; i++){
       for( unsigned j = 0; j < clusters[i].size(); j++){
          solucion[clusters[i][j]] = i;
@@ -383,6 +397,7 @@ int CCP::greedy(){
    generar_solucion();
    desviacion_general();
    calcular_lambda();
+   infactibilidad_solucion();
 
    f_objetivo = desv_gen + infactibilidad * lambda;
    std::cout << "Lambda: " << lambda << std::endl;
@@ -480,6 +495,7 @@ std::vector<double> CCP::fila_datos(){
    std::vector<double> fila;
    fila.push_back(desv_gen);
    fila.push_back(infactibilidad);
+   fila.push_back(lambda);
    fila.push_back(f_objetivo);
 
    return fila;

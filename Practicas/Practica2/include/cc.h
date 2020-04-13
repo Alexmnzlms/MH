@@ -36,6 +36,7 @@ private:
    void distancia_intracluster(const int i);
    void desviacion_general();
    void calcular_lambda();
+   void infactibilidad_solucion();
 
    double distancia_nodo_cluster(const int n, const int c);
    double distancia_nodo_nodo(const int n, const int m);
