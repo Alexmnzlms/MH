@@ -37,139 +37,40 @@ CCP::CCP(const int n, const std::string p, const std::string r){
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-void CCP::mostrar_datos(){
-   std::cout << posiciones.size() << std::endl;
-   for( unsigned i = 0; i < posiciones.size(); i++){
-      for( unsigned j = 0; j < posiciones[i].size(); j++){
-         std::cout << posiciones[i][j] << " ";
-      }
-      std::cout << std::endl;
-   }
-
-   std::map<std::pair<int,int>,int>::iterator it = restricciones.begin();
-   for(; it != restricciones.end(); it++){
-      std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
-   }
-
-   std::cout << "Restricciones: " << restricciones.size() << std::endl;
-
-   for( unsigned i = 0; i < centroides.size(); i++){
-      for( unsigned j = 0; j < centroides[i].size(); j++){
-         std::cout << centroides[i][j] << " ";
-      }
-      std::cout << std::endl;
-   }
-}
-
-void CCP::mostrar_solucion(bool completo){
-   std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
-   std::cout << "Desviacion general: " << desv_gen << std::endl;
-   std::cout << "Infactibilidad: " << infactibilidad << std::endl;
-   std::cout << "Lambda: " << lambda << std::endl;
-   if(completo){
-      std::cout << "Restricciones: " << restricciones.size() << std::endl;
-      for( int j = 0; j < n_cluster; j++){
-         std::cout << "Cluster " << j << " : ";
-         for( unsigned k = 0; k < clusters[j].size(); k++){
-            std::cout << clusters[j][k] << " ";
-         }
-         std::cout << std::endl;
-      }
-      std::cout << std::endl;
-      for( unsigned j = 0; j < solucion.size(); j++){
-         std::cout << solucion[j] << " ";
-      }
-      std::cout << std::endl;
-      std::cout << std::endl;
-   }
-}
-
-std::vector<double> CCP::fila_datos(){
-   std::vector<double> fila;
-   fila.push_back(desv_gen);
-   fila.push_back(infactibilidad);
-   fila.push_back(f_objetivo);
-
-   return fila;
-}
-/////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////
-int CCP::greedy(){
-   int i = 0, n_max = 500;
-   bool cambio_c;
-   std::vector<int> rsi;
-   std::vector<std::vector<int>> solucion_ant = clusters;
-
-   for( unsigned i = 0; i < posiciones.size(); i++){
-      rsi.push_back(i);
-   }
-
-   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
-
-   do {
-      cambio_c = false;
-      for( unsigned i = 0; i < rsi.size(); i++){
-         asignar_cluster(rsi[i]);
-      }
-      for( int i = 0; i < n_cluster; i++){
-         if(solucion_ant[i] != clusters[i]){
-            calcular_centroide(i);
-            cambio_c = true;
-         }
-      }
-      solucion_ant = clusters;
-      //mostrar_solucion();
-      if(cambio_c){
-         limpiar_clusters();
-      }
-      i++;
-   } while(cambio_c && i < n_max);
-
-   generar_solucion();
-   desviacion_general();
-   calcular_lambda();
-
-   f_objetivo = desv_gen + infactibilidad * lambda;
-   std::cout << "Lambda: " << lambda << std::endl;
-   return i;
-}
-
-void CCP::busqueda_local(){
-   double f_objetivo_ant, infactibilidad_ant;
+void CCP::cargar_posiciones(const std::string archivo){
+   std::ifstream in(archivo);
    int i = 0;
-   std::vector<int> solucion_ant;
-   solucion_inicial();
-   leer_solucion();
-   generar_vecindario();
-   f_objetivo_ant = f_objetivo;
-   solucion_ant = solucion;
-   infactibilidad_ant = infactibilidad;
-
-   do{
-      generar_vecino();
+   std::string variable;
+   std::string dato;
+   while(getline(in,variable)){
+      posiciones.resize(i+1);
+      std::istringstream iss(variable);
+      while(getline(iss,dato,',')){
+         posiciones[i].push_back(atof(dato.c_str()));
+      }
       i++;
+   }
+}
 
-      if(f_objetivo < f_objetivo_ant){
-         f_objetivo_ant = f_objetivo;
-         solucion_ant = solucion;
-         infactibilidad_ant = infactibilidad;
-         generar_vecindario();
+void CCP::cargar_restricciones(const std::string archivo){
+   std::ifstream in(archivo);
+   int valor;
+   int i = 0,j = 0;
+   std::string fila;
+   std::string restriccion;
+   while(getline(in,fila)){
+      std::istringstream iss(fila);
+      while(getline(iss,restriccion,',')){
+         std::pair<int,int> pareja(i,j);
+         valor = atof(restriccion.c_str());
+         if (valor != 0 && i != j){
+            restricciones.insert(std::pair<std::pair<int,int>,int>(pareja,valor));
+         }
+         j++;
       }
-      else{
-         solucion = solucion_ant;
-         infactibilidad = infactibilidad_ant;
-      }
-      if(!quedan_vecinos()){
-         //std::cout << "No quedan vecinos con los que probar" << std::endl;
-         leer_vecino();
-      }
-      if(i >= 100000){
-         //std::cout << "Num Max Evaluaciones" << std::endl;
-      }
-   }while(i < 100000 && quedan_vecinos());
-   //std::cout << "Num Evaluaciones: " << i << std::endl;
-   std::cout << "Lambda: " << lambda << std::endl;
+      i++;
+      j=0;
+   }
 
 }
 /////////////////////////////////////////////////////////////////////////////////
@@ -448,40 +349,139 @@ bool CCP::quedan_vecinos(){
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-void CCP::cargar_posiciones(const std::string archivo){
-   std::ifstream in(archivo);
-   int i = 0;
-   std::string variable;
-   std::string dato;
-   while(getline(in,variable)){
-      posiciones.resize(i+1);
-      std::istringstream iss(variable);
-      while(getline(iss,dato,',')){
-         posiciones[i].push_back(atof(dato.c_str()));
+int CCP::greedy(){
+   int i = 0, n_max = 500;
+   bool cambio_c;
+   std::vector<int> rsi;
+   std::vector<std::vector<int>> solucion_ant = clusters;
+
+   for( unsigned i = 0; i < posiciones.size(); i++){
+      rsi.push_back(i);
+   }
+
+   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
+
+   do {
+      cambio_c = false;
+      for( unsigned i = 0; i < rsi.size(); i++){
+         asignar_cluster(rsi[i]);
+      }
+      for( int i = 0; i < n_cluster; i++){
+         if(solucion_ant[i] != clusters[i]){
+            calcular_centroide(i);
+            cambio_c = true;
+         }
+      }
+      solucion_ant = clusters;
+      //mostrar_solucion();
+      if(cambio_c){
+         limpiar_clusters();
       }
       i++;
+   } while(cambio_c && i < n_max);
+
+   generar_solucion();
+   desviacion_general();
+   calcular_lambda();
+
+   f_objetivo = desv_gen + infactibilidad * lambda;
+   std::cout << "Lambda: " << lambda << std::endl;
+   return i;
+}
+
+void CCP::busqueda_local(){
+   double f_objetivo_ant, infactibilidad_ant;
+   int i = 0;
+   std::vector<int> solucion_ant;
+   solucion_inicial();
+   leer_solucion();
+   generar_vecindario();
+   f_objetivo_ant = f_objetivo;
+   solucion_ant = solucion;
+   infactibilidad_ant = infactibilidad;
+
+   do{
+      generar_vecino();
+      i++;
+
+      if(f_objetivo < f_objetivo_ant){
+         f_objetivo_ant = f_objetivo;
+         solucion_ant = solucion;
+         infactibilidad_ant = infactibilidad;
+         generar_vecindario();
+      }
+      else{
+         solucion = solucion_ant;
+         infactibilidad = infactibilidad_ant;
+      }
+      if(!quedan_vecinos()){
+         //std::cout << "No quedan vecinos con los que probar" << std::endl;
+         leer_vecino();
+      }
+      if(i >= 100000){
+         //std::cout << "Num Max Evaluaciones" << std::endl;
+      }
+   }while(i < 100000 && quedan_vecinos());
+   //std::cout << "Num Evaluaciones: " << i << std::endl;
+   std::cout << "Lambda: " << lambda << std::endl;
+
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+void CCP::mostrar_datos(){
+   std::cout << posiciones.size() << std::endl;
+   for( unsigned i = 0; i < posiciones.size(); i++){
+      for( unsigned j = 0; j < posiciones[i].size(); j++){
+         std::cout << posiciones[i][j] << " ";
+      }
+      std::cout << std::endl;
+   }
+
+   std::map<std::pair<int,int>,int>::iterator it = restricciones.begin();
+   for(; it != restricciones.end(); it++){
+      std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
+   }
+
+   std::cout << "Restricciones: " << restricciones.size() << std::endl;
+
+   for( unsigned i = 0; i < centroides.size(); i++){
+      for( unsigned j = 0; j < centroides[i].size(); j++){
+         std::cout << centroides[i][j] << " ";
+      }
+      std::cout << std::endl;
    }
 }
 
-void CCP::cargar_restricciones(const std::string archivo){
-   std::ifstream in(archivo);
-   int valor;
-   int i = 0,j = 0;
-   std::string fila;
-   std::string restriccion;
-   while(getline(in,fila)){
-      std::istringstream iss(fila);
-      while(getline(iss,restriccion,',')){
-         std::pair<int,int> pareja(i,j);
-         valor = atof(restriccion.c_str());
-         if (valor != 0 && i != j){
-            restricciones.insert(std::pair<std::pair<int,int>,int>(pareja,valor));
+void CCP::mostrar_solucion(bool completo){
+   std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
+   std::cout << "Desviacion general: " << desv_gen << std::endl;
+   std::cout << "Infactibilidad: " << infactibilidad << std::endl;
+   std::cout << "Lambda: " << lambda << std::endl;
+   if(completo){
+      std::cout << "Restricciones: " << restricciones.size() << std::endl;
+      for( int j = 0; j < n_cluster; j++){
+         std::cout << "Cluster " << j << " : ";
+         for( unsigned k = 0; k < clusters[j].size(); k++){
+            std::cout << clusters[j][k] << " ";
          }
-         j++;
+         std::cout << std::endl;
       }
-      i++;
-      j=0;
+      std::cout << std::endl;
+      for( unsigned j = 0; j < solucion.size(); j++){
+         std::cout << solucion[j] << " ";
+      }
+      std::cout << std::endl;
+      std::cout << std::endl;
    }
+}
 
+std::vector<double> CCP::fila_datos(){
+   std::vector<double> fila;
+   fila.push_back(desv_gen);
+   fila.push_back(infactibilidad);
+   fila.push_back(f_objetivo);
+
+   return fila;
 }
 /////////////////////////////////////////////////////////////////////////////////

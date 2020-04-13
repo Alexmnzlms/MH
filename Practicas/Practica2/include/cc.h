@@ -29,12 +29,11 @@ private:
    double lambda;
    double f_objetivo;
 
-
    void calcular_centroide(const int i);
    void distancia_intracluster(const int i);
    void desviacion_general();
    void calcular_lambda();
-   
+
    double distancia_nodo_cluster(const int n, const int c);
    double distancia_nodo_nodo(const int n, const int m);
    double restricciones_incumplidas(const int n, const int c);
@@ -57,11 +56,11 @@ private:
 
 public:
    CCP(const int n, const std::string p, const std::string r);
+   int greedy();
+   void busqueda_local();
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
-   int greedy();
-   void busqueda_local();
 };
 
 
