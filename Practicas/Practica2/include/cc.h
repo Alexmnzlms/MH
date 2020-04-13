@@ -29,26 +29,30 @@ private:
    double lambda;
    double f_objetivo;
 
-   void cargar_posiciones(const std::string archivo);
-   void cargar_restricciones(const std::string archivo);
+
    void calcular_centroide(const int i);
    void distancia_intracluster(const int i);
    void desviacion_general();
-   void leer_solucion();
-   void leer_vecino();
-   void generar_solucion();
-   void asignar_cluster(const int n);
+   void calcular_lambda();
+   
    double distancia_nodo_cluster(const int n, const int c);
+   double distancia_nodo_nodo(const int n, const int m);
    double restricciones_incumplidas(const int n, const int c);
+
+   void asignar_cluster(const int n);
+   int buscar_cluster(const int n);
    void limpiar_clusters();
 
-   void generar_vecino();
-   int buscar_cluster(const int n);
    void solucion_inicial();
-   void calcular_lambda();
-   double distancia_nodo_nodo(const int n, const int m);
+   void generar_solucion();
+   void generar_vecino();
    void generar_vecindario();
+   void leer_solucion();
+   void leer_vecino();
    bool quedan_vecinos();
+
+   void cargar_posiciones(const std::string archivo);
+   void cargar_restricciones(const std::string archivo);
 
 
 public:
