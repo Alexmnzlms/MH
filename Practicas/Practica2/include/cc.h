@@ -29,6 +29,9 @@ private:
    double lambda;
    double f_objetivo;
 
+   void cargar_posiciones(const std::string archivo);
+   void cargar_restricciones(const std::string archivo);
+
    void calcular_centroide(const int i);
    void distancia_intracluster(const int i);
    void desviacion_general();
@@ -49,9 +52,6 @@ private:
    void leer_solucion();
    void leer_vecino();
    bool quedan_vecinos();
-
-   void cargar_posiciones(const std::string archivo);
-   void cargar_restricciones(const std::string archivo);
 
 
 public:
