@@ -54,7 +54,8 @@ private:
 public:
    CCP(const int n, const std::string p, const std::string r);
    void mostrar_datos();
-   void mostrar_solucion();
+   void mostrar_solucion(bool completo=false);
+   std::vector<double> fila_datos();
    int greedy();
    void busqueda_local();
 };

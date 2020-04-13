@@ -95,25 +95,36 @@ void CCP::mostrar_datos(){
    }
 }
 
-void CCP::mostrar_solucion(){
+void CCP::mostrar_solucion(bool completo){
    std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
    std::cout << "Desviacion general: " << desv_gen << std::endl;
    std::cout << "Infactibilidad: " << infactibilidad << std::endl;
    std::cout << "Lambda: " << lambda << std::endl;
-   std::cout << "Restricciones: " << restricciones.size() << std::endl;
-   for( int j = 0; j < n_cluster; j++){
-      std::cout << "Cluster " << j << " : ";
-      for( unsigned k = 0; k < clusters[j].size(); k++){
-         std::cout << clusters[j][k] << " ";
+   if(completo){
+      std::cout << "Restricciones: " << restricciones.size() << std::endl;
+      for( int j = 0; j < n_cluster; j++){
+         std::cout << "Cluster " << j << " : ";
+         for( unsigned k = 0; k < clusters[j].size(); k++){
+            std::cout << clusters[j][k] << " ";
+         }
+         std::cout << std::endl;
       }
       std::cout << std::endl;
+      for( unsigned j = 0; j < solucion.size(); j++){
+         std::cout << solucion[j] << " ";
+      }
+      std::cout << std::endl;
+      std::cout << std::endl;
    }
-   std::cout << std::endl;
-   for( unsigned j = 0; j < solucion.size(); j++){
-      std::cout << solucion[j] << " ";
-   }
-   std::cout << std::endl;
-   std::cout << std::endl;
+}
+
+std::vector<double> CCP::fila_datos(){
+   std::vector<double> fila;
+   fila.push_back(desv_gen);
+   fila.push_back(infactibilidad);
+   fila.push_back(f_objetivo);
+
+   return fila;
 }
 
 void CCP::calcular_centroide(const int i){
@@ -243,7 +254,7 @@ void CCP::limpiar_clusters(){
 }
 
 int CCP::greedy(){
-   int i = 0, n_max = 1000;
+   int i = 0, n_max = 500;
    bool cambio_c;
    std::vector<int> rsi;
    std::vector<std::vector<int>> solucion_ant = clusters;
@@ -275,7 +286,7 @@ int CCP::greedy(){
    generar_solucion();
    desviacion_general();
    f_objetivo = desv_gen + infactibilidad;
-   std::cout << "Iteraciones: " << i << std::endl;
+   //std::cout << "Iteraciones: " << i << std::endl;
    return i;
 }
 
@@ -446,13 +457,13 @@ void CCP::busqueda_local(){
          infactibilidad = infactibilidad_ant;
       }
       if(!quedan_vecinos()){
-         std::cout << "No quedan vecinos con los que probar" << std::endl;
+         //std::cout << "No quedan vecinos con los que probar" << std::endl;
          leer_vecino();
       }
       if(i >= 100000){
-         std::cout << "Num Max Evaluaciones" << std::endl;
+         //std::cout << "Num Max Evaluaciones" << std::endl;
       }
    }while(i < 100000 && quedan_vecinos());
-   std::cout << "Num Evaluaciones: " << i << std::endl;
+   //std::cout << "Num Evaluaciones: " << i << std::endl;
 
 }
