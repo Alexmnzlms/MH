@@ -96,21 +96,21 @@ unsigned buscar_semilla(){
 
 int main(){
    unsigned long tini, tfin;
-   //int n_iteraciones = 5;
-   //int n_conjuntos_datos = 6;
+   int n_iteraciones = 5;
+   int n_conjuntos_datos = 6;
    double semillas [5] = {1584565171,1584764782,1584565259,1584564539,1522565615};
 
-   //vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Rand 20%", "Iris 20%", "Ecoli 20%"};
-   //vector<int> n_k {3,3,8,3,3,8};
-   //vector<string> datos {"data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat", "data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat"};
-   //vector<string> restricciones {"data_old/rand_set_const_10.const", "data_old/iris_set_const_10.const", "data_old/ecoli_set_const_10.const", "data_old/rand_set_const_20.const", "data_old/iris_set_const_20.const", "data_old/ecoli_set_const_20.const"};
+   vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Rand 20%", "Iris 20%", "Ecoli 20%"};
+   vector<int> n_k {3,3,8,3,3,8};
+   vector<string> datos {"data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat", "data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat"};
+   vector<string> restricciones {"data_old/rand_set_const_10.const", "data_old/iris_set_const_10.const", "data_old/ecoli_set_const_10.const", "data_old/rand_set_const_20.const", "data_old/iris_set_const_20.const", "data_old/ecoli_set_const_20.const"};
 
-   int n_iteraciones = 1;
+   /*int n_iteraciones = 1;
    int n_conjuntos_datos = 2;
    vector<string> titulos {"Iris 10%", "Iris 20%"};
    vector<int> n_k {3,3};
    vector<string> datos {"data_old/iris_set.dat", "data_old/iris_set.dat"};
-   vector<string> restricciones {"data_old/iris_set_const_10.const", "data_old/iris_set_const_20.const"};
+   vector<string> restricciones {"data_old/iris_set_const_10.const", "data_old/iris_set_const_20.const"};*/
 
    cout << "Ejecutando programa CCP" << endl;
 
