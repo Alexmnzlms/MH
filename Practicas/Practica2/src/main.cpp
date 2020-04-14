@@ -99,18 +99,12 @@ int main(){
    int n_iteraciones = 5;
    int n_conjuntos_datos = 6;
    double semillas [5] = {1584565171,1584764782,1584565259,1584564539,1522565615};
+   bool solucion_completa = false;
 
    vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Rand 20%", "Iris 20%", "Ecoli 20%"};
    vector<int> n_k {3,3,8,3,3,8};
    vector<string> datos {"data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat", "data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat"};
    vector<string> restricciones {"data_old/rand_set_const_10.const", "data_old/iris_set_const_10.const", "data_old/ecoli_set_const_10.const", "data_old/rand_set_const_20.const", "data_old/iris_set_const_20.const", "data_old/ecoli_set_const_20.const"};
-
-   /*int n_iteraciones = 1;
-   int n_conjuntos_datos = 2;
-   vector<string> titulos {"Iris 10%", "Iris 20%"};
-   vector<int> n_k {3,3};
-   vector<string> datos {"data_old/iris_set.dat", "data_old/iris_set.dat"};
-   vector<string> restricciones {"data_old/iris_set_const_10.const", "data_old/iris_set_const_20.const"};*/
 
    cout << "Ejecutando programa CCP" << endl;
 
@@ -138,9 +132,9 @@ int main(){
          Set_random(semillas[i]);
          CCP par(n_k[c],datos[c],restricciones[c]);
 
-         tini= clock(); // Tiempo inicial
+         tini= clock();
          par.greedy();
-         tfin= clock(); // Tiempo final
+         tfin= clock();
 
          double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
          vector<double> fila;
@@ -148,30 +142,33 @@ int main(){
          fila.push_back(tiempo);
          greedy.push_back(fila);
 
-         cout << "---------------------------------------------------------------------------------------------------" << endl;
-         cout << titulos[c] << endl;
-         cout << "Iteracion: " << i+1 << endl;
-         cout << "Semilla: " << semillas[i] << endl;
-         par.mostrar_solucion(true);
-         cout << "---------------------------------------------------------------------------------------------------" << endl;
-      }
-   }
+         if(solucion_completa){
+            cout << "---------------------------------------------------------------------------------------------------" << endl;
+            cout << titulos[c] << endl;
+            cout << "Iteracion: " << i+1 << endl;
+            cout << "Semilla: " << semillas[i] << endl;
+            par.mostrar_solucion(true);
+            cout << "---------------------------------------------------------------------------------------------------" << endl;
+         }
 
-   for(int c = 0; c < n_conjuntos_datos; c++){
-      cout << titulos[c] << endl;
-      cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
-      cout << "---------------------------------------------------------------------------------------------------" << endl;
 
-      for(int i = c*n_iteraciones; i < c*n_iteraciones + n_iteraciones; i++){
+         if(i == 0){
+            cout << titulos[c] << endl;
+            cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+            cout << "---------------------------------------------------------------------------------------------------" << endl;
+         }
          cout << i+1 << "          ";
          vector<double>::iterator it;
-         for(it = greedy[i].begin(); it != greedy[i].end(); it++){
+         for(it = fila.begin(); it != fila.end(); it++){
             cout << *it << "          ";
          }
          cout << endl;
          cout << "---------------------------------------------------------------------------------------------------" << endl;
       }
    }
+   
+   cout << endl;
+   cout << endl;
 
    cout << "----------------- Tabla de resultados BL -----------------" << endl;
    for(int c = 0; c < n_conjuntos_datos; c++){
@@ -179,9 +176,9 @@ int main(){
          Set_random(semillas[i]);
          CCP par(n_k[c],datos[c],restricciones[c]);
 
-         tini= clock(); // Tiempo inicial
+         tini= clock();
          par.busqueda_local();
-         tfin= clock(); // Tiempo final
+         tfin= clock();
 
          double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
          vector<double> fila;
@@ -189,24 +186,23 @@ int main(){
          fila.push_back(tiempo);
          bl.push_back(fila);
 
-         cout << "---------------------------------------------------------------------------------------------------" << endl;
-         cout << titulos[c] << endl;
-         cout << "Iteracion: " << i+1 << endl;
-         cout << "Semilla: " << semillas[i] << endl;
-         par.mostrar_solucion(true);
-         cout << "---------------------------------------------------------------------------------------------------" << endl;
-      }
-   }
+         if(solucion_completa){
+            cout << "---------------------------------------------------------------------------------------------------" << endl;
+            cout << titulos[c] << endl;
+            cout << "Iteracion: " << i+1 << endl;
+            cout << "Semilla: " << semillas[i] << endl;
+            par.mostrar_solucion(true);
+            cout << "---------------------------------------------------------------------------------------------------" << endl;
+         }
 
-   for(int c = 0; c < n_conjuntos_datos; c++){
-      cout << titulos[c] << endl;
-      cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
-      cout << "---------------------------------------------------------------------------------------------------" << endl;
-
-      for(int i = c*n_iteraciones; i < c*n_iteraciones + n_iteraciones; i++){
+         if(i == 0){
+            cout << titulos[c] << endl;
+            cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+            cout << "---------------------------------------------------------------------------------------------------" << endl;
+         }
          cout << i+1 << "          ";
          vector<double>::iterator it;
-         for(it = bl[i].begin(); it != bl[i].end(); it++){
+         for(it = fila.begin(); it != fila.end(); it++){
             cout << *it << "          ";
          }
          cout << endl;
