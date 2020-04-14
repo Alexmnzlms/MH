@@ -64,6 +64,7 @@ private:
    int generacion_inicial();
    int calcular_infact_sol(std::vector<int> sol);
    double evaluar_solucion(std::vector<int> sol);
+   std::vector<int> torneo_binario();
    void seleccion();
 
 public:
@@ -74,7 +75,7 @@ public:
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
-   void mostrar_generacion(int e);
+   void mostrar_generacion(int e = 0);
 };
 
 

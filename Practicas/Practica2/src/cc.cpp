@@ -434,7 +434,36 @@ double CCP::evaluar_solucion(std::vector<int> sol){
    evaluacion = desv_sol + lambda*infact;
 
    return evaluacion;
+}
 
+std::vector<int> CCP::torneo_binario(){
+   std::vector<int> ganadores;
+   int index_a, index_b;
+   for(int i = 0; i < poblacion; i++){
+      index_a = Randint(0, poblacion-1);
+      index_b = Randint(0, poblacion-1);
+      if(f_generacion[index_a] <= f_generacion[index_b]){
+         ganadores.push_back(index_a);
+      } else {
+         ganadores.push_back(index_b);
+      }
+   }
+
+   return ganadores;
+}
+
+void CCP::seleccion(){
+   std::vector<int> seleccionados = torneo_binario();
+   std::vector<std::vector<int>> poblacion_seleccionada;
+   std::vector<double> f_poblacion_seleccionada;
+
+   for(int i = 0; i < (int) seleccionados.size(); i++){
+      poblacion_seleccionada.push_back(generacion[seleccionados[i]]);
+      f_poblacion_seleccionada.push_back(f_generacion[seleccionados[i]]);
+   }
+
+   generacion = poblacion_seleccionada;
+   f_generacion = f_poblacion_seleccionada;
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -518,6 +547,8 @@ void CCP::busqueda_local(){
 void CCP::AGG_UN(){
    int eval = 0;
    eval += generacion_inicial();
+   mostrar_generacion(eval);
+   seleccion();
    mostrar_generacion(eval);
    generacion.clear();
    f_generacion.clear();
