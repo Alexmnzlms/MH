@@ -1,5 +1,6 @@
 #include "cc.h"
 
+/////////////////////////////////////////////////////////////////////////////////
 CCP::CCP(const int n, const std::string p, const std::string r){
    n_cluster = n;
    desv_gen = 0;
@@ -32,8 +33,12 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    for( unsigned i = 0; i < solucion.size(); i++){
       solucion[i] = -1;
    }
-}
 
+   calcular_lambda();
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
 void CCP::cargar_posiciones(const std::string archivo){
    std::ifstream in(archivo);
    int i = 0;
@@ -70,7 +75,366 @@ void CCP::cargar_restricciones(const std::string archivo){
    }
 
 }
+/////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////
+void CCP::calcular_centroide(const int i){
+   for( unsigned j = 0; j < centroides[i].size(); j++){
+      centroides[i][j] = 0;
+   }
+   for( unsigned j = 0; j < clusters[i].size(); j++){
+      for( unsigned k = 0; k < posiciones[clusters[i][j]].size(); k++){
+            centroides[i][k] += (1.0/clusters[i].size()) * posiciones[clusters[i][j]][k];
+      }
+   }
+}
+
+void CCP::distancia_intracluster(const int i){
+   double d_euclidea;
+   for( int j = 0; j < n_cluster; j++){
+      d_intracluster[j] = 0;
+   }
+   for( unsigned j = 0; j < clusters[i].size(); j++){
+      for( unsigned k = 0; k < posiciones[clusters[i][j]].size(); k++){
+         d_euclidea =  std::abs(posiciones[clusters[i][j]][k] - centroides[i][k]);
+         d_euclidea *= d_euclidea;
+         d_intracluster[i] += (1.0/clusters[i].size()) * d_euclidea;
+      }
+   }
+}
+
+void CCP::desviacion_general(){
+   desv_gen = 0;
+   for( int i = 0; i < n_cluster; i++){
+      distancia_intracluster(i);
+      desv_gen += (1.0/n_cluster)*d_intracluster[i];
+   }
+}
+
+void CCP::calcular_lambda(){
+   lambda = 0;
+   double d, d_max = 0.0;
+   for( int i = 0; i < (int) posiciones.size(); i++){
+      for( int j = i+1; j < (int) posiciones.size(); j++){
+         d = distancia_nodo_nodo(i,j);
+         if(d > d_max){
+            d_max = d;
+         }
+      }
+   }
+   lambda = d_max / restricciones.size();
+   //std::cout << "Distancia maxima del conjunto: " << d_max << std::endl;
+   //std::cout << "Numero de restricciones: " << restricciones.size() << std::endl;
+   //std::cout << "Lambda: " << lambda << std::endl;
+}
+
+void CCP::infactibilidad_solucion(){
+   //std::cout << "-----------------------" << std::endl;
+   infactibilidad = 0;
+   for(int i = 0; i < (int) solucion.size(); i++){
+      for(int j = i+1; j < (int) solucion.size(); j++){
+         if(i < j){
+            std::pair<int,int> pareja = std::make_pair(i,j);
+            auto it = restricciones.find(pareja);
+            if(it != restricciones.end()){
+               if(it->second == -1 && solucion[i] == solucion[j]){
+                  //std::cout << "Infactibilidad CL " << i << " " << j << " detectada" << std::endl;
+                  infactibilidad++;
+               } else if(it->second == 1 && solucion[i] != solucion[j]){
+                  //std::cout << "Infactibilidad ML " << i << " " << j << " detectada" << std::endl;
+                  infactibilidad++;
+               }
+            }
+         }
+      }
+   }
+   //std::cout << "-----------------------" << std::endl;
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+double CCP::distancia_nodo_cluster(const int n, const int c){
+   double d_euclidea = 0, componente = 0;
+   for( unsigned i = 0; i < posiciones[n].size(); i++){
+      componente = std::abs(posiciones[n][i] - centroides[c][i]);
+      componente *= componente;
+      d_euclidea += componente;
+   }
+   return d_euclidea;
+}
+
+double CCP::distancia_nodo_nodo(const int n, const int m){
+   double d_euclidea = 0, componente = 0;
+   for( unsigned i = 0; i < posiciones[n].size(); i++){
+      componente = std::abs(posiciones[n][i] - posiciones[m][i]);
+      componente *= componente;
+      d_euclidea += componente;
+   }
+   return d_euclidea;
+}
+
+double CCP::restricciones_incumplidas(const int n, const int c){
+   double incumplidas = 0;
+   std::pair<int,int> pareja;
+   pareja.first = n;
+   for( unsigned i = 0; i < clusters[c].size(); i++){
+      pareja.second = clusters[c][i];
+      auto it = restricciones.find(pareja);
+      if(it->second == -1 && it != restricciones.end()){
+         incumplidas++;
+      }
+   }
+   for( int i = 0; i < n_cluster; i++){
+      if(i != c){
+         for( unsigned j = 0; j < clusters[i].size(); j++){
+            pareja.second = clusters[i][j];
+            auto it = restricciones.find(pareja);
+            if(it->second == 1 && it != restricciones.end()){
+               incumplidas++;
+            }
+         }
+      }
+   }
+   return incumplidas;
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+void CCP::asignar_cluster(const int n){
+   std::pair<int,int> pareja;
+   std::vector<std::pair<int,int>> r;
+
+   int cluster = -1;
+   double d_min, d, r_min;
+
+   for( int i = 0; i < n_cluster; i++){
+      pareja.first = restricciones_incumplidas(n,i);
+      pareja.second = i;
+      r.push_back(pareja);
+   }
+
+   std::sort(r.begin(),r.end());
+
+   r_min = r[0].first;
+   d_min = 1000000.0;
+   for( unsigned i = 0; i < r.size() && r[i].first == r_min; i++){
+      d = distancia_nodo_cluster(n,r[i].second);
+      if(d < d_min){
+         d_min = d;
+         cluster = r[i].second;
+      }
+   }
+   clusters[cluster].push_back(n);
+}
+
+int CCP::buscar_cluster(const int n){
+   for( int i = 0; i < n_cluster; i++){
+      for( unsigned j = 0; j < clusters[i].size(); j++){
+         if(clusters[i][j] == n){
+            return i;
+         }
+      }
+   }
+   return -1;
+}
+
+void CCP::limpiar_clusters(){
+   for( int i = 0; i < n_cluster; i++){
+      clusters[i].clear();
+   }
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+void CCP::solucion_inicial(){
+   std::vector<int> index;
+   std::vector<std::vector<int>> c;
+   c.resize(n_cluster);
+
+   for( unsigned i = 0; i < posiciones.size(); i++){
+      index.push_back(i);
+   }
+   std::random_shuffle(index.begin(), index.end(), Randint_shuffle);
+   auto it = index.begin();
+   for( int i = 0; i < n_cluster; i++, it++){
+      c[i].push_back(*it);
+   }
+   int random;
+   for(; it != index.end(); it++){
+      random = Randint(0,n_cluster-1);
+      c[random].push_back(*it);
+   }
+
+   for( int i = 0; i < n_cluster; i++){
+      for( unsigned j = 0; j < c[i].size(); j++){
+         solucion[c[i][j]] = i;
+      }
+   }
+   for(int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
+   }
+}
+
+void CCP::generar_solucion(){
+   for( int i = 0; i < n_cluster; i++){
+      for( unsigned j = 0; j < clusters[i].size(); j++){
+         solucion[clusters[i][j]] = i;
+      }
+   }
+}
+
+void CCP::generar_vecino(){
+   bool salir = false;
+   int pos, n;
+   while(!salir && quedan_vecinos()){
+      salir = false;
+      pos = Randint(0,solucion.size()-1);
+      n = Randint(0,n_cluster-1);
+      auto it = vecindario.find(std::make_pair(pos,n));
+      if(it != vecindario.end()){
+         salir = true;
+         vecindario.erase(it);
+         for( int i = 0; i < n_cluster; i++){
+            clusters[i].clear();
+         }
+         for(unsigned j = 0; j < solucion.size(); j++){
+               clusters[solucion[j]].push_back(j);
+         }
+         solucion[pos] = n;
+         clusters[solucion[pos]].push_back(pos);
+         for( int i = 0; i < n_cluster; i++){
+            calcular_centroide(i);
+         }
+         desviacion_general();
+         infactibilidad_solucion();
+         f_objetivo = desv_gen + (infactibilidad*lambda);
+      }
+   }
+}
+
+void CCP::generar_vecindario(){
+   vecindario.clear();
+   for(unsigned i = 0; i < posiciones.size(); i++){
+      for(int j = 0; j < n_cluster; j++){
+         if(j != buscar_cluster(i) && clusters[buscar_cluster(i)].size() > (unsigned) 1){
+            vecindario.insert(std::make_pair(i,j));
+         }
+      }
+   }
+}
+
+void CCP::leer_solucion(){
+   limpiar_clusters();
+   for( unsigned i = 0; i < solucion.size(); i++){
+      clusters[solucion[i]].push_back(i);
+   }
+   for( int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
+   }
+   desviacion_general();
+   infactibilidad_solucion();
+   f_objetivo = desv_gen + (infactibilidad*lambda);
+}
+
+void CCP::leer_vecino(){
+   limpiar_clusters();
+   for( unsigned i = 0; i < solucion.size(); i++){
+      clusters[solucion[i]].push_back(i);
+   }
+   for(int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
+   }
+   desviacion_general();
+   f_objetivo = desv_gen + (infactibilidad*lambda);
+}
+
+bool CCP::quedan_vecinos(){
+   if(vecindario.size() > 0){
+      return true;
+   }
+   return false;
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+int CCP::greedy(){
+   int i = 0, n_max = 500;
+   bool cambio_c;
+   std::vector<int> rsi;
+   std::vector<std::vector<int>> solucion_ant = clusters;
+
+   for( unsigned i = 0; i < posiciones.size(); i++){
+      rsi.push_back(i);
+   }
+
+   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
+
+   do {
+      cambio_c = false;
+      for( unsigned i = 0; i < rsi.size(); i++){
+         asignar_cluster(rsi[i]);
+      }
+      for( int i = 0; i < n_cluster; i++){
+         if(solucion_ant[i] != clusters[i]){
+            calcular_centroide(i);
+            cambio_c = true;
+         }
+      }
+      solucion_ant = clusters;
+      //mostrar_solucion();
+      if(cambio_c){
+         limpiar_clusters();
+      }
+      i++;
+   } while(cambio_c && i < n_max);
+
+   generar_solucion();
+   desviacion_general();
+   infactibilidad_solucion();
+
+   f_objetivo = desv_gen + infactibilidad * lambda;
+   return i;
+}
+
+void CCP::busqueda_local(){
+   double f_objetivo_ant, infactibilidad_ant;
+   int i = 0;
+   std::vector<int> solucion_ant;
+   solucion_inicial();
+   leer_solucion();
+   generar_vecindario();
+   f_objetivo_ant = f_objetivo;
+   solucion_ant = solucion;
+   infactibilidad_ant = infactibilidad;
+
+   do{
+      generar_vecino();
+      i++;
+
+      if(f_objetivo < f_objetivo_ant){
+         f_objetivo_ant = f_objetivo;
+         solucion_ant = solucion;
+         infactibilidad_ant = infactibilidad;
+         generar_vecindario();
+      }
+      else{
+         solucion = solucion_ant;
+         infactibilidad = infactibilidad_ant;
+      }
+      if(!quedan_vecinos()){
+         //std::cout << "No quedan vecinos con los que probar" << std::endl;
+         leer_vecino();
+      }
+      if(i >= 100000){
+         //std::cout << "Num Max Evaluaciones" << std::endl;
+      }
+   }while(i < 100000 && quedan_vecinos());
+   //std::cout << "Num Evaluaciones: " << i << std::endl;
+
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
 void CCP::mostrar_datos(){
    std::cout << posiciones.size() << std::endl;
    for( unsigned i = 0; i < posiciones.size(); i++){
@@ -122,348 +486,9 @@ std::vector<double> CCP::fila_datos(){
    std::vector<double> fila;
    fila.push_back(desv_gen);
    fila.push_back(infactibilidad);
+   fila.push_back(lambda);
    fila.push_back(f_objetivo);
 
    return fila;
 }
-
-void CCP::calcular_centroide(const int i){
-   for( unsigned j = 0; j < centroides[i].size(); j++){
-      centroides[i][j] = 0;
-   }
-   for( unsigned j = 0; j < clusters[i].size(); j++){
-      for( unsigned k = 0; k < posiciones[clusters[i][j]].size(); k++){
-            centroides[i][k] += (1.0/clusters[i].size()) * posiciones[clusters[i][j]][k];
-      }
-   }
-}
-
-void CCP::distancia_intracluster(const int i){
-   double d_euclidea;
-   for( int j = 0; j < n_cluster; j++){
-      d_intracluster[j] = 0;
-   }
-   for( unsigned j = 0; j < clusters[i].size(); j++){
-      for( unsigned k = 0; k < posiciones[clusters[i][j]].size(); k++){
-         d_euclidea =  std::abs(posiciones[clusters[i][j]][k] - centroides[i][k]);
-         d_euclidea *= d_euclidea;
-         d_intracluster[i] += (1.0/clusters[i].size()) * d_euclidea;
-      }
-   }
-}
-
-void CCP::desviacion_general(){
-   desv_gen = 0;
-   for( int i = 0; i < n_cluster; i++){
-      distancia_intracluster(i);
-      desv_gen += (1.0/n_cluster)*d_intracluster[i];
-   }
-}
-
-int CCP::buscar_cluster(const int n){
-   for( int i = 0; i < n_cluster; i++){
-      for( unsigned j = 0; j < clusters[i].size(); j++){
-         if(clusters[i][j] == n){
-            return i;
-         }
-      }
-   }
-   return -1;
-}
-
-void CCP::generar_solucion(){
-   for( unsigned i = 0; i < solucion.size(); i++){
-      solucion[i] = -1;
-   }
-   for( int i = 0; i < n_cluster; i++){
-      for( unsigned j = 0; j < clusters[i].size(); j++){
-         solucion[clusters[i][j]] = i;
-      }
-   }
-}
-
-double CCP::distancia_nodo_cluster(const int n, const int c){
-   double d_euclidea = 0, componente = 0;
-   for( unsigned i = 0; i < posiciones[n].size(); i++){
-      componente = std::abs(posiciones[n][i] - centroides[c][i]);
-      componente *= componente;
-      d_euclidea += componente;
-   }
-   return d_euclidea;
-}
-
-double CCP::restricciones_incumplidas(const int n, const int c){
-   double incumplidas = 0;
-   std::pair<int,int> pareja;
-   pareja.first = n;
-   for( unsigned i = 0; i < clusters[c].size(); i++){
-      pareja.second = clusters[c][i];
-         auto it = restricciones.find(pareja);
-         if(it->second == -1 && it != restricciones.end()){
-            incumplidas++;
-         }
-   }
-   for( int i = 0; i < n_cluster; i++){
-      if(i != c){
-         for( unsigned j = 0; j < clusters[i].size(); j++){
-            pareja.second = clusters[i][j];
-               auto it = restricciones.find(pareja);
-               if(it->second == 1 && it != restricciones.end()){
-                  incumplidas++;
-               }
-         }
-      }
-   }
-   return incumplidas;
-}
-
-void CCP::asignar_cluster(const int n){
-   std::pair<int,int> pareja;
-   std::vector<std::pair<int,int>> r;
-
-   int cluster = -1;
-   double d_min, d, r_min;
-
-   for( int i = 0; i < n_cluster; i++){
-      pareja.first = restricciones_incumplidas(n,i);
-      pareja.second = i;
-      r.push_back(pareja);
-   }
-
-   std::sort(r.begin(),r.end());
-
-   r_min = r[0].first;
-   d_min = 1000000.0;
-   for( unsigned i = 0; i < r.size() && r[i].first == r_min; i++){
-      d = distancia_nodo_cluster(n,r[i].second);
-      if(d < d_min){
-         d_min = d;
-         cluster = r[i].second;
-      }
-   }
-
-   infactibilidad += r_min;
-   clusters[cluster].push_back(n);
-}
-
-void CCP::limpiar_clusters(){
-   for( int i = 0; i < n_cluster; i++){
-      clusters[i].clear();
-   }
-   infactibilidad = 0;
-}
-
-int CCP::greedy(){
-   int i = 0, n_max = 500;
-   bool cambio_c;
-   std::vector<int> rsi;
-   std::vector<std::vector<int>> solucion_ant = clusters;
-
-   for( unsigned i = 0; i < posiciones.size(); i++){
-      rsi.push_back(i);
-   }
-
-   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
-
-   do {
-      cambio_c = false;
-      for( unsigned i = 0; i < rsi.size(); i++){
-         asignar_cluster(rsi[i]);
-      }
-      for( int i = 0; i < n_cluster; i++){
-         if(solucion_ant[i] != clusters[i]){
-            calcular_centroide(i);
-            cambio_c = true;
-         }
-      }
-      solucion_ant = clusters;
-      //mostrar_solucion();
-      if(cambio_c){
-         limpiar_clusters();
-      }
-      i++;
-   } while(cambio_c && i < n_max);
-   generar_solucion();
-   desviacion_general();
-   f_objetivo = desv_gen + infactibilidad;
-   //std::cout << "Iteraciones: " << i << std::endl;
-   return i;
-}
-
-void CCP::generar_vecino(){
-   bool salir = false;
-   int pos, n, c;
-   while(!salir && quedan_vecinos()){
-      salir = false;
-      pos = Randint(0,solucion.size()-1);
-      n = Randint(0,n_cluster-1);
-      auto it = vecindario.find(std::make_pair(pos,n));
-      if(it != vecindario.end()){
-         salir = true;
-         vecindario.erase(it);
-         c = solucion[pos];
-         solucion[pos] = -1;
-         for( int i = 0; i < n_cluster; i++){
-            clusters[i].clear();
-         }
-         for(unsigned j = 0; j < solucion.size(); j++){
-            if(solucion[j] != -1){
-               clusters[solucion[j]].push_back(j);
-            }
-         }
-         infactibilidad -= restricciones_incumplidas(pos,c);
-         infactibilidad += restricciones_incumplidas(pos,n);
-         solucion[pos] = n;
-         clusters[solucion[pos]].push_back(pos);
-         desviacion_general();
-         f_objetivo = desv_gen + (infactibilidad*lambda);
-      }
-   }
-}
-
-void CCP::leer_vecino(){
-   double infactibilidad_aux = infactibilidad;
-   limpiar_clusters();
-   infactibilidad = infactibilidad_aux;
-   for( unsigned i = 0; i < solucion.size(); i++){
-      clusters[solucion[i]].push_back(i);
-   }
-   for(int i = 0; i < n_cluster; i++){
-      calcular_centroide(i);
-   }
-   desviacion_general();
-   if(lambda == 0){
-      calcular_lambda();
-   }
-   f_objetivo = desv_gen + (infactibilidad*lambda);
-}
-
-void CCP::generar_vecindario(){
-   vecindario.clear();
-   for(unsigned i = 0; i < posiciones.size(); i++){
-      for(int j = 0; j < n_cluster; j++){
-         if(j != buscar_cluster(i) && clusters[buscar_cluster(i)].size() > (unsigned) 1){
-            vecindario.insert(std::make_pair(i,j));
-         }
-      }
-   }
-}
-
-bool CCP::quedan_vecinos(){
-   if(vecindario.size() > 0){
-      return true;
-   }
-   return false;
-}
-
-void CCP::solucion_inicial(){
-   std::vector<int> index;
-   std::vector<std::vector<int>> c;
-   c.resize(n_cluster);
-
-   for( unsigned i = 0; i < posiciones.size(); i++){
-      index.push_back(i);
-   }
-   std::random_shuffle(index.begin(), index.end(), Randint_shuffle);
-   auto it = index.begin();
-   for( int i = 0; i < n_cluster; i++, it++){
-      c[i].push_back(*it);
-   }
-   int random;
-   for(; it != index.end(); it++){
-      random = Randint(0,n_cluster-1);
-      c[random].push_back(*it);
-   }
-
-   for( int i = 0; i < n_cluster; i++){
-      for( unsigned j = 0; j < c[i].size(); j++){
-         solucion[c[i][j]] = i;
-      }
-   }
-   for(int i = 0; i < n_cluster; i++){
-      calcular_centroide(i);
-   }
-}
-
-double CCP::distancia_nodo_nodo(const int n, const int m){
-   double d_euclidea = 0, componente = 0;
-   for( unsigned i = 0; i < posiciones[n].size(); i++){
-      componente = std::abs(posiciones[n][i] - posiciones[m][i]);
-      componente *= componente;
-      d_euclidea += componente;
-   }
-   return d_euclidea;
-}
-
-void CCP::calcular_lambda(){
-   lambda = 0;
-   double d, d_max = 0.0;
-   int cluster;
-   for( unsigned i = 0; i < posiciones.size(); i++){
-      cluster = buscar_cluster(i);
-      for(int j = 0; j < n_cluster; j++){
-         if(j != cluster){
-            for( unsigned k = 0; k < clusters[j].size(); k++){
-               d = distancia_nodo_nodo(i,clusters[j][k]);
-               if(d > d_max){
-                  d_max = d;
-               }
-            }
-         }
-      }
-   }
-   lambda = d_max / restricciones.size();
-}
-
-void CCP::leer_solucion(){
-   limpiar_clusters();
-   for( unsigned i = 0; i < solucion.size(); i++){
-      clusters[solucion[i]].push_back(i);
-   }
-   for( unsigned i = 0; i < solucion.size(); i++){
-      infactibilidad += restricciones_incumplidas(i,solucion[i]);
-   }
-   desviacion_general();
-   if(lambda == 0){
-      calcular_lambda();
-   }
-   infactibilidad /= 2;
-   f_objetivo = desv_gen + (infactibilidad*lambda);
-}
-
-void CCP::busqueda_local(){
-   double f_objetivo_ant, infactibilidad_ant;
-   int i = 0;
-   std::vector<int> solucion_ant;
-   solucion_inicial();
-   leer_solucion();
-   generar_vecindario();
-   f_objetivo_ant = f_objetivo;
-   solucion_ant = solucion;
-   infactibilidad_ant = infactibilidad;
-
-   do{
-      generar_vecino();
-      i++;
-
-      if(f_objetivo < f_objetivo_ant){
-         f_objetivo_ant = f_objetivo;
-         solucion_ant = solucion;
-         infactibilidad_ant = infactibilidad;
-         generar_vecindario();
-      }
-      else{
-         solucion = solucion_ant;
-         infactibilidad = infactibilidad_ant;
-      }
-      if(!quedan_vecinos()){
-         //std::cout << "No quedan vecinos con los que probar" << std::endl;
-         leer_vecino();
-      }
-      if(i >= 100000){
-         //std::cout << "Num Max Evaluaciones" << std::endl;
-      }
-   }while(i < 100000 && quedan_vecinos());
-   //std::cout << "Num Evaluaciones: " << i << std::endl;
-
-}
+/////////////////////////////////////////////////////////////////////////////////
