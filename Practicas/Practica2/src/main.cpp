@@ -139,7 +139,7 @@ int main(){
    vector<double>bl_media;
 
    bool solucion_completa = false;
-   bool mostrar_iteracion = true;
+   bool mostrar_iteracion = false;
    bool mostrar_media = true;
 
    if(nueva_semilla){
@@ -235,7 +235,7 @@ int main(){
 
    cout << "----------------- Tabla de resultados BL -----------------" << endl;
    for(int c = 0; c < n_conjuntos_datos; c++){
-      bl.clear()
+      bl.clear();
 
       for(int i = 0; i < n_iteraciones; i++){
          Set_random(semillas[i]);
