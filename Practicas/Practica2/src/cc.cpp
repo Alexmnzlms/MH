@@ -133,17 +133,15 @@ void CCP::infactibilidad_solucion(){
    infactibilidad = 0;
    for(int i = 0; i < (int) solucion.size(); i++){
       for(int j = i+1; j < (int) solucion.size(); j++){
-         if(i < j){
-            std::pair<int,int> pareja = std::make_pair(i,j);
-            auto it = restricciones.find(pareja);
-            if(it != restricciones.end()){
-               if(it->second == -1 && solucion[i] == solucion[j]){
-                  //std::cout << "Infactibilidad CL " << i << " " << j << " detectada" << std::endl;
-                  infactibilidad++;
-               } else if(it->second == 1 && solucion[i] != solucion[j]){
-                  //std::cout << "Infactibilidad ML " << i << " " << j << " detectada" << std::endl;
-                  infactibilidad++;
-               }
+         std::pair<int,int> pareja = std::make_pair(i,j);
+         auto it = restricciones.find(pareja);
+         if(it != restricciones.end()){
+            if(it->second == -1 && solucion[i] == solucion[j]){
+               //std::cout << "Infactibilidad CL " << i << " " << j << " detectada" << std::endl;
+               infactibilidad++;
+            } else if(it->second == 1 && solucion[i] != solucion[j]){
+               //std::cout << "Infactibilidad ML " << i << " " << j << " detectada" << std::endl;
+               infactibilidad++;
             }
          }
       }
