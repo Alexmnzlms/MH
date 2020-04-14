@@ -121,21 +121,21 @@ unsigned buscar_semilla(){
 
 int main(){
    unsigned long tini, tfin;
-   int n_iteraciones = 5;
+   int n_iteraciones = 1;
    int n_conjuntos_datos = 8;
    double semillas [5] = {2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
 
    vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Newthyroid 10%", "Rand 20%", "Iris 20%", "Ecoli 20%", "Newthyroid 10%"};
    vector<int> n_k {3,3,8,3,3,3,8,3};
-   vector<bool> usar_conjunto {true,true,/*false*/true,true,true,true,/*false*/true,true};
+   vector<bool> usar_conjunto {false,true,false,false,false,false,false,false};
    vector<string> datos {"data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat", "data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat"};
    vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
 
    cout << "Ejecutando programa CCP" << endl;
 
    cout << "Semillas utilizadas: {";
-   for(int i = 0; i < 5; i++){
+   for(int i = 0; i < n_iteraciones; i++){
       cout << (unsigned) semillas[i];
       if(i != 4){
          cout << ", ";
@@ -147,18 +147,22 @@ int main(){
    vector<double> greedy_media;
 
    vector<vector<double>> bl;
-   vector<double>bl_media;
+   vector<double> bl_media;
 
-   bool solucion_completa = false;
-   bool mostrar_iteracion = false;
+   vector<vector<double>> agg_un;
+   vector<double> agg_un_media;
+
+   bool solucion_completa = true;
+   bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
-   bool mostrar_greedy = true;
-   bool mostrar_bl = true;
+   bool mostrar_greedy = false;
+   bool mostrar_bl = false;
+   bool mostrar_agg_un = true;
 
    if(nueva_semilla){
       vector<unsigned> sems;
-      for(int i = 0; i < 5; i++){
+      for(int i = 0; i < n_iteraciones; i++){
          unsigned seed = buscar_semilla();
          cout << "----------------------------------------------------------------" << endl;
          cout << "Semilla encontrada: " << seed << endl;
@@ -213,7 +217,7 @@ int main(){
                      cout << "---------------------------------------------------------------------------------------------------" << endl;
                   }
                   cout << i+1 << "          ";
-                  for(auto it = fila.begin(); it != fila.end(); it++){
+                  for(auto it = fila.begin(); it != fila.end(); ++it){
                      cout << *it << "          ";
                   }
                   cout << endl;
@@ -227,7 +231,7 @@ int main(){
                   greedy_media.push_back(0);
                }
 
-               for(auto i = 0; i < (int) greedy.size(); i++){
+               for(int i = 0; i < (int) greedy.size(); i++){
                   for(int j = 0; j < (int) greedy[i].size(); j++){
                      greedy_media[j] += (greedy[i][j] / n_iteraciones);
                   }
@@ -237,7 +241,7 @@ int main(){
                cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
                cout << "---------------------------------------------------------------------------------------------------" << endl;
                cout << c+1 << "          ";
-               for(auto it = greedy_media.begin(); it != greedy_media.end(); it++){
+               for(auto it = greedy_media.begin(); it != greedy_media.end(); ++it){
                   cout << *it << "          ";
                }
                cout << endl;
@@ -286,7 +290,7 @@ int main(){
                   }
                   cout << i+1 << "          ";
                   vector<double>::iterator it;
-                  for(it = fila.begin(); it != fila.end(); it++){
+                  for(it = fila.begin(); it != fila.end(); ++it){
                      cout << *it << "          ";
                   }
                   cout << endl;
@@ -300,7 +304,7 @@ int main(){
                   bl_media.push_back(0);
                }
 
-               for(auto i = 0; i < (int) bl.size(); i++){
+               for(int i = 0; i < (int) bl.size(); i++){
                   for(int j = 0; j < (int) bl[i].size(); j++){
                      bl_media[j] += (bl[i][j] / n_iteraciones);
                   }
@@ -310,7 +314,7 @@ int main(){
                cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
                cout << "---------------------------------------------------------------------------------------------------" << endl;
                cout << c+1 << "          ";
-               for(auto it = bl_media.begin(); it != bl_media.end(); it++){
+               for(auto it = bl_media.begin(); it != bl_media.end(); ++it){
                   cout << *it << "          ";
                }
                cout << endl;
@@ -322,5 +326,76 @@ int main(){
       cout << endl;
    }
 
+   if(mostrar_agg_un){
+      cout << "----------------- Tabla de resultados AGG_UN -----------------" << endl;
+      for(int c = 0; c < n_conjuntos_datos; c++){
+         if(usar_conjunto[c]){
+            agg_un.clear();
 
+            for(int i = 0; i < n_iteraciones; i++){
+               Set_random(semillas[i]);
+               CCP par(n_k[c],datos[c],restricciones[c]);
+
+               tini= clock();
+               par.AGG_UN();
+               tfin= clock();
+
+               double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
+               vector<double> fila;
+               fila = par.fila_datos();
+               fila.push_back(tiempo);
+               agg_un.push_back(fila);
+
+               if(solucion_completa){
+                  cout << "---------------------------------------------------------------------------------------------------" << endl;
+                  cout << titulos[c] << endl;
+                  cout << "Iteracion: " << i+1 << endl;
+                  cout << "Semilla: " << semillas[i] << endl;
+                  par.mostrar_solucion(true);
+                  cout << "---------------------------------------------------------------------------------------------------" << endl;
+               }
+
+               if(mostrar_iteracion){
+                  if(i == 0){
+                     cout << titulos[c] << endl;
+                     cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+                     cout << "---------------------------------------------------------------------------------------------------" << endl;
+                  }
+                  cout << i+1 << "          ";
+                  vector<double>::iterator it;
+                  for(it = fila.begin(); it != fila.end(); ++it){
+                     cout << *it << "          ";
+                  }
+                  cout << endl;
+                  cout << "---------------------------------------------------------------------------------------------------" << endl;
+               }
+            }
+
+            if(mostrar_media){
+               agg_un_media.clear();
+               for(int i = 0; i < (int) agg_un[0].size(); i++){
+                  agg_un_media.push_back(0);
+               }
+
+               for(int i = 0; i < (int) agg_un.size(); i++){
+                  for(int j = 0; j < (int) agg_un[i].size(); j++){
+                     agg_un_media[j] += (agg_un[i][j] / n_iteraciones);
+                  }
+               }
+
+               cout << "Media: " << titulos[c] << endl;
+               cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+               cout << "---------------------------------------------------------------------------------------------------" << endl;
+               cout << c+1 << "          ";
+               for(auto it = agg_un_media.begin(); it != agg_un_media.end(); ++it){
+                  cout << *it << "          ";
+               }
+               cout << endl;
+               cout << "---------------------------------------------------------------------------------------------------" << endl;
+            }
+         }
+      }
+      cout << endl;
+      cout << endl;
+   }
 }

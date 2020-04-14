@@ -7,6 +7,7 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    infactibilidad = 0;
    lambda = 0;
    f_objetivo = 0;
+   poblacion = 50;
    cargar_posiciones(p);
    cargar_restricciones(r);
    centroides.resize(n_cluster);
@@ -129,24 +130,7 @@ void CCP::calcular_lambda(){
 }
 
 void CCP::infactibilidad_solucion(){
-   //std::cout << "-----------------------" << std::endl;
-   infactibilidad = 0;
-   for(int i = 0; i < (int) solucion.size(); i++){
-      for(int j = i+1; j < (int) solucion.size(); j++){
-         std::pair<int,int> pareja = std::make_pair(i,j);
-         auto it = restricciones.find(pareja);
-         if(it != restricciones.end()){
-            if(it->second == -1 && solucion[i] == solucion[j]){
-               //std::cout << "Infactibilidad CL " << i << " " << j << " detectada" << std::endl;
-               infactibilidad++;
-            } else if(it->second == 1 && solucion[i] != solucion[j]){
-               //std::cout << "Infactibilidad ML " << i << " " << j << " detectada" << std::endl;
-               infactibilidad++;
-            }
-         }
-      }
-   }
-   //std::cout << "-----------------------" << std::endl;
+   infactibilidad = calcular_infact_sol(solucion);
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -244,30 +228,39 @@ void CCP::limpiar_clusters(){
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-void CCP::solucion_inicial(){
+std::vector<int> CCP::crear_solucion(){
+   std::vector<int> sol;
    std::vector<int> index;
    std::vector<std::vector<int>> c;
    c.resize(n_cluster);
+   sol.resize(posiciones.size());
 
    for( unsigned i = 0; i < posiciones.size(); i++){
       index.push_back(i);
    }
    std::random_shuffle(index.begin(), index.end(), Randint_shuffle);
    auto it = index.begin();
-   for( int i = 0; i < n_cluster; i++, it++){
+   for( int i = 0; i < n_cluster; i++, ++it){
       c[i].push_back(*it);
    }
    int random;
-   for(; it != index.end(); it++){
+   for(; it != index.end(); ++it){
       random = Randint(0,n_cluster-1);
       c[random].push_back(*it);
    }
 
    for( int i = 0; i < n_cluster; i++){
       for( unsigned j = 0; j < c[i].size(); j++){
-         solucion[c[i][j]] = i;
+         sol[c[i][j]] = i;
       }
    }
+
+   return sol;
+}
+
+void CCP::solucion_inicial(){
+   solucion = crear_solucion();
+
    for(int i = 0; i < n_cluster; i++){
       calcular_centroide(i);
    }
@@ -355,6 +348,97 @@ bool CCP::quedan_vecinos(){
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
+int CCP::generacion_inicial(){
+   int evals  = 0;
+   for(int i = 0; i < poblacion; i++){
+      generacion.push_back(crear_solucion());
+   }
+   for(auto it = generacion.begin(); it != generacion.end(); ++it){
+      f_generacion.push_back(evaluar_solucion(*it));
+      evals++;
+   }
+
+   return evals;
+}
+
+int CCP::calcular_infact_sol(std::vector<int> sol){
+   int infactibilidad = 0;
+   for(int i = 0; i < (int) sol.size(); i++){
+      for(int j = i+1; j < (int) sol.size(); j++){
+         std::pair<int,int> pareja = std::make_pair(i,j);
+         auto it = restricciones.find(pareja);
+         if(it != restricciones.end()){
+            if(it->second == -1 && sol[i] == sol[j]){
+               infactibilidad++;
+            } else if(it->second == 1 && sol[i] != sol[j]){
+               infactibilidad++;
+            }
+         }
+      }
+   }
+   return infactibilidad;
+}
+
+double CCP::evaluar_solucion(std::vector<int> sol){
+   std::vector<std::vector<double>> cent;
+   std::vector<double> d_intra;
+   std::vector<std::vector<int>> c;
+   double desv_sol;
+   double d_euclidea;
+   int infact;
+   double evaluacion;
+
+   c.resize(n_cluster);
+   for( int i = 0; i < (int) sol.size(); i++){
+      c[sol[i]].push_back(i);
+   }
+
+   cent.resize(n_cluster);
+   for( int i = 0; i < n_cluster; i++){
+      cent[i].resize(posiciones[0].size());
+   }
+   for( int i = 0; i < n_cluster; i++){
+      for(int j = 0; j < (int) posiciones[0].size(); j++){
+         cent[i].push_back(0);
+      }
+   }
+   for(int i = 0; i < n_cluster; i++){
+      for( int j = 0; j < (int) c[i].size(); j++){
+         for( int k = 0; k < (int) posiciones[c[i][j]].size(); k++){
+               cent[i][k] += (1.0/c[i].size()) * posiciones[c[i][j]][k];
+         }
+      }
+   }
+
+   d_intra.resize(n_cluster);
+   for(int i = 0; i < n_cluster; i++){
+      for( int j = 0; j < n_cluster; j++){
+         d_intracluster.push_back(0);
+      }
+      for( int j = 0; j < (int) c[i].size(); j++){
+         for( int k = 0; k < (int) posiciones[c[i][j]].size(); k++){
+            d_euclidea =  std::abs(posiciones[c[i][j]][k] - cent[i][k]);
+            d_euclidea *= d_euclidea;
+            d_intra[i] += (1.0/c[i].size()) * d_euclidea;
+         }
+      }
+   }
+
+   desv_sol = 0;
+   for( int i = 0; i < n_cluster; i++){
+      desv_sol += (1.0/n_cluster)*d_intra[i];
+   }
+
+   infact = calcular_infact_sol(sol);
+
+   evaluacion = desv_sol + lambda*infact;
+
+   return evaluacion;
+
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
 int CCP::greedy(){
    int i = 0, n_max = 500;
    bool cambio_c;
@@ -430,6 +514,14 @@ void CCP::busqueda_local(){
    //std::cout << "Num Evaluaciones: " << i << std::endl;
 
 }
+
+void CCP::AGG_UN(){
+   int eval = 0;
+   eval += generacion_inicial();
+   mostrar_generacion(eval);
+   generacion.clear();
+   f_generacion.clear();
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -443,7 +535,7 @@ void CCP::mostrar_datos(){
    }
 
    std::map<std::pair<int,int>,int>::iterator it = restricciones.begin();
-   for(; it != restricciones.end(); it++){
+   for(; it != restricciones.end(); ++it){
       std::cout << (*it).first.first << ", " << (*it).first.second << ": "  << (*it).second << std::endl;
    }
 
@@ -488,5 +580,15 @@ std::vector<double> CCP::fila_datos(){
    fila.push_back(f_objetivo);
 
    return fila;
+}
+
+void CCP::mostrar_generacion(int e){
+   for(int i = 0; i < (int) generacion.size(); i++){
+      for(int j = 0; j < (int) generacion[i].size(); j++){
+         std::cout << generacion[i][j];
+      }
+      std::cout << " F: " << f_generacion[i] << std::endl;
+   }
+   std::cout << "Evaluaciones: " << e << std::endl;
 }
 /////////////////////////////////////////////////////////////////////////////////
