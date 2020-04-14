@@ -17,7 +17,7 @@ unsigned buscar_semilla(){
       cout << "Seed: " << seed << endl;
       fallo = false;
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data_old/rand_set.dat","data_old/rand_set_const_10.const");
+         CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -29,7 +29,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data_old/rand_set.dat","data_old/rand_set_const_20.const");
+         CCP par(3,"data/rand_set.dat","data/rand_set_const_20.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -41,7 +41,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data_old/iris_set.dat","data_old/iris_set_const_10.const");
+         CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -53,7 +53,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data_old/iris_set.dat","data_old/iris_set_const_20.const");
+         CCP par(3,"data/iris_set.dat","data/iris_set_const_20.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -65,7 +65,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(8,"data_old/ecoli_set.dat","data_old/ecoli_set_const_10.const");
+         CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_10.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -77,7 +77,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(8,"data_old/ecoli_set.dat","data_old/ecoli_set_const_20.const");
+         CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_20.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -103,8 +103,8 @@ int main(){
 
    vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Rand 20%", "Iris 20%", "Ecoli 20%"};
    vector<int> n_k {3,3,8,3,3,8};
-   vector<string> datos {"data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat", "data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat"};
-   vector<string> restricciones {"data_old/rand_set_const_10.const", "data_old/iris_set_const_10.const", "data_old/ecoli_set_const_10.const", "data_old/rand_set_const_20.const", "data_old/iris_set_const_20.const", "data_old/ecoli_set_const_20.const"};
+   vector<string> datos {"data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat"};
+   vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const"};
 
    cout << "Ejecutando programa CCP" << endl;
 
@@ -166,7 +166,7 @@ int main(){
          cout << "---------------------------------------------------------------------------------------------------" << endl;
       }
    }
-   
+
    cout << endl;
    cout << endl;
 
