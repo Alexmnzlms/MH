@@ -33,6 +33,8 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    for( unsigned i = 0; i < solucion.size(); i++){
       solucion[i] = -1;
    }
+
+   calcular_lambda();
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -112,21 +114,18 @@ void CCP::desviacion_general(){
 void CCP::calcular_lambda(){
    lambda = 0;
    double d, d_max = 0.0;
-   int cluster;
-   for( unsigned i = 0; i < posiciones.size(); i++){
-      cluster = buscar_cluster(i);
-      for(int j = 0; j < n_cluster; j++){
-         if(j != cluster){
-            for( unsigned k = 0; k < clusters[j].size(); k++){
-               d = distancia_nodo_nodo(i,clusters[j][k]);
-               if(d > d_max){
-                  d_max = d;
-               }
-            }
+   for( int i = 0; i < (int) posiciones.size(); i++){
+      for( int j = i+1; j < (int) posiciones.size(); j++){
+         d = distancia_nodo_nodo(i,j);
+         if(d > d_max){
+            d_max = d;
          }
       }
    }
    lambda = d_max / restricciones.size();
+   //std::cout << "Distancia maxima del conjunto: " << d_max << std::endl;
+   //std::cout << "Numero de restricciones: " << restricciones.size() << std::endl;
+   //std::cout << "Lambda: " << lambda << std::endl;
 }
 
 void CCP::infactibilidad_solucion(){
@@ -334,7 +333,6 @@ void CCP::leer_solucion(){
    }
    desviacion_general();
    infactibilidad_solucion();
-   calcular_lambda();
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 
@@ -392,7 +390,6 @@ int CCP::greedy(){
 
    generar_solucion();
    desviacion_general();
-   calcular_lambda();
    infactibilidad_solucion();
 
    f_objetivo = desv_gen + infactibilidad * lambda;
@@ -432,7 +429,7 @@ void CCP::busqueda_local(){
          //std::cout << "Num Max Evaluaciones" << std::endl;
       }
    }while(i < 100000 && quedan_vecinos());
-   std::cout << "Num Evaluaciones: " << i << std::endl;
+   //std::cout << "Num Evaluaciones: " << i << std::endl;
 
 }
 /////////////////////////////////////////////////////////////////////////////////
