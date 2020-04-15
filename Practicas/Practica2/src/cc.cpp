@@ -465,6 +465,66 @@ void CCP::seleccion(){
    generacion = poblacion_seleccionada;
    f_generacion = f_poblacion_seleccionada;
 }
+
+std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> p1, std::vector<int> p2){
+   int genoma = ((int) p1.size() / 2);
+   int gen;
+   std::set<int> genes;
+
+   for(int i = 0; i < genoma; i++){
+      gen = Randint(0,((int) p1.size())-1);
+      auto it = genes.find(gen);
+      if(it == genes.end()){
+         genes.insert(gen);
+      }
+   }
+
+   /*for(auto it = genes.begin(); it != genes.end(); ++it){
+      std::cout << *it << std::endl;
+   }*/
+
+   std::vector<int> descendiente;
+   for(int i = 0; i < (int) p1.size(); i++){
+      auto it = genes.find(i);
+      if(it != genes.end()){
+         descendiente.push_back(p1[i]);
+      } else {
+         descendiente.push_back(p2[i]);
+      }
+   }
+   return descendiente;
+}
+
+int CCP::cruce_uniforme(){
+   int eval = 0;
+   int n_hijos = 2;
+   std::vector<std::vector<int>> new_generacion;
+   std::vector<int> desc;
+   int p_cruce = (poblacion / 2) * 0.7;
+
+   std::cout << "Cruzan: " << p_cruce << " pareja" << std::endl;
+
+   for(int i = 0; i < p_cruce; i++){
+      for(int j = 0; j < n_hijos; j++){
+         desc = operador_cruce_uniforme(generacion[i*2],generacion[i*2+1]);
+         new_generacion.push_back(desc);
+      }
+   }
+   for(int i = p_cruce*2; i < poblacion; i++){
+      new_generacion.push_back(generacion[i]);
+   }
+
+   std::vector<double> f_new_generacion;
+   for(int i = 0; i < (int) new_generacion.size(); i++){
+      f_new_generacion.push_back(evaluar_solucion(new_generacion[i]));
+      eval++;
+   }
+
+   generacion = new_generacion;
+   f_generacion = f_new_generacion;
+
+   return eval;
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -549,6 +609,12 @@ void CCP::AGG_UN(){
    eval += generacion_inicial();
    mostrar_generacion(eval);
    seleccion();
+   std::cout << std::endl;
+   std::cout << "Seleccion" << std::endl;
+   mostrar_generacion(eval);
+   eval += cruce_uniforme();
+   std::cout << std::endl;
+   std::cout << "Cruce" << std::endl;
    mostrar_generacion(eval);
    generacion.clear();
    f_generacion.clear();

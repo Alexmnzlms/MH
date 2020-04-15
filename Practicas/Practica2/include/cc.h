@@ -29,6 +29,7 @@ private:
    int poblacion;
    std::vector<std::vector<int>> generacion;
    std::vector<double> f_generacion;
+   std::vector<int> mejor_generacion;
 
    double desv_gen;
    double infactibilidad;
@@ -66,6 +67,8 @@ private:
    double evaluar_solucion(std::vector<int> sol);
    std::vector<int> torneo_binario();
    void seleccion();
+   std::vector<int> operador_cruce_uniforme(std::vector<int> p1, std::vector<int> p2);
+   int cruce_uniforme();
 
 public:
    CCP(const int n, const std::string p, const std::string r);
