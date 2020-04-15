@@ -78,6 +78,8 @@ private:
    void mutar_solucion(std::vector<int> & sol);
    void mutar_generacion();
    void leer_mejor_generado();
+   void cruce_segmento();
+   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2);
 
 public:
    CCP(const int n, const std::string p, const std::string r);

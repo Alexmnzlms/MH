@@ -539,16 +539,17 @@ void CCP::cruce_uniforme(){
       new_generacion.push_back(generacion[i]);
    }
 
-   std::vector<double> f_new_generacion;
-   for(int i = 0; i < (int) new_generacion.size(); i++){
-      f_new_generacion.push_back(evaluar_solucion(new_generacion[i]));
-   }
-
    generacion = new_generacion;
-   f_generacion = f_new_generacion;
 
    mutar_generacion();
    reparar_generacion();
+
+   std::vector<double> f_new_generacion;
+   for(int i = 0; i < (int) generacion.size(); i++){
+      f_new_generacion.push_back(evaluar_solucion(generacion[i]));
+   }
+   f_generacion = f_new_generacion;
+
    conservar_elitismo();
 }
 
@@ -565,6 +566,7 @@ void CCP::conservar_elitismo(){
 void CCP::reparar_solucion(std::vector<int> & sol){
    bool reparacion = false;
    int aleatorio = 0;
+   int tam_sol = ((int) sol.size())-1;
    std::vector<std::vector<int>> c;
    std::vector<int> c_vacio;
    c.resize(n_cluster);
@@ -580,12 +582,15 @@ void CCP::reparar_solucion(std::vector<int> & sol){
       }
    }
    if(reparacion){
-      for(int i = 0; i < (int) c_vacio.size(); i++){
-         do{
-            aleatorio = Randint(0, ((int) sol.size())-1);
-         } while(!(c[sol[aleatorio]].empty()) && (int) (c[sol[aleatorio]].size()) > 1);
-         sol[aleatorio] = c_vacio[i];
-         reparar_solucion(sol);
+      for(auto it = c_vacio.begin(); it != c_vacio.end(); ++it){
+         aleatorio = Randint(0, tam_sol);
+         while(( (int) c[sol[aleatorio]].size()) <= 1){
+            aleatorio = Randint(0, tam_sol);
+         }
+
+         c[sol[aleatorio]].erase(std::find(c[sol[aleatorio]].begin(), c[sol[aleatorio]].end(),aleatorio));
+         sol[aleatorio] = *it;
+         c[sol[aleatorio]].push_back(aleatorio);
       }
    }
 }
@@ -713,22 +718,20 @@ void CCP::AGG_UN(){
    do{
       generacion++;
       seleccionar_mejor();
-      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
-      std::cout << "Generacion: " << generacion << std::endl;
-      mostrar_generacion();
-      std::cout << std::endl;
-      std::cout << std::endl;
+      //std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      //std::cout << "Generacion: " << generacion << std::endl;
+      //mostrar_generacion();
+      //std::cout << std::endl << std::endl;
 
       seleccion();
-      std::cout << std::endl;
-      std::cout << "Seleccion" << std::endl;
-      mostrar_generacion();
+      //std::cout << std::endl;
+      //std::cout << "Seleccion" << std::endl;
+      //mostrar_generacion();
 
       cruce_uniforme();
-      std::cout << std::endl;
-      std::cout << "Cruce" << std::endl;
-      mostrar_generacion();
-      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      //std::cout << std::endl << "Cruce" << std::endl;
+      //mostrar_generacion();
+      // std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
    }while(ind_eval < 100000);
    leer_mejor_generado();
 }

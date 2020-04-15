@@ -121,14 +121,14 @@ unsigned buscar_semilla(){
 
 int main(){
    unsigned long tini, tfin;
-   int n_iteraciones = 5;
+   int n_iteraciones = 1;
    int n_conjuntos_datos = 8;
    double semillas [5] = {2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
 
    vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Newthyroid 10%", "Rand 20%", "Iris 20%", "Ecoli 20%", "Newthyroid 20%"};
    vector<int> n_k {3,3,8,3,3,3,8,3};
-   vector<bool> usar_conjunto {false,false,true,false,false,false,false,false};
+   vector<bool> usar_conjunto {false,false,false,true,false,false,false,true};
    vector<string> datos {"data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat", "data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat"};
    vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
 
@@ -156,8 +156,8 @@ int main(){
    bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
-   bool mostrar_greedy = false;
-   bool mostrar_bl = false;
+   bool mostrar_greedy = true;
+   bool mostrar_bl = true;
    bool mostrar_agg_un = true;
 
    if(nueva_semilla){
