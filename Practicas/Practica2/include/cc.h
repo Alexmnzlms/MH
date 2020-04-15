@@ -27,6 +27,7 @@ private:
    std::vector<std::vector<int>> clusters;
 
    int poblacion;
+   int ind_eval;
    std::vector<std::vector<int>> generacion;
    std::vector<double> f_generacion;
    std::vector<int> mejor_generacion;
@@ -62,13 +63,21 @@ private:
    void leer_vecino();
    bool quedan_vecinos();
 
-   int generacion_inicial();
-   int calcular_infact_sol(std::vector<int> sol);
-   double evaluar_solucion(std::vector<int> sol);
+   void generacion_inicial();
+   int calcular_infact_sol(std::vector<int> & sol);
+   double evaluar_solucion(std::vector<int> & sol);
    std::vector<int> torneo_binario();
+   void seleccionar_mejor();
+   int seleccionar_peor();
    void seleccion();
-   std::vector<int> operador_cruce_uniforme(std::vector<int> p1, std::vector<int> p2);
-   int cruce_uniforme();
+   std::vector<int> operador_cruce_uniforme(std::vector<int> & p1, std::vector<int> & p2);
+   void cruce_uniforme();
+   void conservar_elitismo();
+   void reparar_solucion(std::vector<int> & sol);
+   void reparar_generacion();
+   void mutar_solucion(std::vector<int> & sol);
+   void mutar_generacion();
+   void leer_mejor_generado();
 
 public:
    CCP(const int n, const std::string p, const std::string r);
@@ -78,7 +87,7 @@ public:
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
-   void mostrar_generacion(int e = 0);
+   void mostrar_generacion();
 };
 
 

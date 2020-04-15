@@ -8,6 +8,7 @@ CCP::CCP(const int n, const std::string p, const std::string r){
    lambda = 0;
    f_objetivo = 0;
    poblacion = 50;
+   ind_eval = 0;
    cargar_posiciones(p);
    cargar_restricciones(r);
    centroides.resize(n_cluster);
@@ -348,20 +349,18 @@ bool CCP::quedan_vecinos(){
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-int CCP::generacion_inicial(){
-   int evals  = 0;
+void CCP::generacion_inicial(){
    for(int i = 0; i < poblacion; i++){
       generacion.push_back(crear_solucion());
    }
    for(auto it = generacion.begin(); it != generacion.end(); ++it){
       f_generacion.push_back(evaluar_solucion(*it));
-      evals++;
    }
 
-   return evals;
+   seleccionar_mejor();
 }
 
-int CCP::calcular_infact_sol(std::vector<int> sol){
+int CCP::calcular_infact_sol(std::vector<int> & sol){
    int infactibilidad = 0;
    for(int i = 0; i < (int) sol.size(); i++){
       for(int j = i+1; j < (int) sol.size(); j++){
@@ -379,7 +378,9 @@ int CCP::calcular_infact_sol(std::vector<int> sol){
    return infactibilidad;
 }
 
-double CCP::evaluar_solucion(std::vector<int> sol){
+double CCP::evaluar_solucion(std::vector<int> & sol){
+   ind_eval++;
+
    std::vector<std::vector<double>> cent;
    std::vector<double> d_intra;
    std::vector<std::vector<int>> c;
@@ -452,6 +453,33 @@ std::vector<int> CCP::torneo_binario(){
    return ganadores;
 }
 
+void CCP::seleccionar_mejor(){
+   std::vector<int> mejor;
+   int index_mejor = -1;
+   double d_min = 100000000.0;
+   for(int i = 0; i < (int) f_generacion.size(); i++){
+      if(d_min > f_generacion[i]){
+         d_min = f_generacion[i];
+         index_mejor = i;
+      }
+   }
+
+   mejor_generacion = generacion[index_mejor];
+}
+
+int CCP::seleccionar_peor(){
+   int index_peor = -1;
+   double d_max = -100000000.0;
+   for(int i = 0; i < (int) f_generacion.size(); i++){
+      if(d_max < f_generacion[i]){
+         d_max = f_generacion[i];
+         index_peor = i;
+      }
+   }
+
+   return index_peor;
+}
+
 void CCP::seleccion(){
    std::vector<int> seleccionados = torneo_binario();
    std::vector<std::vector<int>> poblacion_seleccionada;
@@ -466,7 +494,7 @@ void CCP::seleccion(){
    f_generacion = f_poblacion_seleccionada;
 }
 
-std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> p1, std::vector<int> p2){
+std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> & p1, std::vector<int> & p2){
    int genoma = ((int) p1.size() / 2);
    int gen;
    std::set<int> genes;
@@ -495,14 +523,11 @@ std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> p1, std::vector<i
    return descendiente;
 }
 
-int CCP::cruce_uniforme(){
-   int eval = 0;
+void CCP::cruce_uniforme(){
    int n_hijos = 2;
    std::vector<std::vector<int>> new_generacion;
    std::vector<int> desc;
    int p_cruce = (poblacion / 2) * 0.7;
-
-   std::cout << "Cruzan: " << p_cruce << " pareja" << std::endl;
 
    for(int i = 0; i < p_cruce; i++){
       for(int j = 0; j < n_hijos; j++){
@@ -517,13 +542,90 @@ int CCP::cruce_uniforme(){
    std::vector<double> f_new_generacion;
    for(int i = 0; i < (int) new_generacion.size(); i++){
       f_new_generacion.push_back(evaluar_solucion(new_generacion[i]));
-      eval++;
    }
 
    generacion = new_generacion;
    f_generacion = f_new_generacion;
 
-   return eval;
+   mutar_generacion();
+   reparar_generacion();
+   conservar_elitismo();
+}
+
+void CCP::conservar_elitismo(){
+   auto coincidencia = std::find(generacion.begin(), generacion.end(), mejor_generacion);
+
+   if(coincidencia == generacion.end()){
+      int sustituir = seleccionar_peor();
+      generacion[sustituir] = mejor_generacion;
+      f_generacion[sustituir] = evaluar_solucion(mejor_generacion);
+   }
+}
+
+void CCP::reparar_solucion(std::vector<int> & sol){
+   bool reparacion = false;
+   int aleatorio = 0;
+   std::vector<std::vector<int>> c;
+   std::vector<int> c_vacio;
+   c.resize(n_cluster);
+
+   for(int i = 0; i < (int) sol.size(); i++){
+      c[sol[i]].push_back(i);
+   }
+
+   for(int i = 0; i < n_cluster; i++){
+      if(c[i].empty()){
+         reparacion = true;
+         c_vacio.push_back(i);
+      }
+   }
+   if(reparacion){
+      for(int i = 0; i < (int) c_vacio.size(); i++){
+         do{
+            aleatorio = Randint(0, ((int) sol.size())-1);
+         } while(!(c[sol[aleatorio]].empty()) && (int) (c[sol[aleatorio]].size()) > 1);
+         sol[aleatorio] = c_vacio[i];
+         reparar_solucion(sol);
+      }
+   }
+}
+
+void CCP::reparar_generacion(){
+   for(int i = 0; i < (int) generacion.size(); i++){
+      reparar_solucion(generacion[i]);
+   }
+
+}
+
+void CCP::mutar_solucion(std::vector<int> & sol){
+   int aleatorio, mutacion, p_mutacion = 1000;
+   for(int i = 0; i < (int)sol.size(); i++){
+      mutacion= Randint(1,p_mutacion);
+      if(mutacion == 1){
+         aleatorio = Randint(0,n_cluster-1);
+         sol[i] = aleatorio;
+      }
+   }
+}
+
+void CCP::mutar_generacion(){
+   for(int i = 0; i < (int) generacion.size(); i++){
+      mutar_solucion(generacion[i]);
+   }
+}
+
+void CCP::leer_mejor_generado(){
+   limpiar_clusters();
+   solucion = mejor_generacion;
+   for( unsigned i = 0; i < solucion.size(); i++){
+      clusters[solucion[i]].push_back(i);
+   }
+   for( int i = 0; i < n_cluster; i++){
+      calcular_centroide(i);
+   }
+   desviacion_general();
+   infactibilidad_solucion();
+   f_objetivo = desv_gen + (infactibilidad*lambda);
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -605,19 +707,30 @@ void CCP::busqueda_local(){
 }
 
 void CCP::AGG_UN(){
-   int eval = 0;
-   eval += generacion_inicial();
-   mostrar_generacion(eval);
-   seleccion();
-   std::cout << std::endl;
-   std::cout << "Seleccion" << std::endl;
-   mostrar_generacion(eval);
-   eval += cruce_uniforme();
-   std::cout << std::endl;
-   std::cout << "Cruce" << std::endl;
-   mostrar_generacion(eval);
-   generacion.clear();
-   f_generacion.clear();
+   int generacion = 0;
+   generacion_inicial();
+
+   do{
+      generacion++;
+      seleccionar_mejor();
+      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Generacion: " << generacion << std::endl;
+      mostrar_generacion();
+      std::cout << std::endl;
+      std::cout << std::endl;
+
+      seleccion();
+      std::cout << std::endl;
+      std::cout << "Seleccion" << std::endl;
+      mostrar_generacion();
+
+      cruce_uniforme();
+      std::cout << std::endl;
+      std::cout << "Cruce" << std::endl;
+      mostrar_generacion();
+      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+   }while(ind_eval < 100000);
+   leer_mejor_generado();
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -679,13 +792,20 @@ std::vector<double> CCP::fila_datos(){
    return fila;
 }
 
-void CCP::mostrar_generacion(int e){
+void CCP::mostrar_generacion(){
    for(int i = 0; i < (int) generacion.size(); i++){
       for(int j = 0; j < (int) generacion[i].size(); j++){
          std::cout << generacion[i][j];
       }
       std::cout << " F: " << f_generacion[i] << std::endl;
    }
-   std::cout << "Evaluaciones: " << e << std::endl;
+
+   std::cout << "Mejor generado: ";
+   for(int j = 0; j < (int) mejor_generacion.size(); j++){
+      std::cout << mejor_generacion[j];
+   }
+   std::cout << " F: " << evaluar_solucion(mejor_generacion) << std::endl;
+
+   std::cout << "Evaluaciones: " << ind_eval << std::endl;
 }
 /////////////////////////////////////////////////////////////////////////////////
