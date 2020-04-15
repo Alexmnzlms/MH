@@ -504,6 +504,8 @@ std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> & p1, std::vector
       auto it = genes.find(gen);
       if(it == genes.end()){
          genes.insert(gen);
+      } else {
+         i--;
       }
    }
 
@@ -549,8 +551,6 @@ void CCP::cruce_uniforme(){
       f_new_generacion.push_back(evaluar_solucion(generacion[i]));
    }
    f_generacion = f_new_generacion;
-
-   conservar_elitismo();
 }
 
 void CCP::conservar_elitismo(){
@@ -632,6 +632,105 @@ void CCP::leer_mejor_generado(){
    infactibilidad_solucion();
    f_objetivo = desv_gen + (infactibilidad*lambda);
 }
+
+std::vector<int> CCP::operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2, int n){
+   int r,v,tam = (int) p1.size();
+   r = Randint(0, tam-1);
+   v = Randint(0, tam-1);
+   std::set<int> genes_dominantes;
+   int genoma = ((tam - v) / 2);
+   int gen;
+   std::set<int> genes;
+
+   for(int i = 0; i < v; i++){
+      genes_dominantes.insert((r+i)%tam);
+   }
+
+
+
+   for(int i = 0; i < genoma; i++){
+      gen = Randint(0,tam);
+      auto it = genes.find(gen);
+      auto dom = genes_dominantes.find(gen);
+      if(it == genes.end() && dom == genes_dominantes.end()){
+         genes.insert(gen);
+      } else {
+         i--;
+      }
+   }
+
+
+   double vp1 = evaluar_solucion(p1);
+   double vp2 = evaluar_solucion(p2);
+   std::vector<int> mejor;
+   std::vector<int> peor;
+
+   if(vp1 <= vp2){
+      mejor = p1;
+      peor = p2;
+   } else {
+      mejor = p2;
+      peor = p1;
+   }
+
+   std::vector<int> descendiente;
+   for(int i = 0; i < tam; i++){
+      auto it = genes_dominantes.find(i);
+      if(n == 0){
+         if(it != genes_dominantes.end()){
+            descendiente.push_back(mejor[i]);
+         } else {
+            auto it = genes.find(i);
+            if(it != genes.end()){
+               descendiente.push_back(p1[i]);
+            } else {
+               descendiente.push_back(p2[i]);
+            }
+         }
+      } else if(n == 1){
+         if(it != genes_dominantes.end()){
+            descendiente.push_back(peor[i]);
+         } else {
+            auto it = genes.find(i);
+            if(it != genes.end()){
+               descendiente.push_back(p1[i]);
+            } else {
+               descendiente.push_back(p2[i]);
+            }
+         }
+      }
+
+   }
+   return descendiente;
+}
+
+void CCP::cruce_segmento(){
+   int n_hijos = 2;
+   std::vector<std::vector<int>> new_generacion;
+   std::vector<int> desc;
+   int p_cruce = (poblacion / 2) * 0.7;
+
+   for(int i = 0; i < p_cruce; i++){
+      for(int j = 0; j < n_hijos; j++){
+         desc = operador_cruce_segmento(generacion[i*2],generacion[i*2+1]);
+         new_generacion.push_back(desc);
+      }
+   }
+   for(int i = p_cruce*2; i < poblacion; i++){
+      new_generacion.push_back(generacion[i]);
+   }
+
+   generacion = new_generacion;
+
+   mutar_generacion();
+   reparar_generacion();
+
+   std::vector<double> f_new_generacion;
+   for(int i = 0; i < (int) generacion.size(); i++){
+      f_new_generacion.push_back(evaluar_solucion(generacion[i]));
+   }
+   f_generacion = f_new_generacion;
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -711,27 +810,33 @@ void CCP::busqueda_local(){
 
 }
 
-void CCP::AGG_UN(){
+void CCP::AGG(int n){
    int generacion = 0;
    generacion_inicial();
 
    do{
       generacion++;
       seleccionar_mejor();
-      //std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
-      //std::cout << "Generacion: " << generacion << std::endl;
-      //mostrar_generacion();
-      //std::cout << std::endl << std::endl;
+      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Generacion: " << generacion << std::endl;
+      mostrar_generacion();
+      std::cout << std::endl << std::endl;
 
       seleccion();
-      //std::cout << std::endl;
-      //std::cout << "Seleccion" << std::endl;
-      //mostrar_generacion();
+      std::cout << std::endl;
+      std::cout << "Seleccion" << std::endl;
+      mostrar_generacion();
 
-      cruce_uniforme();
-      //std::cout << std::endl << "Cruce" << std::endl;
-      //mostrar_generacion();
-      // std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      if(n == 0){
+         cruce_uniforme();
+      } else if (n == 1){
+         cruce_segmento();
+      }
+
+      conservar_elitismo();
+      std::cout << std::endl << "Cruce" << std::endl;
+      mostrar_generacion();
+      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
    }while(ind_eval < 100000);
    leer_mejor_generado();
 }

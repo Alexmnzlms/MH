@@ -79,13 +79,13 @@ private:
    void mutar_generacion();
    void leer_mejor_generado();
    void cruce_segmento();
-   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2);
+   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2, int n = 0);
 
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy();
    void busqueda_local();
-   void AGG_UN();
+   void AGG(int n);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
