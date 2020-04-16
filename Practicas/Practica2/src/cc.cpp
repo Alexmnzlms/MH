@@ -773,6 +773,92 @@ void CCP::aplicar_estacionario(int n){
    seleccion.clear();
    f_seleccion.clear();
 }
+
+bool CCP::mejor_valor(std::vector<int> & sol, double f_sol, int i){
+   double min = f_sol;
+   int cluster_min = -1;
+   std::vector<int> sol_comp;
+   double f_sol_comp;
+   std::vector<std::vector<int>> c;
+   c.resize(n_cluster);
+   for( int j = 0; j < (int) sol.size(); j++){
+      c[sol[j]].push_back(j);
+   }
+
+   for(int j = 0; j < n_cluster; j++){
+      sol_comp = sol;
+      if(sol[i] != j && ((int) c[j].size()) > 1 ){
+         sol_comp[i] = j;
+         f_sol_comp = evaluar_solucion(sol_comp);
+         if(min > f_sol_comp){
+            cluster_min = j;
+            min = f_sol_comp;
+         }
+      }
+   }
+   if(cluster_min == -1){
+      return false;
+   } else {
+      return true;
+   }
+}
+
+void CCP::busqueda_local_suave(std::vector<int> & sol, double f_sol){
+   int i = 0;
+   std::vector<int> rsi;
+   int tam = (int) sol.size();
+   bool mejora;
+   int fallos;
+   int umbral = 0.1*tam;
+   for( int i = 0; i < tam; i++){
+      rsi.push_back(i);
+   }
+
+   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
+
+   mejora = true;
+   while((mejora || fallos < umbral) && i < tam){
+      if(mejor_valor(sol,f_sol,rsi[i])){
+         mejora = true;
+      } else {
+         fallos++;
+      }
+
+      i++;
+   }
+
+}
+
+void CCP::aplicar_BLS(double p, bool mejor){
+   int probabilidad = p * ((int) generacion.size());
+   std::vector<int> index_mejores;
+   double f_mejor;
+   int i_mejor;
+
+   if(mejor){
+      for(int i = 0; i < probabilidad; i++){
+         f_mejor = 1000000.0;
+         i_mejor = -1;
+         for(int j = 0; j < (int) generacion.size(); j++){
+            auto it = std::find(index_mejores.begin(), index_mejores.end(), j);
+            if(f_generacion[j] < f_mejor && it == index_mejores.end()){
+               i_mejor = j;
+               f_mejor = f_generacion[j];
+            }
+         }
+         index_mejores.push_back(i_mejor);
+      }
+
+      for(int i = 0; i < (int) index_mejores.size(); i++){
+         busqueda_local_suave(generacion[index_mejores[i]], f_generacion[index_mejores[i]]);
+      }
+
+   } else {
+      for(int i = 0; i < probabilidad; i++){
+         busqueda_local_suave(generacion[i], f_generacion[i]);
+      }
+   }
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -852,7 +938,7 @@ void CCP::busqueda_local(){
 
 }
 
-void CCP::AGG(int g, int n){
+void CCP::AG(int g, int n){
    int generacion = 0;
    int select = 0;
    double p_cruce = 0;
@@ -892,6 +978,42 @@ void CCP::AGG(int g, int n){
          aplicar_estacionario(select);
       }
 
+
+   }while(ind_eval < 100000);
+   leer_mejor_generado();
+}
+
+void CCP::AM(int n, double p, bool mejor){
+   int generacion = 0;
+   double p_cruce = 0.7;
+   poblacion = 10;
+   int select = poblacion;
+
+   generacion_inicial();
+
+   do{
+      generacion++;
+      seleccionar_mejor();
+      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Generacion: " << generacion << std::endl;
+      mostrar_generacion();
+      std::cout << std::endl << std::endl;
+
+      operador_seleccion(select);
+      std::cout << std::endl;
+      std::cout << "Seleccion" << std::endl;
+      mostrar_seleccion();
+
+      operador_cruce(0,select,p_cruce);
+      std::cout << std::endl << "Cruce" << std::endl;
+      mostrar_seleccion();
+      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+
+      aplicar_generacional();
+
+      if(generacion%n == 0){
+         aplicar_BLS(p,mejor);
+      }
 
    }while(ind_eval < 100000);
    leer_mejor_generado();

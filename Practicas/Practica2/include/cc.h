@@ -83,13 +83,17 @@ private:
    void leer_mejor_generado();
    void aplicar_generacional();
    void aplicar_estacionario(int n);
+   bool mejor_valor(std::vector<int> & sol, double f_sol,int i);
+   void busqueda_local_suave(std:: vector<int> & sol, double f_sol);
+   void aplicar_BLS(double p, bool mejor);
 
 
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy();
    void busqueda_local();
-   void AGG(int g, int n);
+   void AG(int g, int n);
+   void AM(int n, double p, bool mejor = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
