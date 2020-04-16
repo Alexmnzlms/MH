@@ -29,7 +29,9 @@ private:
    int poblacion;
    int ind_eval;
    std::vector<std::vector<int>> generacion;
+   std::vector<std::vector<int>> seleccion;
    std::vector<double> f_generacion;
+   std::vector<double> f_seleccion;
    std::vector<int> mejor_generacion;
 
    double desv_gen;
@@ -66,30 +68,33 @@ private:
    void generacion_inicial();
    int calcular_infact_sol(std::vector<int> & sol);
    double evaluar_solucion(std::vector<int> & sol);
-   std::vector<int> torneo_binario();
+   std::vector<int> torneo_binario(int t);
    void seleccionar_mejor();
    int seleccionar_peor();
-   void seleccion();
+   void operador_seleccion(int t);
    std::vector<int> operador_cruce_uniforme(std::vector<int> & p1, std::vector<int> & p2);
-   void cruce_uniforme();
+   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2, int n = 0);
+   void operador_cruce(int n, int s,double p);
    void conservar_elitismo();
    void reparar_solucion(std::vector<int> & sol);
-   void reparar_generacion();
+   void reparar_seleccion();
    void mutar_solucion(std::vector<int> & sol);
-   void mutar_generacion();
+   void mutar_seleccion();
    void leer_mejor_generado();
-   void cruce_segmento();
-   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2, int n = 0);
+   void aplicar_generacional();
+   void aplicar_estacionario(int n);
+
 
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy();
    void busqueda_local();
-   void AGG(int n);
+   void AGG(int g, int n);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
    void mostrar_generacion();
+   void mostrar_seleccion();
 };
 
 

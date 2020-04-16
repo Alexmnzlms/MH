@@ -121,14 +121,14 @@ unsigned buscar_semilla(){
 
 int main(){
    unsigned long tini, tfin;
-   int n_iteraciones = 5;
+   int n_iteraciones = 1;
    int n_conjuntos_datos = 8;
    double semillas [5] = {2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
 
    vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Newthyroid 10%", "Rand 20%", "Iris 20%", "Ecoli 20%", "Newthyroid 20%"};
    vector<int> n_k {3,3,8,3,3,3,8,3};
-   vector<bool> usar_conjunto {false,true,false,false,false,false,false,false};
+   vector<bool> usar_conjunto {true,true,true,true,false,false,false,false};
    vector<string> datos {"data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat", "data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat"};
    vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
 
@@ -152,7 +152,7 @@ int main(){
    vector<vector<double>> agg;
    vector<double> agg_media;
 
-   bool solucion_completa = true;
+   bool solucion_completa = false;
    bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
@@ -327,75 +327,77 @@ int main(){
    }
 
    if(mostrar_agg){
-      cout << "----------------- Tabla de resultados AGG -----------------" << endl;
-      for(int c = 0; c < n_conjuntos_datos; c++){
-         if(usar_conjunto[c]){
-            agg.clear();
+      for(int ag = 0; ag < 1; ag++){
+         cout << "----------------- Tabla de resultados AGG -----------------" << endl;
+         for(int c = 0; c < n_conjuntos_datos; c++){
+            if(usar_conjunto[c]){
+               agg.clear();
 
-            for(int i = 0; i < n_iteraciones; i++){
-               Set_random(semillas[i]);
-               CCP par(n_k[c],datos[c],restricciones[c]);
+               for(int i = 0; i < n_iteraciones; i++){
+                  Set_random(semillas[i]);
+                  CCP par(n_k[c],datos[c],restricciones[c]);
 
-               tini= clock();
-               par.AGG(1);
-               tfin= clock();
+                  tini= clock();
+                  par.AGG(1,0);
+                  tfin= clock();
 
-               double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
-               vector<double> fila;
-               fila = par.fila_datos();
-               fila.push_back(tiempo);
-               agg.push_back(fila);
+                  double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
+                  vector<double> fila;
+                  fila = par.fila_datos();
+                  fila.push_back(tiempo);
+                  agg.push_back(fila);
 
-               if(solucion_completa){
-                  cout << "---------------------------------------------------------------------------------------------------" << endl;
-                  cout << titulos[c] << endl;
-                  cout << "Iteracion: " << i+1 << endl;
-                  cout << "Semilla: " << semillas[i] << endl;
-                  par.mostrar_solucion(true);
-                  cout << "---------------------------------------------------------------------------------------------------" << endl;
-               }
-
-               if(mostrar_iteracion){
-                  if(i == 0){
+                  if(solucion_completa){
+                     cout << "---------------------------------------------------------------------------------------------------" << endl;
                      cout << titulos[c] << endl;
-                     cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+                     cout << "Iteracion: " << i+1 << endl;
+                     cout << "Semilla: " << semillas[i] << endl;
+                     par.mostrar_solucion(true);
                      cout << "---------------------------------------------------------------------------------------------------" << endl;
                   }
-                  cout << i+1 << "          ";
-                  vector<double>::iterator it;
-                  for(it = fila.begin(); it != fila.end(); ++it){
+
+                  if(mostrar_iteracion){
+                     if(i == 0){
+                        cout << titulos[c] << endl;
+                        cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+                        cout << "---------------------------------------------------------------------------------------------------" << endl;
+                     }
+                     cout << i+1 << "          ";
+                     vector<double>::iterator it;
+                     for(it = fila.begin(); it != fila.end(); ++it){
+                        cout << *it << "          ";
+                     }
+                     cout << endl;
+                     cout << "---------------------------------------------------------------------------------------------------" << endl;
+                  }
+               }
+
+               if(mostrar_media){
+                  agg_media.clear();
+                  for(int i = 0; i < (int) agg[0].size(); i++){
+                     agg_media.push_back(0);
+                  }
+
+                  for(int i = 0; i < (int) agg.size(); i++){
+                     for(int j = 0; j < (int) agg[i].size(); j++){
+                        agg_media[j] += (agg[i][j] / n_iteraciones);
+                     }
+                  }
+
+                  cout << "Media: " << titulos[c] << " AGG" << endl;
+                  cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
+                  cout << "---------------------------------------------------------------------------------------------------" << endl;
+                  cout << c+1 << "          ";
+                  for(auto it = agg_media.begin(); it != agg_media.end(); ++it){
                      cout << *it << "          ";
                   }
                   cout << endl;
                   cout << "---------------------------------------------------------------------------------------------------" << endl;
                }
             }
-
-            if(mostrar_media){
-               agg_media.clear();
-               for(int i = 0; i < (int) agg[0].size(); i++){
-                  agg_media.push_back(0);
-               }
-
-               for(int i = 0; i < (int) agg.size(); i++){
-                  for(int j = 0; j < (int) agg[i].size(); j++){
-                     agg_media[j] += (agg[i][j] / n_iteraciones);
-                  }
-               }
-
-               cout << "Media: " << titulos[c] << " AGG" << endl;
-               cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "T" << endl;
-               cout << "---------------------------------------------------------------------------------------------------" << endl;
-               cout << c+1 << "          ";
-               for(auto it = agg_media.begin(); it != agg_media.end(); ++it){
-                  cout << *it << "          ";
-               }
-               cout << endl;
-               cout << "---------------------------------------------------------------------------------------------------" << endl;
-            }
          }
+         cout << endl;
+         cout << endl;
       }
-      cout << endl;
-      cout << endl;
    }
 }
