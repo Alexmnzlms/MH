@@ -624,12 +624,12 @@ void CCP::operador_cruce(int n, int s,double p){
 }
 
 void CCP::conservar_elitismo(){
-   auto coincidencia = std::find(seleccion.begin(), seleccion.end(), mejor_generacion);
+   auto coincidencia = std::find(generacion.begin(), generacion.end(), mejor_generacion);
 
-   if(coincidencia == seleccion.end()){
+   if(coincidencia == generacion.end()){
       int sustituir = seleccionar_peor();
-      seleccion[sustituir] = mejor_generacion;
-      f_seleccion[sustituir] = evaluar_solucion(mejor_generacion);
+      generacion[sustituir] = mejor_generacion;
+      f_generacion[sustituir] = evaluar_solucion(mejor_generacion);
    }
 }
 
@@ -704,9 +704,11 @@ void CCP::leer_mejor_generado(){
 }
 
 void CCP::aplicar_generacional(){
-   conservar_elitismo();
    generacion = seleccion;
    f_generacion = f_seleccion;
+   conservar_elitismo();
+   seleccion.clear();
+   f_seleccion.clear();
 }
 
 void CCP::aplicar_estacionario(int n){
@@ -750,11 +752,6 @@ void CCP::aplicar_estacionario(int n){
             max = f_peores[j];
             i_max = j;
          }
-      }
-
-      if(i_min == -1 || i_max == -1){
-         std::cout << "AAAAAAAAAAAAAAAAAAAAA" << std::endl;
-         exit(1);
       }
 
       if(f_seleccion[i_min] < f_peores[i_max]){
@@ -962,6 +959,12 @@ std::vector<double> CCP::fila_datos(){
 void CCP::mostrar_generacion(){
    std::cout << "Tamaño de la poblacion: " << (int) generacion.size() << std::endl;
 
+   for(int i = 0; i < (int) generacion.size(); i++){
+      for(int j = 0; j < (int) generacion[i].size(); j++){
+         std::cout << generacion[i][j];
+      }
+      std::cout << " F: " << f_generacion[i] << std::endl;
+   }
 
    std::cout << "Mejor generado: ";
    for(int j = 0; j < (int) mejor_generacion.size(); j++){

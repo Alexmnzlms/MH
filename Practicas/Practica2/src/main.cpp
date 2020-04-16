@@ -128,7 +128,7 @@ int main(int argc, char ** argv){
    double semillas [5] = {2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
 
-   bool solucion_completa = true;
+   bool solucion_completa = false;
    bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
@@ -147,7 +147,13 @@ int main(int argc, char ** argv){
    vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
 
    n_iteraciones = atoi(argv[1]);
-   usar_conjunto[atoi(argv[2])] = true;
+   if(atoi(argv[2]) == 0){
+      for(int i = 0; i < n_conjuntos_datos; i++){
+         usar_conjunto[i] = true;
+      }
+   } else{
+      usar_conjunto[atoi(argv[2]) - 1] = true;
+   }
 
    char greedy_code[] = "G";
    char bl_code[] = "BL";
