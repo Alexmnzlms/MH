@@ -862,7 +862,7 @@ void CCP::aplicar_BLS(double p, bool mejor){
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-int CCP::greedy(){
+int CCP::greedy(bool v){
    int i = 0, n_max = 500;
    bool cambio_c;
    std::vector<int> rsi;
@@ -886,11 +886,16 @@ int CCP::greedy(){
          }
       }
       solucion_ant = clusters;
-      //mostrar_solucion();
+
+      if(v){
+         mostrar_solucion(true);
+      }
+
       if(cambio_c){
          limpiar_clusters();
       }
       i++;
+
    } while(cambio_c && i < n_max);
 
    generar_solucion();
@@ -901,7 +906,7 @@ int CCP::greedy(){
    return i;
 }
 
-void CCP::busqueda_local(){
+void CCP::busqueda_local(bool v){
    double f_objetivo_ant, infactibilidad_ant;
    int i = 0;
    std::vector<int> solucion_ant;
@@ -921,6 +926,9 @@ void CCP::busqueda_local(){
          solucion_ant = solucion;
          infactibilidad_ant = infactibilidad;
          generar_vecindario();
+         if(v){
+            mostrar_solucion(true);
+         }
       }
       else{
          solucion = solucion_ant;
@@ -938,7 +946,7 @@ void CCP::busqueda_local(){
 
 }
 
-void CCP::AG(int g, int n){
+void CCP::AG(int g, int n, bool v){
    int generacion = 0;
    int select = 0;
    double p_cruce = 0;
@@ -957,20 +965,28 @@ void CCP::AG(int g, int n){
    do{
       generacion++;
       seleccionar_mejor();
-      //std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
-      //std::cout << "Generacion: " << generacion << std::endl;
-      //mostrar_generacion();
-      //std::cout << std::endl << std::endl;
+      if(v){
+         std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+         std::cout << "Generacion: " << generacion << std::endl;
+         mostrar_generacion();
+         std::cout << std::endl << std::endl;
+
+      }
 
       operador_seleccion(select);
-      //std::cout << std::endl;
-      //std::cout << "Seleccion" << std::endl;
-      //mostrar_seleccion();
+      if(v){
+         std::cout << std::endl;
+         std::cout << "Seleccion" << std::endl;
+         mostrar_seleccion();
+      }
+
 
       operador_cruce(n,select,p_cruce);
-      //std::cout << std::endl << "Cruce" << std::endl;
-      //mostrar_seleccion();
-      //std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      if(v){
+         std::cout << std::endl << "Cruce" << std::endl;
+         mostrar_seleccion();
+         std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      }
 
       if(g == 0){
          aplicar_generacional();
@@ -983,7 +999,7 @@ void CCP::AG(int g, int n){
    leer_mejor_generado();
 }
 
-void CCP::AM(int n, double p, bool mejor){
+void CCP::AM(int n, double p, bool mejor, bool v){
    int generacion = 0;
    double p_cruce = 0.7;
    poblacion = 10;
@@ -994,20 +1010,26 @@ void CCP::AM(int n, double p, bool mejor){
    do{
       generacion++;
       seleccionar_mejor();
-      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
-      std::cout << "Generacion: " << generacion << std::endl;
-      mostrar_generacion();
-      std::cout << std::endl << std::endl;
+      if(v){
+         std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+         std::cout << "Generacion: " << generacion << std::endl;
+         mostrar_generacion();
+         std::cout << std::endl << std::endl;
+      }
 
       operador_seleccion(select);
-      std::cout << std::endl;
-      std::cout << "Seleccion" << std::endl;
-      mostrar_seleccion();
+      if(v){
+         std::cout << std::endl;
+         std::cout << "Seleccion" << std::endl;
+         mostrar_seleccion();
+      }
 
       operador_cruce(0,select,p_cruce);
-      std::cout << std::endl << "Cruce" << std::endl;
-      mostrar_seleccion();
-      std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      if(v){
+         std::cout << std::endl << "Cruce" << std::endl;
+         mostrar_seleccion();
+         std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
+      }
 
       aplicar_generacional();
 

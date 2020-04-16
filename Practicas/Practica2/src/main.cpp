@@ -216,6 +216,13 @@ int main(int argc, char ** argv){
       nueva_semilla = true;
    }
 
+   if(argc > 4){
+      char verbose[] = "v";
+      if(strcmp(verbose, argv[4]) == 0){
+         solucion_completa = true;
+      }
+   }
+
 
    cout << "Ejecutando programa CCP" << endl;
 
@@ -272,7 +279,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.greedy();
+               par.greedy(solucion_completa);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
@@ -344,7 +351,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.busqueda_local();
+               par.busqueda_local(solucion_completa);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
@@ -417,7 +424,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.AG(tipo_ag,operador_ag);
+               par.AG(tipo_ag,operador_ag,solucion_completa);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
@@ -490,7 +497,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.AM(generaciones_am,probabilidad_am,mejores_am);
+               par.AM(generaciones_am,probabilidad_am,mejores_am,solucion_completa);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;

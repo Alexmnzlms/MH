@@ -90,10 +90,10 @@ private:
 
 public:
    CCP(const int n, const std::string p, const std::string r);
-   int greedy();
-   void busqueda_local();
-   void AG(int g, int n);
-   void AM(int n, double p, bool mejor = false);
+   int greedy(bool v = false);
+   void busqueda_local(bool v = false);
+   void AG(int g, int n, bool v = false);
+   void AM(int n, double p, bool mejor = false, bool v = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos();
