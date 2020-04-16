@@ -2,6 +2,7 @@
 *.ods
 *.txt
 *.zip
+*_result
 
 # Prerequisites
 *.d
