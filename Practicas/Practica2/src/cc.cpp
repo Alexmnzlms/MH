@@ -799,6 +799,7 @@ bool CCP::mejor_valor(std::vector<int> & sol, double f_sol, int i){
    if(cluster_min == -1){
       return false;
    } else {
+      sol[i] = cluster_min;
       return true;
    }
 }
@@ -846,6 +847,7 @@ void CCP::aplicar_BLS(double p, bool mejor){
                f_mejor = f_generacion[j];
             }
          }
+         //std::cout << "Aplico BLS al mejor: " << i_mejor << std::endl;
          index_mejores.push_back(i_mejor);
       }
 
@@ -855,6 +857,7 @@ void CCP::aplicar_BLS(double p, bool mejor){
 
    } else {
       for(int i = 0; i < probabilidad; i++){
+         //std::cout << "Aplico BLS: " << i << std::endl;
          busqueda_local_suave(generacion[i], f_generacion[i]);
       }
    }
@@ -978,6 +981,7 @@ void CCP::AG(int g, int n, bool v){
          std::cout << std::endl;
          std::cout << "Seleccion" << std::endl;
          mostrar_seleccion();
+         std::cout << "Generacion: " << generacion << std::endl;
       }
 
 
@@ -985,6 +989,7 @@ void CCP::AG(int g, int n, bool v){
       if(v){
          std::cout << std::endl << "Cruce" << std::endl;
          mostrar_seleccion();
+         std::cout << "Generacion: " << generacion << std::endl;
          std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
       }
 
@@ -1022,12 +1027,14 @@ void CCP::AM(int n, double p, bool mejor, bool v){
          std::cout << std::endl;
          std::cout << "Seleccion" << std::endl;
          mostrar_seleccion();
+         std::cout << "Generacion: " << generacion << std::endl;
       }
 
       operador_cruce(0,select,p_cruce);
       if(v){
          std::cout << std::endl << "Cruce" << std::endl;
          mostrar_seleccion();
+         std::cout << "Generacion: " << generacion << std::endl;
          std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
       }
 
