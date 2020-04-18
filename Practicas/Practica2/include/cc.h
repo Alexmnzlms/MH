@@ -39,6 +39,10 @@ private:
    double lambda;
    double f_objetivo;
 
+   int it_greedy;
+   int eval_bl;
+   int gen_ag_am;
+
    void cargar_posiciones(const std::string archivo);
    void cargar_restricciones(const std::string archivo);
 
@@ -83,8 +87,8 @@ private:
    void leer_mejor_generado();
    void aplicar_generacional();
    void aplicar_estacionario(int n);
-   bool mejor_valor(std::vector<int> & sol, double f_sol,int i);
-   void busqueda_local_suave(std:: vector<int> & sol, double f_sol);
+   bool mejor_valor(std::vector<int> & sol, double & f_sol,int i);
+   void busqueda_local_suave(std:: vector<int> & sol, double & f_sol);
    void aplicar_BLS(double p, bool mejor);
 
 
@@ -96,7 +100,7 @@ public:
    void AM(int n, double p, bool mejor = false, bool v = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
-   std::vector<double> fila_datos();
+   std::vector<double> fila_datos(int n);
    void mostrar_generacion();
    void mostrar_seleccion();
 };

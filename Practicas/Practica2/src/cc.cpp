@@ -441,8 +441,8 @@ std::vector<int> CCP::torneo_binario(int t){
    std::vector<int> ganadores;
    int index_a, index_b;
    for(int i = 0; i < t; i++){
-      index_a = Randint(0, t-1);
-      index_b = Randint(0, t-1);
+      index_a = Randint(0, (int)f_generacion.size()-1);
+      index_b = Randint(0, (int)f_generacion.size()-1);
       if(f_generacion[index_a] <= f_generacion[index_b]){
          ganadores.push_back(index_a);
       } else {
@@ -774,7 +774,7 @@ void CCP::aplicar_estacionario(int n){
    f_seleccion.clear();
 }
 
-bool CCP::mejor_valor(std::vector<int> & sol, double f_sol, int i){
+bool CCP::mejor_valor(std::vector<int> & sol, double & f_sol, int i){
    double min = f_sol;
    int cluster_min = -1;
    std::vector<int> sol_comp;
@@ -800,11 +800,12 @@ bool CCP::mejor_valor(std::vector<int> & sol, double f_sol, int i){
       return false;
    } else {
       sol[i] = cluster_min;
+      f_sol = evaluar_solucion(sol);
       return true;
    }
 }
 
-void CCP::busqueda_local_suave(std::vector<int> & sol, double f_sol){
+void CCP::busqueda_local_suave(std::vector<int> & sol, double & f_sol){
    int i = 0;
    std::vector<int> rsi;
    int tam = (int) sol.size();
@@ -906,6 +907,7 @@ int CCP::greedy(bool v){
    infactibilidad_solucion();
 
    f_objetivo = desv_gen + infactibilidad * lambda;
+   it_greedy = i;
    return i;
 }
 
@@ -946,7 +948,7 @@ void CCP::busqueda_local(bool v){
       }
    }while(i < 100000 && quedan_vecinos());
    //std::cout << "Num Evaluaciones: " << i << std::endl;
-
+   eval_bl = i;
 }
 
 void CCP::AG(int g, int n, bool v){
@@ -1002,6 +1004,7 @@ void CCP::AG(int g, int n, bool v){
 
    }while(ind_eval < 100000);
    leer_mejor_generado();
+   gen_ag_am = generacion;
 }
 
 void CCP::AM(int n, double p, bool mejor, bool v){
@@ -1044,8 +1047,9 @@ void CCP::AM(int n, double p, bool mejor, bool v){
          aplicar_BLS(p,mejor);
       }
 
-   }while(ind_eval < 100000);
+   }while(ind_eval < 100000 || generacion < 500);
    leer_mejor_generado();
+   gen_ag_am = generacion;
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -1097,12 +1101,20 @@ void CCP::mostrar_solucion(bool completo){
    }
 }
 
-std::vector<double> CCP::fila_datos(){
+std::vector<double> CCP::fila_datos(int n){
    std::vector<double> fila;
    fila.push_back(desv_gen);
    fila.push_back(infactibilidad);
    fila.push_back(lambda);
    fila.push_back(f_objetivo);
+   if(n == 0){
+      fila.push_back(it_greedy);
+   } else if(n == 1){
+      fila.push_back(eval_bl);
+   } else if(n == 2){
+      fila.push_back(gen_ag_am);
+      fila.push_back(ind_eval);
+   }
 
    return fila;
 }
