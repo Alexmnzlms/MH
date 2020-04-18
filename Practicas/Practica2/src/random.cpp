@@ -30,7 +30,7 @@ float Rand(void)
 int Randint(int low, int high)
 /* Genera un numero aleatorio entero en {low,...,high} */
 {
-    return (int) (low + (high-(low)+1) * Rand());
+    return ((int) (low + (high-(low)+1) * Rand())) % high;
 }
 
 int Randint_shuffle(int high)
