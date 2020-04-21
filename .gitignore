@@ -3,6 +3,8 @@
 *.txt
 *.zip
 *_result
+*_graph
+
 
 # Prerequisites
 *.d
