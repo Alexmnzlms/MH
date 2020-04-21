@@ -4,6 +4,7 @@
 *.zip
 *_result
 *_graph
+*.png
 
 
 # Prerequisites
