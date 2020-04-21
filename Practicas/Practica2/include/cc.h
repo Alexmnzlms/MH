@@ -33,6 +33,7 @@ private:
    std::vector<double> f_generacion;
    std::vector<double> f_seleccion;
    std::vector<int> mejor_generacion;
+   double f_mejor_generacion;
 
    double desv_gen;
    double infactibilidad;
@@ -77,7 +78,7 @@ private:
    int seleccionar_peor();
    void operador_seleccion(int t);
    std::vector<int> operador_cruce_uniforme(std::vector<int> & p1, std::vector<int> & p2);
-   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2, int n = 0);
+   std::vector<int> operador_cruce_segmento(std::vector<int> & p1, double f_p1, std::vector<int> & p2, double f_p2, int n = 0);
    void operador_cruce(int n, int s,double p);
    void conservar_elitismo();
    void reparar_solucion(std::vector<int> & sol);
@@ -96,13 +97,14 @@ public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy(bool v = false);
    void busqueda_local(bool v = false);
-   void AG(int g, int n, bool v = false);
-   void AM(int n, double p, bool mejor = false, bool v = false);
+   void AG(int g, int n, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
+   void AM(int n, double p, bool mejor = false, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos(int n);
    void mostrar_generacion();
    void mostrar_seleccion();
+   void mostrar_agm();
 };
 
 

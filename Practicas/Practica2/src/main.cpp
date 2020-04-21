@@ -125,8 +125,9 @@ int main(int argc, char ** argv){
    unsigned long tini, tfin;
    int n_iteraciones = 5;
    int n_conjuntos_datos = 8;
-   double semillas [5] = {2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
+   double semillas [5] = {123452244/*2024614690*/, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
+   bool grafica_genetico = false;
 
    bool solucion_completa = false;
    bool mostrar_iteracion = true;
@@ -153,6 +154,9 @@ int main(int argc, char ** argv){
    vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
 
    n_iteraciones = atoi(argv[1]);
+   if(n_iteraciones == 0){
+      grafica_genetico = true;
+   }
    if(atoi(argv[2]) == 0){
       for(int i = 0; i < n_conjuntos_datos; i++){
          usar_conjunto[i] = true;
@@ -266,6 +270,30 @@ int main(int argc, char ** argv){
       }
       cout << "};" << endl;
       return(0);
+   }
+
+   if(grafica_genetico){
+      if(mostrar_ag){
+         for(int c = 0; c < n_conjuntos_datos; c++){
+            if(usar_conjunto[c]){
+               Set_random(semillas[0]);
+               CCP par(n_k[c],datos[c],restricciones[c]);
+               par.AG(tipo_ag,operador_ag,false,true);
+               par.mostrar_agm();
+               return(0);
+            }
+         }
+      } else if(mostrar_am){
+         for(int c = 0; c < n_conjuntos_datos; c++){
+            if(usar_conjunto[c]){
+               Set_random(semillas[0]);
+               CCP par(n_k[c],datos[c],restricciones[c]);
+               par.AM(generaciones_am,probabilidad_am,mejores_am,false,true);
+               par.mostrar_agm();
+               return(0);
+            }
+         }
+      }
    }
 
    if(mostrar_greedy){
@@ -423,7 +451,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.AG(tipo_ag,operador_ag,solucion_completa);
+               par.AG(tipo_ag,operador_ag,solucion_completa,false);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
@@ -495,7 +523,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.AM(generaciones_am,probabilidad_am,mejores_am,solucion_completa);
+               par.AM(generaciones_am,probabilidad_am,mejores_am,solucion_completa,false);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;

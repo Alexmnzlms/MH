@@ -246,7 +246,7 @@ std::vector<int> CCP::crear_solucion(){
    }
    int random;
    for(; it != index.end(); ++it){
-      random = Randint(0,n_cluster-1);
+      random = Randint(0,n_cluster);
       c[random].push_back(*it);
    }
 
@@ -280,9 +280,10 @@ void CCP::generar_vecino(){
    int pos, n;
    while(!salir && quedan_vecinos()){
       salir = false;
-      pos = Randint(0,solucion.size()-1);
-      n = Randint(0,n_cluster-1);
-      auto it = vecindario.find(std::make_pair(pos,n));
+      pos = Randint(0,solucion.size());
+      n = Randint(0,n_cluster);
+      std::pair<int,int> pareja = std::make_pair(pos,n);
+      auto it = vecindario.find(pareja);
       if(it != vecindario.end()){
          salir = true;
          vecindario.erase(it);
@@ -441,8 +442,8 @@ std::vector<int> CCP::torneo_binario(int t){
    std::vector<int> ganadores;
    int index_a, index_b;
    for(int i = 0; i < t; i++){
-      index_a = Randint(0, (int)f_generacion.size()-1);
-      index_b = Randint(0, (int)f_generacion.size()-1);
+      index_a = Randint(0, (int)f_generacion.size());
+      index_b = Randint(0, (int)f_generacion.size());
       if(f_generacion[index_a] <= f_generacion[index_b]){
          ganadores.push_back(index_a);
       } else {
@@ -465,6 +466,7 @@ void CCP::seleccionar_mejor(){
    }
 
    mejor_generacion = generacion[index_mejor];
+   f_mejor_generacion = evaluar_solucion(mejor_generacion);
 }
 
 int CCP::seleccionar_peor(){
@@ -495,7 +497,7 @@ std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> & p1, std::vector
    std::set<int> genes;
 
    for(int i = 0; i < genoma; i++){
-      gen = Randint(0,((int) p1.size())-1);
+      gen = Randint(0,((int) p1.size()));
       auto it = genes.find(gen);
       if(it == genes.end()){
          genes.insert(gen);
@@ -520,10 +522,10 @@ std::vector<int> CCP::operador_cruce_uniforme(std::vector<int> & p1, std::vector
    return descendiente;
 }
 
-std::vector<int> CCP::operador_cruce_segmento(std::vector<int> & p1, std::vector<int> & p2, int n){
+std::vector<int> CCP::operador_cruce_segmento(std::vector<int> & p1, double f_p1, std::vector<int> & p2, double f_p2, int n){
    int r,v,tam = (int) p1.size();
-   r = Randint(0, tam-1);
-   v = Randint(0, tam-1);
+   r = Randint(0, tam);
+   v = Randint(0, tam);
    std::set<int> genes_dominantes;
    int genoma = ((tam - v) / 2);
    int gen;
@@ -547,12 +549,10 @@ std::vector<int> CCP::operador_cruce_segmento(std::vector<int> & p1, std::vector
    }
 
 
-   double vp1 = evaluar_solucion(p1);
-   double vp2 = evaluar_solucion(p2);
    std::vector<int> mejor;
    std::vector<int> peor;
 
-   if(vp1 <= vp2){
+   if(f_p1 <= f_p2){
       mejor = p1;
       peor = p2;
    } else {
@@ -601,8 +601,8 @@ void CCP::operador_cruce(int n, int s,double p){
       for(int j = 0; j < n_hijos; j++){
          if(n == 0){
             desc = operador_cruce_uniforme(seleccion[i*2],seleccion[i*2+1]);
-         } else {
-            desc = operador_cruce_segmento(seleccion[i*2],seleccion[i*2+1]);
+         } else if(n == 1){
+            desc = operador_cruce_segmento(seleccion[i*2],f_seleccion[i*2],seleccion[i*2+1],f_seleccion[i*2+1]);
          }
          new_seleccion.push_back(desc);
       }
@@ -677,7 +677,7 @@ void CCP::mutar_solucion(std::vector<int> & sol){
    for(int i = 0; i < (int)sol.size(); i++){
       mutacion= Randint(1,p_mutacion);
       if(mutacion == 1){
-         aleatorio = Randint(0,n_cluster-1);
+         aleatorio = Randint(0,n_cluster);
          sol[i] = aleatorio;
       }
    }
@@ -951,11 +951,13 @@ void CCP::busqueda_local(bool v){
    eval_bl = i;
 }
 
-void CCP::AG(int g, int n, bool v){
+void CCP::AG(int g, int n, bool v, bool graph, bool ignore_eval,int maxgen){
    int generacion = 0;
    int select = 0;
    double p_cruce = 0;
    poblacion = 50;
+   int lim_eval = 100000;
+
 
    if(g == 0){
       select = poblacion;
@@ -965,11 +967,21 @@ void CCP::AG(int g, int n, bool v){
       p_cruce = 1;
    }
 
+   if(ignore_eval){
+      lim_eval = 0;
+   }
+
    generacion_inicial();
 
    do{
       generacion++;
       seleccionar_mejor();
+
+      if(graph){
+         std::cout << generacion << " ";
+         std::cout << evaluar_solucion(mejor_generacion) << std::endl;
+      }
+
       if(v){
          std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
          std::cout << "Generacion: " << generacion << std::endl;
@@ -1002,22 +1014,33 @@ void CCP::AG(int g, int n, bool v){
       }
 
 
-   }while(ind_eval < 100000);
+   }while(ind_eval < lim_eval || generacion < maxgen);
    leer_mejor_generado();
    gen_ag_am = generacion;
 }
 
-void CCP::AM(int n, double p, bool mejor, bool v){
+void CCP::AM(int n, double p, bool mejor, bool v, bool graph, bool ignore_eval,int maxgen){
    int generacion = 0;
    double p_cruce = 0.7;
    poblacion = 10;
    int select = poblacion;
+   int lim_eval = 100000;
+
+   if(ignore_eval){
+      lim_eval = 0;
+   }
 
    generacion_inicial();
 
    do{
       generacion++;
       seleccionar_mejor();
+
+      if(graph){
+         std::cout << generacion << " ";
+         std::cout << f_mejor_generacion << std::endl;
+      }
+
       if(v){
          std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
          std::cout << "Generacion: " << generacion << std::endl;
@@ -1047,7 +1070,7 @@ void CCP::AM(int n, double p, bool mejor, bool v){
          aplicar_BLS(p,mejor);
       }
 
-   }while(ind_eval < 100000 || generacion < 500);
+   }while(ind_eval < lim_eval || generacion < maxgen);//while(ind_eval < 100000 || generacion < 650);
    leer_mejor_generado();
    gen_ag_am = generacion;
 }
@@ -1133,7 +1156,7 @@ void CCP::mostrar_generacion(){
    for(int j = 0; j < (int) mejor_generacion.size(); j++){
       std::cout << mejor_generacion[j];
    }
-   std::cout << " F: " << evaluar_solucion(mejor_generacion) << std::endl;
+   std::cout << " F: " << f_mejor_generacion << std::endl;
 
    std::cout << "Evaluaciones: " << ind_eval << std::endl;
 }
@@ -1151,8 +1174,12 @@ void CCP::mostrar_seleccion(){
    for(int j = 0; j < (int) mejor_generacion.size(); j++){
       std::cout << mejor_generacion[j];
    }
-   std::cout << " F: " << evaluar_solucion(mejor_generacion) << std::endl;
+   std::cout << " F: " << f_mejor_generacion << std::endl;
 
    std::cout << "Evaluaciones: " << ind_eval << std::endl;
+}
+
+void CCP::mostrar_agm(){
+   std::cout << gen_ag_am << " " << f_objetivo << std::endl;
 }
 /////////////////////////////////////////////////////////////////////////////////
