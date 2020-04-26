@@ -227,17 +227,18 @@ int main(int argc, char ** argv){
       }
    }
 
+   if(!grafica_genetico){
+      cout << "Ejecutando programa CCP" << endl;
 
-   cout << "Ejecutando programa CCP" << endl;
-
-   cout << "Semillas utilizadas: {";
-   for(int i = 0; i < n_iteraciones; i++){
-      cout << (unsigned) semillas[i];
-      if(i != 4){
-         cout << ", ";
+      cout << "Semillas utilizadas: {";
+      for(int i = 0; i < n_iteraciones; i++){
+         cout << (unsigned) semillas[i];
+         if(i != 4){
+            cout << ", ";
+         }
       }
+      cout << "};" << endl << endl;
    }
-   cout << "};" << endl << endl;
 
    vector<vector<double>> greedy;
    vector<double> greedy_media;

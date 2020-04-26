@@ -1,15 +1,18 @@
 .SUFFIXES:
 .PHONY: x
 
-OBJ 				 := obj/
-SRC				 := src/
-INC    			 := include/
-exe             := bin/clustering_exe
-units_CCP        := $(wildcard $(addprefix $(SRC), *.cpp))
-units_o         := $(addprefix $(OBJ), $(addsuffix .o, $(notdir $(basename $(units_CCP)))))
-headers         := $(wildcard $(addprefix $(INC), *.h*))
-compiler        := g++
-CCP_flags        := -std=c++11 -Wall -O3 -I/usr/include -I$(INC)
+OBJ				:= obj/
+SRC				:= src/
+INC				:= include/
+exe            := bin/clustering_exe
+units_CCP      := $(wildcard $(addprefix $(SRC), *.cpp))
+units_o        := $(addprefix $(OBJ), $(addsuffix .o, $(notdir $(basename $(units_CCP)))))
+headers        := $(wildcard $(addprefix $(INC), *.h*))
+compiler       := g++ -pg
+CCP_flags      := -std=c++11 -Wall -O3 -I/usr/include -I$(INC)
+
+# compiler       := g++ -g
+# CCP_flags      := -std=c++11 -Wall -O3 -I/usr/include -I$(INC)
 
 
 x: $(exe)

@@ -441,14 +441,18 @@ double CCP::evaluar_solucion(std::vector<int> & sol){
 std::vector<int> CCP::torneo_binario(int t){
    std::vector<int> ganadores;
    int index_a, index_b;
+   index_a = index_b = -1;
    for(int i = 0; i < t; i++){
-      index_a = Randint(0, (int)f_generacion.size());
-      index_b = Randint(0, (int)f_generacion.size());
+      while(index_a == index_b){
+         index_a = Randint(0, (int)f_generacion.size());
+         index_b = Randint(0, (int)f_generacion.size());
+      }
       if(f_generacion[index_a] <= f_generacion[index_b]){
          ganadores.push_back(index_a);
       } else {
          ganadores.push_back(index_b);
       }
+      index_a = index_b;
    }
 
    return ganadores;
