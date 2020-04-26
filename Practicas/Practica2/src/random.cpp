@@ -21,14 +21,14 @@ unsigned long Get_random (void)
 }
 
 float Rand(void)
-/* Genera un numero aleatorio real en el intervalo [0,1[
+/* Genera un número aleatorio real en el intervalo [0,1[
    (incluyendo el 0 pero sin incluir el 1) */
 {
     return (( Seed = ( (Seed * PRIME) & MASK) ) * SCALE );
 }
 
 int Randint(int low, int high)
-/* Genera un numero aleatorio entero en {low,...,high} */
+/* Genera un número aleatorio entero en {low,...,high} */
 {
    int aleatorio = ((int) (low + (high-(low)) * Rand()));
    while (aleatorio >= high){
@@ -38,13 +38,13 @@ int Randint(int low, int high)
 }
 
 int Randint_shuffle(int high)
-/* Genera un numero aleatorio entero en {low,...,high} */
+/* Genera un número aleatorio entero en {low,...,high} */
 {
     return (int) (high * Rand());
 }
 
 float Randfloat(float low, float high)
-/* Genera un numero aleatorio real en el intervalo [low,...,high[
+/* Genera un número aleatorio real en el intervalo [low,...,high[
    (incluyendo 'low' pero sin incluir 'high') */
 {
     return (low + (high-(low))*Rand());

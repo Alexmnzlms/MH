@@ -1,0 +1,107 @@
+\chapter{Descripción de los algoritmos empleados}
+%MAX 4 PAGS
+%Breve descripción de la aplicación de los algoritmos empleados al problema (máximo 4 páginas): Todas las consideraciones comunes a los distintos algoritmos se describirán en este apartado, que será previo a la descripción de los algoritmos específicos. Incluirá por ejemplo la descripción del esquema de representación de soluciones y la descripción en pseudocódigo (no código) de la función objetivo y los operadores comunes.
+
+En esta práctica se han implementado dos algoritmos:
+\begin{itemize}
+   \item \textbf{K-medias Restringido Débil}: Algoritmo de heurística greedy, que busca minimizar tanto la desviación general como la \emph{infeasibility}. $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $
+   \item \textbf{Búsqueda Local}: Como método de búsqueda por trayectorias utilizaremos la búsqueda local, en este caso, se busca minimizar la desviación general y la \emph{infeasibility} multiplicado por un parámetro $ \lambda $ que se describirá mas adelante. $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $
+   \item
+\end{itemize}
+
+\section{Representación de los datos}
+Los datos comunes a ambos algoritmos se representan de la siguiente manera:
+
+\begin{itemize}
+   \item Para los \textbf{datos} utilizo una matriz \emph{posiciones} de números reales de dimensión $ i \times n $.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      double: matriz[i][n] posiciones
+   \end{minted}
+
+   \item Para los \textbf{centroides} de cada cluster utilizo una matriz \emph{centroides} de dimensión $ k \times n $.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      double: matriz[k][n] centroides
+   \end{minted}
+
+   \item Para las \textbf{restricciones}, he elegido no utilizar las representación en forma de matriz, porque es muy costoso recorrerla secuencialmente, y la representación en forma de lista no te permite acceder a un elemento en concreto, por eso he decidido utilizar un map \emph{restricciones}. Este tipo de estructura se puede recorrer secuencialmete de forma eficiente y ademas, existe un operador de búsqueda para poder acceder a un elemento concreto. El map se compone de dos elementos: la clave y el valor. La clave es la pareja de elementos $ x_{i}, x_{j}$ y el valor es 1 si la restricción es de tipo \textbf{ML} o -1 si es de tipo \textbf{CL}.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      Pareja(int,int),int: map restricciones
+   \end{minted}
+
+   \item Los elementos $ x_{i} $ que pertenecen a los distintos \textbf{clusters} los almaceno en una matriz \emph{clusters} de dimensión $ k \times i $.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      double: matriz[k][i] clusters
+   \end{minted}
+
+   \item Finalmente la \textbf{partición} \emph{C} la represento en un vector de enteros \emph{solucion}, en los que posición del vector \emph{i} indica el elemento $ x_{i} $ y el contenido de la posición \emph{i}, \emph{solucion[i]} indica el cluster $ c_{i} $ al que pertenece.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+      int: vector[i] solucion
+   \end{minted}
+\end{itemize}
+
+
+\section{Operadores comunes}
+Hay una serie de operadores que son comunes a los dos algoritmos, los describo a continuación:
+\begin{itemize}
+   \item Operador \textbf{calcular\_centroide(cluster i)} Calcula el centroide de un cluster i:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   Para cada característica u del centroide i:
+      u = 0
+
+   Para cada elemento j del cluster i:
+      Para cada característica c, u del elemento j, centroide i:
+         u += 1/k * c
+   \end{minted}
+   \item Operador \textbf{distancia\_intracluster(cluster i)}: Calcula la distancia intracluster de un cluster i.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   Para todos los clusters:
+      d_intracluster = 0
+
+   Para cada elemento j del cluster i:
+      Para cada característica c, u del elemento j, centroide i :
+         d_intracluster += 1/k * abs(c - u) * abs(c - u)
+   \end{minted}
+   \item Operador \textbf{desviación\_general()}: Calcula la desviación general del problema.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   desv_gen = 0
+
+   Para cada distancia_intracluster i del cluster i:
+      desv_gen += 1/k * i
+   \end{minted}
+   \item Operador \textbf{restricciones\_incumplidas(elemento n, cluster c)}: Este operador calcula el número de restricciones incumplidas que provoca la asignación del elemento n al cluster c.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   incumplidas = 0
+
+   Para cada elemento i del cluster c:
+      Buscar en restricciones la pareja (n,elemento i)
+      Si existe Y valor es -1:
+         incumplidas++
+
+   Para los cluster del conjunto distintos de c:
+      Para cada elemento i del cluster j:
+         Buscar en restricciones la pareja (n,elemento i)
+         Si existe Y valor es 1:
+            incumplidas++
+
+   Devolver incumplidas
+
+   \end{minted}
+\end{itemize}

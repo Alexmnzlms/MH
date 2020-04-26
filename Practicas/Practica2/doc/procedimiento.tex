@@ -1,0 +1,39 @@
+\chapter{Procedimiento}
+\section{Estructura de datos}
+%Breve explicación del procedimiento considerado para desarrollar la práctica: implementación a partir del código proporcionado en prácticas o a partir de cualquier otro, o uso de un framework de metaheurísticas concreto. Inclusión de un pequeño manual de usuario describiendo el proceso para que el profesor de prácticas pueda replicarlo.
+La implementación de la práctica se ha llevado a cabo en c++.\\
+Para la estructura de datos he optado por una sola clase, llamada CCP --- Constrained Clustering Problem --- en la que están todos los datos necesarios para realizar el problema:
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+int n_cluster;
+std::vector<std::vector<double>> posiciones;
+std::vector<std::vector<double>> centroides;
+std::map<std::pair<int,int>,int> restricciones;
+std::set<std::pair<int,int>> vecindario;
+std::vector<std::vector<int>> clusters;
+std::vector<double> d_intracluster;
+std::vector<int> solucion;
+double desv_gen;
+double infactibilidad;
+double lambda;
+double f_objetivo;
+\end{minted}
+
+He utilizado las clases map, set y vector de la STL. \\
+Las restricciones se almacenan en un map debido a que al ser una estructura de datos de la STL, es posible recorrerlo de forma secuencial con un iterador y ademas, cuenta con el operador find, que permite saber si existe determinada combinación de elementos $ x_{i} $ y si la restricción es de tipo ML o CL. Por tanto me pareció mejor implementación que la propuesta de matriz y lista.\\
+El vecindario se utiliza como una manera para poder saber cuando ha terminado el algoritmo de búsqueda local y no volver a explorar vecinos que ya he explorado previamente. Utilizo un set porque a diferencia del vector, no permite que existan parejas (elemento, cluster) duplicadas y ademas estas se ordenan automáticamente en orden ascendente.\\
+\\
+Los operadores de los algoritmos descritos anteriormente se implementan como métodos de la clase CCP.
+
+
+\section{Guía de Uso}
+
+El programa el muy sencillo de compilar. Con la orden \textbf{make} el programa se compila y se ejecuta. Los datos se cargan automáticamente desde los ficheros.\\
+La estructura de ficheros es la siguiente:
+\begin{itemize}
+   \item cc.h: Cabecera de la clase CCP.
+   \item cc.p: implementación de los métodos de la clase CCP.
+   \item main.cpp: Implentación de la ejecución de los algoritmos greedy y BL.
+   \item random.h y random.cpp : Cabeceras e implementación del generador de aleatorios.
+\end{itemize}

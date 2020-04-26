@@ -10,9 +10,9 @@ En la variante \textbf{PAR}, se introduce el concepto de restricción. Nosotros 
 Además, estas restricciones serán débiles, es decir, el objetivo es minimizar tanto el número de restricciones incumplidas --- una solución factible puede incumplir restricciones --- como la desviación general de cada $ c_{i} \in C $.
 \section{Formalización de los datos}
 \begin{itemize}
-   \item Los \textbf{datos} se representan en una matriz $ i \times n $ siendo \emph{i} el numero de datos que tenemos y \emph{n} el numero de características que tiene cada $ x_{i} \in X $ \\
+   \item Los \textbf{datos} se representan en una matriz $ i \times n $ siendo \emph{i} el número de datos que tenemos y \emph{n} el número de características que tiene cada $ x_{i} \in X $ \\
    $ \vec{x_{i}} = \{x_{i0}\ ...\ x_{in}\} $ donde cada $ x_{ij} \in \mathbb{R} $
-   \item Una \textbf{partición} \emph{C} consiste en un conjunto de k clusters. $ C = \{c_{0}\ ...\ c_{k}\} $. Cada $ c_{i} $ contiene un conjunto de elementos $ x_{i} $. El numero de elementos de $ c_{i} $ es $ \left | c_{i} \right | $ y normalmente un cluster $ c_{i} $ tiene asociada una etiqueta $ l_{i} $ --- Esto no lo utilizaremos en la implementación del problema ---.
+   \item Una \textbf{partición} \emph{C} consiste en un conjunto de k clusters. $ C = \{c_{0}\ ...\ c_{k}\} $. Cada $ c_{i} $ contiene un conjunto de elementos $ x_{i} $. El número de elementos de $ c_{i} $ es $ \left | c_{i} \right | $ y normalmente un cluster $ c_{i} $ tiene asociada una etiqueta $ l_{i} $ --- Esto no lo utilizaremos en la implementación del problema ---.
    \item Para cada cluster $ c_{i} $ se puede calcular su \textbf{centroide} $ \vec{\mu_{i}} $ como el promedio de los elementos $ x_{i} \in c_{i} $.\\
    $ \vec{\mu_{i}} = \frac{1}{\left | c_{i} \right |}\sum_{\vec{x_{j}} \in c_{i}} \vec{x_{j}} $.
    \item La \textbf{distancia media intra-cluster} $ \bar{c_{i}} $ se define como la media de las distancias de cada $ x_{i} \in c_{i} $ a su centroide $ \mu_{i} $.\\
@@ -20,7 +20,7 @@ Además, estas restricciones serán débiles, es decir, el objetivo es minimizar
    \item La \textbf{desviación general} de la partición \emph{C} se calcula como la media de las distancias medias intra-\\cluster $ \bar{c_{i}} $.\\
    $ \bar{C} = \frac{1}{k}\sum_{c_{i} \in C} \bar{c_i} $.
    \item El \textbf{conjunto de restricciones totales} \emph{R} se calcula como la unión entre el conjunto de restricciones \emph{ML} y el conjunto de restricciones \emph{CL}.\\
-   $ \left | R \right | $ es el numero de restricciones total $ \left | R \right | = \left | ML \right | + \left | Cl \right | $.
-   \item La \textbf{infactibilidad} --- \emph{infeasibility} --- se calcula como el numero de restricciones que incumple una partición \emph{C} del conjunto \emph{X} dado un conjunto de restricciones \emph{R}. Se define $ V(\vec{x_{i}},\vec{x_{j}}) $ como una función que devuelve 1 si la pareja $ (\vec{x_{i}},\vec{x_{j}}) $ incumple alguna restricción.\\
+   $ \left | R \right | $ es el número de restricciones total $ \left | R \right | = \left | ML \right | + \left | Cl \right | $.
+   \item La \textbf{infactibilidad} --- \emph{infeasibility} --- se calcula como el número de restricciones que incumple una partición \emph{C} del conjunto \emph{X} dado un conjunto de restricciones \emph{R}. Se define $ V(\vec{x_{i}},\vec{x_{j}}) $ como una función que devuelve 1 si la pareja $ (\vec{x_{i}},\vec{x_{j}}) $ incumple alguna restricción.\\
    $ infeasibility = \sum_{i=0}^{n} \sum_{j=i+1}^{n} V(\vec{x_{i}},\vec{x_{j}}) $
 \end{itemize}

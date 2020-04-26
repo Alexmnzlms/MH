@@ -69,7 +69,7 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
    int: vector[] index
    int: matriz[][] c
 
-   Para numero n de 0...i:
+   Para número n de 0...i:
       Añadir n a index
 
    Ordenar index aleatoriamente
@@ -82,11 +82,11 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
       Añadir a fila aleatoria 0...k de c elemento de index
       Pasar al siguiente elemento
 
-   Para cada numero n de 0...k:
+   Para cada número n de 0...k:
       Para los elementos e de la fila n de c:
          Añadir n a solucion en la posición c[n][e]
 
-   Para cada numero n de 0...k:
+   Para cada número n de 0...k:
       calcular_centroide(n)
    \end{minted}
    \newpage
@@ -100,7 +100,7 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
 
    Para cada elemento e en posiciones:
       cluster = Cluster al que pertenece e
-      Para cada numero n de 0...k:
+      Para cada número n de 0...k:
          Si n != cluster:
             Para cada elemento c de cluster n:
                d = Distancia entre n y e
@@ -117,7 +117,7 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
    Vaciar vecindario
 
    Para cada elemento e en posiciones:
-      Para cada numero n de 0...k:
+      Para cada número n de 0...k:
          Si n es distinto al cluster al que pertenece e
          Y en el cluster al que pertenece e hay al menos 1 elemento:
             Insertar en vecindario Pareja (e,n)
@@ -131,8 +131,8 @@ Mientras: i menor que 100000 Y quedan vecinos que explorar
 
    Mientras no salir Y quedan vecinos que explorar:
       salir = falso
-      pos = numero aleatorio 0...i
-      n = numero aleatorio 0...k
+      pos = número aleatorio 0...i
+      n = número aleatorio 0...k
       Buscar Pareja (pos,n) en vecindario
 
       Si Pareja (pos,n) existe en vecindario:
