@@ -65,64 +65,56 @@ Mientras evaluaciones menor que 100000
 
 \subsection{Operadores propios}
 \begin{itemize}
-   \item Operador \textbf{mejor\_valor(sol,f\_sol,i)}:
+   \item Operador \textbf{mejor\_valor(sol,f\_sol,i)}: Este operador recibe una solución, su valoración y el gen que se quiere mejorar. Si existe una majora para este gen, la realiza y devuelve verdadero. Si no, devuelve falso.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   double min = f_sol;
-   int cluster_min = -1;
-   std::vector<int> sol_comp;
-   double f_sol_comp;
-   std::vector<std::vector<int>> c;
-   c.resize(n_cluster);
-   for( int j = 0; j < (int) sol.size(); j++){
-      c[sol[j]].push_back(j);
-   }
+   double: min = f_sol
+   int: cluster_min
+   int: vector sol_comp
+   double: f_sol_comp
+   int: matriz c
 
-   for(int j = 0; j < n_cluster; j++){
-      sol_comp = sol;
-      if(sol[i] != j && ((int) c[j].size()) > 1 ){
-         sol_comp[i] = j;
-         f_sol_comp = evaluar_solucion(sol_comp);
-         if(min > f_sol_comp){
-            cluster_min = j;
-            min = f_sol_comp;
-         }
-      }
-   }
-   if(cluster_min == -1){
-      return false;
-   } else {
-      sol[i] = cluster_min;
-      f_sol = evaluar_solucion(sol);
-      return true;
-   }
+   Para j = 0 hasta tamaño de la solución:
+      Añadr j a c[sol[j]]
+
+   Para j = 0 hasta tamaño de la solución:
+      sol_comp = sol
+      Si sol[i] distinto de j Y tamaño de c[j] mayor que 1:
+         sol_comp[i] = j
+         f_sol_comp = evaluar_solucion(sol_comp)
+         Si min > f_sol_comp:
+            cluster_min = j
+            min = f_sol_comp
+
+   Si cluster_min no se ha asignado a nada:
+      Devolver falso
+   Si no:
+      sol[i] = cluster_min
+      f_sol = evaluar_solucion(sol)
+      Devolver verdadero
+
    \end{minted}
-   \item Operador \textbf{busqueda\_local\_suave()}:
+   \item Operador \textbf{busqueda\_local\_suave()}: Aplica la búsqueda local suave a una solución determinada.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   int i = 0;
-   std::vector<int> rsi;
-   int tam = (int) sol.size();
-   bool mejora;
-   int fallos;
-   int umbral = 0.1*tam;
-   for( int i = 0; i < tam; i++){
-      rsi.push_back(i);
-   }
+   int: i = 0
+   int: tam = tamaño solucion
+   int: vector rsi = {0,1,2....tam-1}
+   bool: mejora
+   int: fallos
+   int: umbral = 0.1*tam
 
-   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
+   Ordenar rsi aleatoriamente
 
-   mejora = true;
-   while((mejora || fallos < umbral) && i < tam){
-      if(mejor_valor(sol,f_sol,rsi[i])){
-         mejora = true;
-      } else {
-         fallos++;
-      }
+   mejora = verdadero
+   Mientras mejora O fallos menor que umbral Y i < tam:
+      Si mejor_valor(sol,f_sol,rsi[i])
+         mejora = verdadero
+      Si no:
+         fallos++
 
-      i++;
-   }
+      i++
    \end{minted}
 \end{itemize}

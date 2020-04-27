@@ -39,6 +39,7 @@ Hay dos operadores de cruce:
    \item \textbf{Operador de segmento fijo [SF]}: El operador de segmento fijo, se basa en generar dos números aleatorios \emph{r} y \emph{v} en el rango $[0,n-1]$. Seleccionamos uno de los padros y copiamos en la descendencia el rango de genes $ [r,((r+v)\,mod\,n) - 1] $. El rsto de genes se determinan de la misma manera que en el operador de cruce uniforme.\\
    Este operador esta sesgado. Si seleccionamos el segmento de datos del padre que mejor valor de la función objetivo tenga, estamos \textbf{favoreciendo la explotación} y si lo hacemos al revés, estaremos \textbf{favoreciendo la exploración}. En este caso, se favorece la \textbf{explotación}.
 \end{itemize}
+\newpage
 \subsubsection{Esquemas de reemplazo y selección}
 Hay dos esquemas de reemplazo y selección:
 \begin{itemize}
@@ -72,9 +73,10 @@ Hacer:
 Mientras evaluaciones menor que 100000
 \end{minted}
 
+\newpage
 \subsection{Operadores propios}
 \begin{itemize}
-   \item Operador \textbf{operador\_seleccion(t)}:
+   \item Operador \textbf{operador\_seleccion(t)}: Selecciona t elementos de la poblacion y los añade a la selección.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -86,7 +88,7 @@ Mientras evaluaciones menor que 100000
       Añadir a f_seleccion el elemento i de f_poblacion
    \end{minted}
 
-   \item Operador \textbf{operador\_cruce\_uniforme(p1,p2)}:
+   \item Operador \textbf{operador\_cruce\_uniforme(p1,p2)}: Aplica el operador de cruce uniforme a p1 y p2 para generar un nuevo vector solución.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -110,7 +112,7 @@ Mientras evaluaciones menor que 100000
       Devolver descendiente
    \end{minted}
 
-   \item Operador \textbf{operador\_cruce\_segmento(p1,f\_p1,p2,f\_p2)}:
+   \item Operador \textbf{operador\_cruce\_segmento(p1,f\_p1,p2,f\_p2)}: Aplica el operador de cruce por segmento fijo a p1 y p2 para generar un nuevo vector solución. Las valoraciones de p1 y p2 se pasan como parámetro para ahorrar evaluaciones innecesarias.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -124,7 +126,6 @@ Mientras evaluaciones menor que 100000
 
    Para i = 0 hasta v:
       Añadir r+i%tam a genes_dominantes
-
    Para i = 0 hasta genoma:
       gen = Numero aleatorio entre 0 y tam
       Si gen no se encuentra en genes Y no se encuentra en genes dominantes:
@@ -137,7 +138,6 @@ Mientras evaluaciones menor que 100000
    Escoger como peor el otro
 
    int: vector descendiente
-
    Para i = 0 hasta tam:
       Si i se encuentra en genes_dominantes:
          Añadir a descendiente, gen i del mejor o peor padre,
@@ -151,7 +151,8 @@ Mientras evaluaciones menor que 100000
    Devolver descendiente
    \end{minted}
 
-   \item Operador \textbf{reparar\_solucion(sol)}:
+\newpage
+   \item Operador \textbf{reparar\_solucion(sol)}: Repara las infactibilidades presentes en un vector solución.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -182,7 +183,7 @@ Mientras evaluaciones menor que 100000
 
    \end{minted}
 
-   \item Operador \textbf{mutar\_solucion(sol)}:
+   \item Operador \textbf{mutar\_solucion(sol)}: Aplica el operador de mutación a una solución.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -198,7 +199,7 @@ Mientras evaluaciones menor que 100000
 
    \end{minted}
 
-   \item Operador \textbf{aplicar\_generacional()}:
+   \item Operador \textbf{aplicar\_generacional()}: Aplica el esquema generacional a una población. Sustituimos la generación actual por la selección y conservamos el elitismo.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -211,7 +212,7 @@ Mientras evaluaciones menor que 100000
    limpiar f_seleccion
    \end{minted}
 
-   \item Operador \textbf{conservar\_elitismo()}:
+   \item Operador \textbf{conservar\_elitismo()}: Comprueba si la mejor solución generada en un generación se encuentra presente en la siguiente generación, y si no es así, la introduce en la generación.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
@@ -224,7 +225,8 @@ Mientras evaluaciones menor que 100000
 
    \end{minted}
 
-   \item Operador \textbf{aplicar\_estacionario(n)}:
+\newpage
+   \item Operador \textbf{aplicar\_estacionario(n)}: Aplica el esquema estacionario a una población. Enfrenta al mejor seleccionado contra el peor de la generación iterativamente e introduce en la generación el mejor de ambos.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
