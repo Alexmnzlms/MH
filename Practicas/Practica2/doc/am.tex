@@ -12,7 +12,7 @@
 %    Pareja(int,int): set vecindario
 % \end{minted}
 
-Los algortimos meméticos se basan en la unión de los algoritmos genéticos con la bússqueda local, por lo que comparten los mismos datos propios.
+Los algortimos meméticos se basan en la unión de los algoritmos genéticos con la búsqueda local, por lo que comparten los mismos datos propios.
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
@@ -29,12 +29,38 @@ Los algortimos meméticos se basan en la unión de los algoritmos genéticos con
 
 
 \subsection{Descripción del algoritmo}
+Los algoritmos memeticos implementados en esta practica, están construidos sobre un algoritmo genético, con esquema generacional y que utiliza el operador de cruce uniforme, es decir, \textbf{AGG\_UN}, puesto que es el algoritmo genético generacional que mejores resultados ha ofrecido durante las pruebas.
+Se implementan 3 versiones de algoritmos meméticos:
+\begin{itemize}
+   \item \textbf{AM\_10-1.0}: Esta versión aplica una BLS cada 10 generaciones a todos los elementos de la población.
+   \item \textbf{AM\_10-0.1}: Esta versión aplica una BLS cada 10 generaciones a 1 elemento de la población.
+   \item \textbf{AM\_10-0.1mej}: Esta versión aplica una BLS cada 10 generaciones al mejor elemento de la población.
+\end{itemize}
+La Búsqueda Local Suave (\textbf{BLS}) es una variación de la búsqueda local que se centra en perder el mayor numero posible de evaluaciones. Existe un número máximo de fallos que puede cometer la BLS. La BLS recorre de menara aleatoria los genes de un cromosoma. Si puede mejorar el cromosoma, aplica el mejor cambio posible, y si no puede mejorarlo más, acumula un fallo. La BLS termina cuando se han recorrido todos los genes o cuando se ha superado el máximo de fallos.
 
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
+int: generacion = 0;
 
+Generamos una poblacion inicial
+//Igual que en la busqueda local.
+
+Hacer:
+   generacion++;
+   Seleccionar el mejor de la población y guardarlo
+
+   Aplicar seleccion
+
+   Aplicar operador de cruce
+
+   Aplicar elitismo y generacional
+
+   Si generacion multiplo de 10:
+      Aplicar BLS
+
+Mientras evaluaciones menor que 100000
 \end{minted}
 
 \subsection{Operadores propios}
@@ -43,12 +69,60 @@ Los algortimos meméticos se basan en la unión de los algoritmos genéticos con
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   double min = f_sol;
+   int cluster_min = -1;
+   std::vector<int> sol_comp;
+   double f_sol_comp;
+   std::vector<std::vector<int>> c;
+   c.resize(n_cluster);
+   for( int j = 0; j < (int) sol.size(); j++){
+      c[sol[j]].push_back(j);
+   }
 
+   for(int j = 0; j < n_cluster; j++){
+      sol_comp = sol;
+      if(sol[i] != j && ((int) c[j].size()) > 1 ){
+         sol_comp[i] = j;
+         f_sol_comp = evaluar_solucion(sol_comp);
+         if(min > f_sol_comp){
+            cluster_min = j;
+            min = f_sol_comp;
+         }
+      }
+   }
+   if(cluster_min == -1){
+      return false;
+   } else {
+      sol[i] = cluster_min;
+      f_sol = evaluar_solucion(sol);
+      return true;
+   }
    \end{minted}
    \item Operador \textbf{busqueda\_local\_suave()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   int i = 0;
+   std::vector<int> rsi;
+   int tam = (int) sol.size();
+   bool mejora;
+   int fallos;
+   int umbral = 0.1*tam;
+   for( int i = 0; i < tam; i++){
+      rsi.push_back(i);
+   }
 
+   std::random_shuffle(rsi.begin(), rsi.end(), Randint_shuffle);
+
+   mejora = true;
+   while((mejora || fallos < umbral) && i < tam){
+      if(mejor_valor(sol,f_sol,rsi[i])){
+         mejora = true;
+      } else {
+         fallos++;
+      }
+
+      i++;
+   }
    \end{minted}
 \end{itemize}

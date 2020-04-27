@@ -12,7 +12,7 @@
 %    Pareja(int,int): set vecindario
 % \end{minted}
 
-En los algoritmos de búsquedas basados en poblaciones necesitamos almacenar un conjunto de soluciones, al que llamaremos población. A cada solución de la población la llamaremos cromosoma. Para cada iteración del algoritmos, diremos que se crea una nueva generación de cromosomas que sustituye a los cromosomas anteriores de la población.\\
+En los algoritmos de búsquedas basados en poblaciones necesitamos almacenar un conjunto de soluciones, al que llamaremos población. A cada solución de la población la llamaremos cromosoma. Para cada iteración del algoritmos, diremos que se crea una nueva generación de cromosomas que sustituye a los cromosomas anteriores de la población. A cada posición dentro de un cromosoma se la denomina gen\\
 Almacenamos en una variable el número de cromosomas que tiene una población. Además, almacenaremos cada generación de la población en una matriz. También debemos tener otra matriz para almacenar los cromosomas seleccionados en cada generación. Las evaluaciones las almacenaremos en una variable que almacena el numero de llamadas que se hace a la función que evalúa una solución.\\
 Para ahorrar evaluaciones, a cada cromosoma, se le asocia un valor de su funcion objetivo que se calcula una sola vez. Estos valores se almacenan en vectores.
 También se almacena en un vector la mejor solución encontrada hasta el momento y su valoración.
@@ -29,29 +29,47 @@ También se almacena en un vector la mejor solución encontrada hasta el momento
    double: f_mejor_generacion;
 \end{minted}
 
-s
-
 \subsection{Descripción del algoritmo}
-Los algoritmos se nombran de la siguiente manera AG[Esquema]\_[Cruce]. Se han implementado las versiones AGG\_UN, AGG\_SF, AGE\_UN, AGE\_SF. Para facilitar la descripción, se describirán por separado los operadores de cruce de los esquemas de selección y reemplazo.
+Los algoritmos se nombran de la siguiente manera \textbf{AG[Esquema]\_[Cruce]}. Se han implementado las versiones \textbf{AGG\_UN}, \textbf{AGG\_SF}, \textbf{AGE\_UN}, \textbf{AGE\_SF}. Para facilitar la descripción, se describirán por separado los operadores de cruce de los esquemas de selección y reemplazo.
 
 \subsubsection{Operadores de cruze}
 Hay dos operadores de cruce:
 \begin{itemize}
-   \item Operador de cruce uniform [UN]:
-   \item Operador de segmento fijo [SF]:
+   \item \textbf{Operador de cruce uniforme [UN]}: El operador de cruce uniforme, se basa en escoger $ n/2 $ números aleatorios en el rango $[0,n-1]$. De uno de los dos padres, seleccionamos los genes que coincidan con estos números y los copiamos en la descendencia. Los genes que quedan por asignar se obtienen del segundo padre.
+   \item \textbf{Operador de segmento fijo [SF]}: El operador de segmento fijo, se basa en generar dos números aleatorios \emph{r} y \emph{v} en el rango $[0,n-1]$. Seleccionamos uno de los padros y copiamos en la descendencia el rango de genes $ [r,((r+v)\,mod\,n) - 1] $. El rsto de genes se determinan de la misma manera que en el operador de cruce uniforme.\\
+   Este operador esta sesgado. Si seleccionamos el segmento de datos del padre que mejor valor de la función objetivo tenga, estamos \textbf{favoreciendo la explotación} y si lo hacemos al revés, estaremos \textbf{favoreciendo la exploración}. En este caso, se favorece la \textbf{explotación}.
 \end{itemize}
 \subsubsection{Esquemas de reemplazo y selección}
 Hay dos esquemas de reemplazo y selección:
 \begin{itemize}
-   \item Generacional [G]:
-   \item Estacionario [E]:
+   \item \textbf{Generacional [G]}: El esquema generacional funciona de la siguiente manera: seleccionamos tantos cromosomas como cromosomas tenga la población ---50 en nuestro caso---. La forma de selección se basa en realizar un torneo binario, es decir, enfrentar a dos cromosomas aleatorios y añadir a la selección el que mejor valor tenga en su función objetivo. Una vez tenemos la selección, generamos tantos cromosomas como cromosomas haya en nuestra selección, utilizando el operador de cruce que corresponda. En el esquema generacional hay un 70\% de probabilidad de cruce, así que aplicando esperanza matemática, solo el 70\% de las parejas cruzan, y el otro 30\% se mantiene igual. Una vez se han cruzado los cromosomas de la población, se aplica el operador de mutación. Cada gen tiene un 0.001\% de probabilidad de mutación. Si un gen muta, cambia aleatoriamente su valor a otro posible cluster. Cuando todos los cromosomas han mutado, se aplica el operador de reparación que arregla las posibles infactibilidades en las soluciones --- haber dejado un cluster vacío, por ejemplo---. Finalmente, se aplica el elitismo. El elitismo se basa en que, después de haber obtenido una nueva generación de cromosomas, se comprueba que la mejor solución de la generación anterior este presente en la nueva generación. Si no esta presente, se sustituye por el peor cromosoma de la generación.
+   \item \textbf{Estacionario [E]}: El esquema estacionario funciona de forma similar al generacional. En cuanto a la selección, en el esquema estacionario solo se seleccionan 2 cromosomas de cada generación, y como es lógico, su probabilidad de cruce es 100\%. A esta selección , tambien se le aplica el operador de mutación y de reparación ---En las mismas condiciones que en el esquema generacional---. A la hora de devolver estos cromosomas a la población, se compara el mejor de la selección contra el peor de la población, y se añade a la población el mejor de los dos. Despues, se comparan el segundo mejor contra el segundo peor y se realiza el mismo proceso.
 \end{itemize}
+El criterio de parada del algortimo es no superar las 100000 evaluaciones.
 
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
+int: generacion = 0;
 
+Generamos una poblacion inicial
+//Igual que en la busqueda local.
+
+Hacer:
+   generacion++;
+   Seleccionar el mejor de la población y guardarlo
+
+   Aplicar seleccion
+
+   Aplicar operador de cruce
+
+   Si generacional:
+      Aplicar elitismo y generacional
+   Si estacionario:
+      Aplicar estacionario
+
+Mientras evaluaciones menor que 100000
 \end{minted}
 
 \subsection{Operadores propios}
@@ -60,42 +78,235 @@ Hay dos esquemas de reemplazo y selección:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   std::vector<int> seleccionados = torneo_binario(t);
 
+   for(int i = 0; i < (int) seleccionados.size(); i++){
+      seleccion.push_back(generacion[seleccionados[i]]);
+      f_seleccion.push_back(f_generacion[seleccionados[i]]);
+   }
    \end{minted}
    \item Operador \textbf{operador\_cruce\_uniforme(p1,p2)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   nt genoma = ((int) p1.size() / 2);
+   int gen;
+   std::set<int> genes;
 
+   for(int i = 0; i < genoma; i++){
+      gen = Randint(0,((int) p1.size()));
+      auto it = genes.find(gen);
+      if(it == genes.end()){
+         genes.insert(gen);
+      } else {
+         i--;
+      }
+   }
+
+   std::vector<int> descendiente;
+   for(int i = 0; i < (int) p1.size(); i++){
+      auto it = genes.find(i);
+      if(it != genes.end()){
+         descendiente.push_back(p1[i]);
+      } else {
+         descendiente.push_back(p2[i]);
+      }
+   }
+   return descendiente;
    \end{minted}
    \item Operador \textbf{operador\_cruce\_segmento(p1,f\_p1,p2,f\_p2)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   int r,v,tam = (int) p1.size();
+   r = Randint(0, tam);
+   v = Randint(0, tam);
+   std::set<int> genes_dominantes;
+   int genoma = ((tam - v) / 2);
+   int gen;
+   std::set<int> genes;
 
+   for(int i = 0; i < v; i++){
+      genes_dominantes.insert((r+i)%tam);
+   }
+
+
+
+   for(int i = 0; i < genoma; i++){
+      gen = Randint(0,tam);
+      auto it = genes.find(gen);
+      auto dom = genes_dominantes.find(gen);
+      if(it == genes.end() && dom == genes_dominantes.end()){
+         genes.insert(gen);
+      } else {
+         i--;
+      }
+   }
+
+
+   std::vector<int> mejor;
+   std::vector<int> peor;
+
+   if(f_p1 <= f_p2){
+      mejor = p1;
+      peor = p2;
+   } else {
+      mejor = p2;
+      peor = p1;
+   }
+
+   std::vector<int> descendiente;
+   for(int i = 0; i < tam; i++){
+      auto it = genes_dominantes.find(i);
+      if(n == 0){
+         if(it != genes_dominantes.end()){
+            descendiente.push_back(mejor[i]);
+         } else {
+            auto it = genes.find(i);
+            if(it != genes.end()){
+               descendiente.push_back(p1[i]);
+            } else {
+               descendiente.push_back(p2[i]);
+            }
+         }
+      } else if(n == 1){
+         if(it != genes_dominantes.end()){
+            descendiente.push_back(peor[i]);
+         } else {
+            auto it = genes.find(i);
+            if(it != genes.end()){
+               descendiente.push_back(p1[i]);
+            } else {
+               descendiente.push_back(p2[i]);
+            }
+         }
+      }
+
+   }
+   return descendiente;
    \end{minted}
    \item Operador \textbf{reparar\_solucion(sol)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   bool reparacion = false;
+   int aleatorio = 0;
+   int tam_sol = ((int) sol.size())-1;
+   std::vector<std::vector<int>> c;
+   std::vector<int> c_vacio;
+   c.resize(n_cluster);
 
+   for(int i = 0; i < (int) sol.size(); i++){
+      c[sol[i]].push_back(i);
+   }
+
+   for(int i = 0; i < n_cluster; i++){
+      if(c[i].empty()){
+         reparacion = true;
+         c_vacio.push_back(i);
+      }
+   }
+   if(reparacion){
+      for(auto it = c_vacio.begin(); it != c_vacio.end(); ++it){
+         aleatorio = Randint(0, tam_sol);
+         while(( (int) c[sol[aleatorio]].size()) <= 1){
+            aleatorio = Randint(0, tam_sol);
+         }
+
+         c[sol[aleatorio]].erase(std::find(c[sol[aleatorio]].begin(), c[sol[aleatorio]].end(),aleatorio));
+         sol[aleatorio] = *it;
+         c[sol[aleatorio]].push_back(aleatorio);
+      }
+   }
    \end{minted}
    \item Operador \textbf{mutar\_solucion(sol)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-
+   void CCP::mutar_solucion(std::vector<int> & sol){
+      int aleatorio, mutacion, p_mutacion = 1000;
+      for(int i = 0; i < (int)sol.size(); i++){
+         mutacion= Randint(1,p_mutacion);
+         if(mutacion == 1){
+            aleatorio = Randint(0,n_cluster);
+            sol[i] = aleatorio;
+         }
+      }
+   }
    \end{minted}
    \item Operador \textbf{aplicar\_generacional()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-
+   generacion = seleccion;
+   f_generacion = f_seleccion;
+   conservar_elitismo();
+   seleccion.clear();
+   f_seleccion.clear();
    \end{minted}
    \item Operador \textbf{aplicar\_estacionario(n)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
+   std::vector<std::vector<int>> estacion;
+   std::vector<double> f_estacion;
+   std::vector<std::vector<int>> peores;
+   std::vector<double> f_peores;
+   int index_peor;
 
+   double max, min;
+   int i_max, i_min;
+
+   for(int i = 0; i < n; i++){
+      index_peor = seleccionar_peor();
+
+      peores.push_back(generacion[index_peor]);
+      f_peores.push_back(f_generacion[index_peor]);
+
+      generacion.erase(std::find(generacion.begin(), generacion.end(), generacion[index_peor]));
+      f_generacion.erase(std::find(f_generacion.begin(), f_generacion.end(), f_generacion[index_peor]));
+   }
+
+   std::vector<int> comprobado_peor;
+   std::vector<int> comprobado_selec;
+
+   for(int i = 0; i < n; i++){
+      min = 100000000.0;
+      max = -1*min;
+      i_min = -1;
+      i_max = i_min;
+      for(int j = 0; j < n; j++){
+         auto it = std::find(comprobado_selec.begin(), comprobado_selec.end(), j);
+         if(f_seleccion[j] < min && it == comprobado_selec.end()){
+            min = f_seleccion[j];
+            i_min = j;
+         }
+      }
+      for(int j = 0; j < n; j++){
+         auto it = std::find(comprobado_peor.begin(), comprobado_peor.end(), j);
+         if(f_peores[j] > max && it == comprobado_peor.end()){
+            max = f_peores[j];
+            i_max = j;
+         }
+      }
+
+      if(f_seleccion[i_min] < f_peores[i_max]){
+         estacion.push_back(seleccion[i_min]);
+         f_estacion.push_back(f_seleccion[i_min]);
+      } else{
+         estacion.push_back(peores[i_max]);
+         f_estacion.push_back(f_peores[i_max]);
+      }
+      comprobado_selec.push_back(i_min);
+      comprobado_peor.push_back(i_max);
+   }
+
+   for(int i = 0; i < n; i++){
+      generacion.push_back(estacion[i]);
+      f_generacion.push_back(f_estacion[i]);
+   }
+
+   seleccion.clear();
+   f_seleccion.clear();
    \end{minted}
 \end{itemize}
