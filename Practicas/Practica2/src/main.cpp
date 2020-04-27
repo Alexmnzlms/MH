@@ -20,7 +20,7 @@ unsigned buscar_semilla(){
       cout << "Seed: " << seed << endl;
       fallo = false;
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data/rand_set.dat","data/rand_set_const_10.const");
+         CCP par(3,"data_old/rand_set.dat","data_old/rand_set_const_10.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -32,7 +32,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data/rand_set.dat","data/rand_set_const_20.const");
+         CCP par(3,"data_old/rand_set.dat","data_old/rand_set_const_20.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -44,7 +44,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data/iris_set.dat","data/iris_set_const_10.const");
+         CCP par(3,"data_old/iris_set.dat","data_old/iris_set_const_10.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -56,7 +56,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data/iris_set.dat","data/iris_set_const_20.const");
+         CCP par(3,"data_old/iris_set.dat","data_old/iris_set_const_20.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -68,7 +68,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_10.const");
+         CCP par(8,"data_old/ecoli_set.dat","data_old/ecoli_set_const_10.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -80,7 +80,7 @@ unsigned buscar_semilla(){
       }
       Set_random(seed);
       for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(8,"data/ecoli_set.dat","data/ecoli_set_const_20.const");
+         CCP par(8,"data_old/ecoli_set.dat","data_old/ecoli_set_const_20.const");
          n = par.greedy();
          if(n >= n_max){
             fallo = true;
@@ -88,30 +88,6 @@ unsigned buscar_semilla(){
          }
          else{
             cout << "Conseguida iteracion " << i+1 << " de ecoli 20%" << endl;
-         }
-      }
-      Set_random(seed);
-      for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data/newthyroid_set.dat","data/newthyroid_set_const_10.const");
-         n = par.greedy();
-         if(n >= n_max){
-            fallo = true;
-            cout << "Fallo en la iteracion " << i+1 << " de newthyroid 10%" << endl;
-         }
-         else{
-            cout << "Conseguida iteracion " << i+1 << " de newthyroid 10%" << endl;
-         }
-      }
-      Set_random(seed);
-      for(int i = 0; i < 1 && !fallo; i++){
-         CCP par(3,"data/newthyroid_set.dat","data/newthyroid_set_const_20.const");
-         n = par.greedy();
-         if(n >= n_max){
-            fallo = true;
-            cout << "Fallo en la iteracion " << i+1 << " de newthyroid 20%" << endl;
-         }
-         else{
-            cout << "Conseguida iteracion " << i+1 << " de newthyroid 20%" << endl;
          }
       }
       if(!fallo){
@@ -124,8 +100,8 @@ unsigned buscar_semilla(){
 int main(int argc, char ** argv){
    unsigned long tini, tfin;
    int n_iteraciones = 5;
-   int n_conjuntos_datos = 8;
-   double semillas [5] = {/*123452244*/2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
+   int n_conjuntos_datos = 6;
+   double semillas [5] = {1584565171,1584764782,1584565259,1584564539,1522565615};
    bool nueva_semilla = false;
    bool grafica_genetico = false;
 
@@ -147,11 +123,11 @@ int main(int argc, char ** argv){
    bool mejores_am = false;
    string nombre_am;
 
-   vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Newthyroid 10%", "Rand 20%", "Iris 20%", "Ecoli 20%", "Newthyroid 20%"};
-   vector<int> n_k {3,3,8,3,3,3,8,3};
-   vector<bool> usar_conjunto {false,false,false,false,false,false,false,false};
-   vector<string> datos {"data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat", "data/rand_set.dat", "data/iris_set.dat", "data/ecoli_set.dat", "data/newthyroid_set.dat"};
-   vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
+   vector<string> titulos {"Rand 10%", "Iris 10%", "Ecoli 10%", "Rand 20%", "Iris 20%", "Ecoli 20%"};
+   vector<int> n_k {3,3,8,3,3,8};
+   vector<bool> usar_conjunto {false,false,false,false,false,false};
+   vector<string> datos {"data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat", "data_old/rand_set.dat", "data_old/iris_set.dat", "data_old/ecoli_set.dat"};
+   vector<string> restricciones {"data_old/rand_set_const_10.const", "data_old/iris_set_const_10.const", "data_old/ecoli_set_const_10.const", "data_old/rand_set_const_20.const", "data_old/iris_set_const_20.const", "data_old/ecoli_set_const_20.const"};
 
    n_iteraciones = atoi(argv[1]);
    if(n_iteraciones == 0){
