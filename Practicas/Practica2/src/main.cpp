@@ -125,7 +125,7 @@ int main(int argc, char ** argv){
    unsigned long tini, tfin;
    int n_iteraciones = 5;
    int n_conjuntos_datos = 8;
-   double semillas [5] = {123452244/*2024614690*/, 2024676296, 2024677261, 2024740484, 2024740899};
+   double semillas [5] = {/*123452244*/2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
    bool grafica_genetico = false;
 
