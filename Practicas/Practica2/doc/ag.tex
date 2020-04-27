@@ -1,17 +1,101 @@
 % \chapter{Métodos de búsqueda}
+\newpage
 \section{Algoritmos genéticos}
 %MAX 2 PAGS
 %Descripción en pseudocódigo de la estructura del método de búsqueda y de todas aquellas operaciones relevantes de cada algoritmo. Este contenido, específico a cada algoritmo se detallará en los correspondientes guiones de prácticas. El pseudocódigo deberá forzosamente reflejar la implementación/ el desarrollo realizados y no ser una descripción genérica extraída de las transparencias de clase o de cualquier otra fuente. La descripción de cada algoritmo no deberá ocupar más de 2 páginas.
 %Para esta primera práctica se incluirá la descripción en pseudocódigo del método de exploración del entorno, el operador de generación de vecino y la generación de soluciones aleatorias empleadas en el algoritmo de BL.
-\subsection{Función objetivo}
-
-
 \subsection{Datos propios}
+% En la búsqueda local es necesario controlar de alguna manera que vecinos se han generado y cuáles puede generar aún, por tanto, almaceno en un set el \textbf{vecindario} correspondiente a la solución que se está evaluando actualmente. El vecindario no es más que las posibles cambios que se pueden realizar en el vector solución, partiendo de un estado determinado.
+% \begin{minted}
+% [fontsize=\footnotesize, linenos]
+% {cpp}
+%    Pareja(int,int): set vecindario
+% \end{minted}
 
+En los algoritmos de búsquedas basados en poblaciones necesitamos almacenar un conjunto de soluciones, al que llamaremos población. A cada solución de la población la llamaremos cromosoma. Para cada iteración del algoritmos, diremos que se crea una nueva generación de cromosomas que sustituye a los cromosomas anteriores de la población.\\
+Almacenamos en una variable el número de cromosomas que tiene una población. Además, almacenaremos cada generación de la población en una matriz. También debemos tener otra matriz para almacenar los cromosomas seleccionados en cada generación. Las evaluaciones las almacenaremos en una variable que almacena el numero de llamadas que se hace a la función que evalúa una solución.\\
+Para ahorrar evaluaciones, a cada cromosoma, se le asocia un valor de su funcion objetivo que se calcula una sola vez. Estos valores se almacenan en vectores.
+También se almacena en un vector la mejor solución encontrada hasta el momento y su valoración.
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+   int: poblacion;
+   int: ind_eval;
+   int: matriz generacion;
+   int: matriz seleccion;
+   double: f_generacion;
+   double: f_seleccion;
+   int: mejor_generacion;
+   double: f_mejor_generacion;
+\end{minted}
+
+s
 
 \subsection{Descripción del algoritmo}
+Los algoritmos se nombran de la siguiente manera AG[Esquema]\_[Cruce]. Se han implementado las versiones AGG\_UN, AGG\_SF, AGE\_UN, AGE\_SF. Para facilitar la descripción, se describirán por separado los operadores de cruce de los esquemas de selección y reemplazo.
+
+\subsubsection{Operadores de cruze}
+Hay dos operadores de cruce:
+\begin{itemize}
+   \item Operador de cruce uniform [UN]:
+   \item Operador de segmento fijo [SF]:
+\end{itemize}
+\subsubsection{Esquemas de reemplazo y selección}
+Hay dos esquemas de reemplazo y selección:
+\begin{itemize}
+   \item Generacional [G]:
+   \item Estacionario [E]:
+\end{itemize}
 
 \subsection{Pseudocódigo del algoritmo}
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
 
+\end{minted}
 
 \subsection{Operadores propios}
+\begin{itemize}
+   \item Operador \textbf{operador\_seleccion(t)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+   \item Operador \textbf{operador\_cruce\_uniforme(p1,p2)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+   \item Operador \textbf{operador\_cruce\_segmento(p1,f\_p1,p2,f\_p2)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+   \item Operador \textbf{reparar\_solucion(sol)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+   \item Operador \textbf{mutar\_solucion(sol)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+   \item Operador \textbf{aplicar\_generacional()}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+   \item Operador \textbf{aplicar\_estacionario(n)}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+
+   \end{minted}
+\end{itemize}

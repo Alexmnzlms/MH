@@ -1,12 +1,19 @@
 \chapter{Descripción de los algoritmos empleados}
 %MAX 4 PAGS
 %Breve descripción de la aplicación de los algoritmos empleados al problema (máximo 4 páginas): Todas las consideraciones comunes a los distintos algoritmos se describirán en este apartado, que será previo a la descripción de los algoritmos específicos. Incluirá por ejemplo la descripción del esquema de representación de soluciones y la descripción en pseudocódigo (no código) de la función objetivo y los operadores comunes.
+\section{Función objetivo}
 
-En esta práctica se han implementado dos algoritmos:
+Todos los algoritmos implementados comparten la misma función objetivo: $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $\\
+\\
+El valor esta función se calcula como la suma de la \textbf{desviación general} ($ \bar{C} $) sumada a la infactibilidad de la partición (\emph{infeasibility}) escalada por un parámetro ($ \lambda $). Este parametro tiene la función de dar relevancia al término \emph{infeasibility}. Si se establece correctamente, primero da prioridad a reducir las restricciones incumplidas por encima de la desviación general.\\ Este parametro se calcula como: $ \lambda = \frac{\left \lceil D \right \rceil}{\left | R \right |}$. Siendo D la distancia entre los dos puntos más lejanos y R el número total de restricciones. \\
+El objetivo de los algoritmos descritos a continuación es minimizar el valor de esta función objetivo.
+
 \begin{itemize}
-   \item \textbf{K-medias Restringido Débil}: Algoritmo de heurística greedy, que busca minimizar tanto la desviación general como la \emph{infeasibility}. $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $
-   \item \textbf{Búsqueda Local}: Como método de búsqueda por trayectorias utilizaremos la búsqueda local, en este caso, se busca minimizar la desviación general y la \emph{infeasibility} multiplicado por un parámetro $ \lambda $ que se describirá mas adelante. $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $
-   \item
+   \item \textbf{K-medias Restringido Débil}: Algoritmo de heurística greedy que se basa en asignar un elemento al cluster de cuyo centroide se encuentre más cercano de manera iterativa, hasta obtener el mejor ajuste posible.
+   \item \textbf{Búsqueda Local}: Algoritmo de búsqueda basado en trayectorias, se basa en la exploracion de vecindarios para obtener la mejor solución posible.
+   \item \textbf{Algoritmos Genéticos}: Algoritmos de búsqueda basado en poblaciones. En esta práctica implementamos un esquema generacional y uno estacionario, y los combinamos con dos operadores de cruce, uno uniforme y otro de segmento fijo, obteniendo así 4 algoritmos distintos.
+   \item \textbf{Algoritmos Meméticos}: Algoritmos de búsqueda basado en poblaciones. Se basa en la implementación de un algortimo genetico con un esquema generacional, con la diferencia que cada determinado numero de generaciones, se aplica una búsqueda local a un determinado numero de cromosomas. En esta práctica se implementan 3 versiones que se desarrollarán más adelante.
+
 \end{itemize}
 
 \section{Representación de los datos}
@@ -84,24 +91,41 @@ Hay una serie de operadores que son comunes a los dos algoritmos, los describo a
    Para cada distancia_intracluster i del cluster i:
       desv_gen += 1/k * i
    \end{minted}
-   \item Operador \textbf{restricciones\_incumplidas(elemento n, cluster c)}: Este operador calcula el número de restricciones incumplidas que provoca la asignación del elemento n al cluster c.
+   \item Operador \textbf{calcular\_lambda()}: Calcula el parámetro $ \lambda $
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   incumplidas = 0
+   lambda = 0
+   double: d, d_max = 0
+   int: cluster
 
-   Para cada elemento i del cluster c:
-      Buscar en restricciones la pareja (n,elemento i)
-      Si existe Y valor es -1:
-         incumplidas++
+   Para cada elemento e en posiciones:
+      cluster = Cluster al que pertenece e
+      Para cada número n de 0...k:
+         Si n != cluster:
+            Para cada elemento c de cluster n:
+               d = Distancia entre n y e
+               Si d es mayor que d_max:
+                  d_max = d
 
-   Para los cluster del conjunto distintos de c:
-      Para cada elemento i del cluster j:
-         Buscar en restricciones la pareja (n,elemento i)
-         Si existe Y valor es 1:
-            incumplidas++
-
-   Devolver incumplidas
+   lambda = d_max / restricciones
 
    \end{minted}
+
+   \item Operador \textbf{calcular\_infact\_sol(solucion)}: Calcula la infacibilidad de un vector solución dado
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   int: infactibilidad = 0
+   Para cada elemento i de la solucion:
+      Desde j = i + 1 hasta el fin de solución:
+         Si la pareja (i,j) pertence al set de restricciones:
+            Si j igual -1 Y elemento i igual elemento j de sol:
+               infactibilidad++
+            Si j igual 1 Y elemento i distinto elemento j de sol:
+               infactibilidad++
+
+   Devolver infactibilidad
+   \end{minted}
+
 \end{itemize}
