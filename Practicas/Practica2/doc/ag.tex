@@ -78,42 +78,38 @@ Mientras evaluaciones menor que 100000
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   std::vector<int> seleccionados = torneo_binario(t);
+   seleccionados = torneo_binario(t)
+   \\Seleccionamos t elementos mediante torneo binario
 
-   for(int i = 0; i < (int) seleccionados.size(); i++){
-      seleccion.push_back(generacion[seleccionados[i]]);
-      f_seleccion.push_back(f_generacion[seleccionados[i]]);
-   }
+   Para i = 0 hasta fin de seleccionados:
+      Añadir a seleccion el elemento i de poblacion
+      Añadir a f_seleccion el elemento i de f_poblacion
    \end{minted}
+
    \item Operador \textbf{operador\_cruce\_uniforme(p1,p2)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}
-   nt genoma = ((int) p1.size() / 2);
-   int gen;
-   std::set<int> genes;
+   int: genoma = tamaño p1 / 2
+   int: gen
+   int: vector genes
 
-   for(int i = 0; i < genoma; i++){
-      gen = Randint(0,((int) p1.size()));
-      auto it = genes.find(gen);
-      if(it == genes.end()){
-         genes.insert(gen);
-      } else {
-         i--;
-      }
-   }
+   Para i = 0 hasta genoma:
+      gen = Numero aleatorio
+      Si gen no esta en genes:
+         Añadir gen a genes
 
-   std::vector<int> descendiente;
-   for(int i = 0; i < (int) p1.size(); i++){
-      auto it = genes.find(i);
-      if(it != genes.end()){
-         descendiente.push_back(p1[i]);
-      } else {
-         descendiente.push_back(p2[i]);
-      }
-   }
-   return descendiente;
+   int: vector descendiente
+
+   Para i = 0 hasta tamaño p1:
+      Si i esta en genes:
+         Añadir a descendiente gen i de p1
+      Si no:
+         Añadir a descendiente gen i de p2
+
+      Devolver descendiente
    \end{minted}
+
    \item Operador \textbf{operador\_cruce\_segmento(p1,f\_p1,p2,f\_p2)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
@@ -185,6 +181,7 @@ Mientras evaluaciones menor que 100000
    }
    return descendiente;
    \end{minted}
+
    \item Operador \textbf{reparar\_solucion(sol)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
@@ -219,6 +216,7 @@ Mientras evaluaciones menor que 100000
       }
    }
    \end{minted}
+
    \item Operador \textbf{mutar\_solucion(sol)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
@@ -234,6 +232,7 @@ Mientras evaluaciones menor que 100000
       }
    }
    \end{minted}
+
    \item Operador \textbf{aplicar\_generacional()}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
@@ -244,6 +243,7 @@ Mientras evaluaciones menor que 100000
    seleccion.clear();
    f_seleccion.clear();
    \end{minted}
+
    \item Operador \textbf{aplicar\_estacionario(n)}:
    \begin{minted}
    [fontsize=\footnotesize, linenos]
@@ -290,8 +290,8 @@ Mientras evaluaciones menor que 100000
          }
       }
 
+      estacion.push_back(seleccion[i_min]);
       if(f_seleccion[i_min] < f_peores[i_max]){
-         estacion.push_back(seleccion[i_min]);
          f_estacion.push_back(f_seleccion[i_min]);
       } else{
          estacion.push_back(peores[i_max]);
