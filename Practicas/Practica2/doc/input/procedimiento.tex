@@ -41,7 +41,7 @@ Los operadores de los algoritmos descritos anteriormente se implementan como mé
 \newpage
 \section{Guía de Uso}
 El programa se compila utilizando la orden \textbf{make}.\\
-Para ejcutar el programa es necesario ejecutar el archivo \textbf{bin/clustering\_exe} $[semilla]$ $[conjunto]$ $[algoritmo]$ $[verbose]$.
+Para ejcutar el programa es necesario ejecutar el archivo \textbf{BIN/clustering\_exe} $[semilla]$ $[conjunto]$ $[algoritmo]$ $[verbose]$.
 Estos parámetros se configuran de la siguiente manera:
 \begin{itemize}
    \item $[semilla]$: Es el numero de semilla que se quiere ejecutar.
@@ -68,11 +68,12 @@ Estos parámetros se configuran de la siguiente manera:
       \item $[AM\_10-1.0]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones a todos los cromosomas
       \item $[AM\_10-0.1]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los cromosomas
       \item $[AM\_10-0.1mej]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los mejores cromosomas
+      \item $[SEM]$: Activa el modo búsqueda de semillas.
    \end{itemize}
    \item $[Verbose]$: Muestra por pantalla la traza de ejecución del algoritmo.
 \end{itemize}
 
-Como ejemplo básico, para obtener los resultados que se muestran a continuación, se debe ejecutar: \textbf{bin/clustering\_exe} 5 0 $[algoritmo]$
+Como ejemplo básico, para obtener los resultados que se muestran a continuación, se debe ejecutar: \textbf{BIN/clustering\_exe} 5 0 $[algoritmo]$
 
 La estructura de ficheros es la siguiente:
 \begin{itemize}

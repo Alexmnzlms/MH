@@ -34,6 +34,29 @@
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccccc}
+\multicolumn{1}{c}{} & \multicolumn{8}{l}{Tabla 6.10: Resultados globales en el PAR con 20\% de restricciones} \\ \cline{2-9}
+\multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Iris}} & \multicolumn{4}{c|}{\textbf{Rand}} \\ \cline{2-9}
+\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
+\multicolumn{1}{|l|}{\textbf{K-medias Restringido Débil}} & 0,60 & 15 & 0,76 & 0,01 & 0,77 & 11 & 0,93 & \multicolumn{1}{c|}{0,01} \\
+\multicolumn{1}{|l|}{\textbf{Búsqueda Local}} & 0,60 & 0 & 0,60 & 0,67 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,64} \\
+\multicolumn{1}{|l|}{\textbf{AGG\_UN}} & 0,60 & 0 & 0,60 & 38,79 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{38,87} \\
+\multicolumn{1}{|l|}{\textbf{AGG\_SF}} & 0,60 & 0 & 0,60 & 39,05 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{39,12} \\
+\multicolumn{1}{|l|}{\textbf{AGE\_UN}} & 0,60 & 0 & 0,60 & 38,81 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{38,81} \\
+\multicolumn{1}{|l|}{\textbf{AGE\_SF}} & 0,60 & 0 & 0,60 & 39,17 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{39,13} \\
+\multicolumn{1}{|l|}{\textbf{AM(10,1.0)}} & 0,60 & 0 & 0,60 & 37,04 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,10} \\
+\multicolumn{1}{|l|}{\textbf{AM(10,0.1)}} & 0,60 & 0 & 0,60 & 37,11 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,15} \\
+\multicolumn{1}{|l|}{\textbf{AM(10,0.1mej)}} & 0,60 & 0 & 0,60 & 37,10 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,18} \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccc}
 \multicolumn{1}{c}{} & \multicolumn{8}{l}{Tabla 6.10: Resultados globales en el PAR con 10\% de restricciones} \\ \cline{2-9}
 \multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Ecoli}} & \multicolumn{4}{c|}{\textbf{Newthyroid}} \\ \cline{2-9}
 \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
@@ -58,36 +81,13 @@
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccccc}
 \multicolumn{1}{c}{} & \multicolumn{8}{l}{Tabla 6.10: Resultados globales en el PAR con 20\% de restricciones} \\ \cline{2-9}
-\multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Iris}} & \multicolumn{4}{c|}{\textbf{Rand}} \\ \cline{2-9}
-\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
-\multicolumn{1}{|l|}{\textbf{K-medias Restringido Débil}} & 0,60 & 15 & 0,76 & 0,01 & 0,77 & 11 & 0,93 & \multicolumn{1}{c|}{0,01} \\
-\multicolumn{1}{|l|}{\textbf{Búsqueda Local}} & 0,60 & 0 & 0,60 & 0,67 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,64} \\
-\multicolumn{1}{|l|}{\textbf{AGG\_UN}} & 0,60 & 0 & 0,60 & 38,79 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{38,87} \\
-\multicolumn{1}{|l|}{\textbf{AGG\_SF}} & 0,60 & 0 & 0,60 & 39,05 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{39,12} \\
-\multicolumn{1}{|l|}{\textbf{AGE\_UN}} & 0,60 & 0 & 0,60 & 38,81 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{38,81} \\
-\multicolumn{1}{|l|}{\textbf{AGE\_SF}} & 0,60 & 0 & 0,60 & 39,17 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{39,13} \\
-\multicolumn{1}{|l|}{\textbf{AM(10,1.0)}} & 0,60 & 0 & 0,60 & 37,04 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,10} \\
-\multicolumn{1}{|l|}{\textbf{AM(10,0.1)}} & 0,60 & 0 & 0,60 & 37,11 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,15} \\
-\multicolumn{1}{|l|}{\textbf{AM(10,0.1mej)}} & 0,60 & 0 & 0,60 & 37,10 & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,18} \\ \hline
-\end{tabular}%
-}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow}
-% \usepackage{graphicx}
-\begin{table}[H]
-\centering
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lcccccccc}
-\multicolumn{1}{c}{} & \multicolumn{8}{l}{Tabla 6.10: Resultados globales en el PAR con 20\% de restricciones} \\ \cline{2-9}
 \multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Ecoli}} & \multicolumn{4}{c|}{\textbf{Newthyroid}} \\ \cline{2-9}
 \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
 \multicolumn{1}{|l|}{\textbf{K-medias Restringido Débil}} & 1.642,50 & 146 & 1.790,36 & 0,23 & 318,22 & 103 & 397,72 & \multicolumn{1}{c|}{0,01} \\
 \multicolumn{1}{|l|}{\textbf{Búsqueda Local}} & 1.673,46 & 340 & 2.018,01 & 48,48 & 311,87 & 20 & 327,56 & \multicolumn{1}{c|}{3,19} \\
 \multicolumn{1}{|l|}{\textbf{AGG\_UN}} & 948,18 & 165 & 1.115,70 & 204,08 & 269,39 & 62 & 316,75 & \multicolumn{1}{c|}{80,76} \\
 \multicolumn{1}{|l|}{\textbf{AGG\_SF}} & 946,03 & 175 & 1.123,67 & 204,81 & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{81,46} \\
-\multicolumn{1}{|l|}{\textbf{AGE\_UN}} & 942,56 & 189 & 1.134,18 & 207,88 & 268,46 & 77 & 327,51 & \multicolumn{1}{c|}{328,62} \\
+\multicolumn{1}{|l|}{\textbf{AGE\_UN}} & 942,56 & 189 & 1.134,18 & 207,88 & 268,46 & 77 & 327,51 & \multicolumn{1}{c|}{80,52} \\
 \multicolumn{1}{|l|}{\textbf{AGE\_SF}} & 950,07 & 148 & 1.099,96 & 206,69 & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{81,01} \\
 \multicolumn{1}{|l|}{\textbf{AM(10,1.0)}} & 917,43 & 123 & 1.041,60 & 223,52 & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{78,11} \\
 \multicolumn{1}{|l|}{\textbf{AM(10,0.1)}} & 927,62 & 98 & 1.026,67 & 201,03 & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{77,53} \\
@@ -493,7 +493,7 @@
 \multicolumn{1}{l|}{\textbf{Ejecución 3}} & 1.042,89 & 210 & 1.255,58 & \multicolumn{1}{c|}{207,66} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{80,67} \\
 \multicolumn{1}{l|}{\textbf{Ejecución 4}} & 946,14 & 147 & 1.095,02 & \multicolumn{1}{c|}{204,69} & 259,11 & 220 & 428,26 & \multicolumn{1}{c|}{80,71} \\
 \multicolumn{1}{l|}{\textbf{Ejecución 5}} & 875,24 & 267 & 1.145,65 & \multicolumn{1}{c|}{204,62} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{79,96} \\
-\multicolumn{1}{l|}{\textbf{Media}} & 942,56 & 189 & 1.134,18 & \multicolumn{1}{c|}{207,88} & 268,46 & 77 & 327,51 & \multicolumn{1}{c|}{328,62} \\ \cline{2-9}
+\multicolumn{1}{l|}{\textbf{Media}} & 942,56 & 189 & 1.134,18 & \multicolumn{1}{c|}{207,88} & 268,46 & 77 & 327,51 & \multicolumn{1}{c|}{80,52} \\ \cline{2-9}
 \end{tabular}%
 }
 \end{table}
