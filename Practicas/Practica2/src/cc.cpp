@@ -983,7 +983,7 @@ void CCP::AG(int g, int n, bool v, bool graph, bool ignore_eval,int maxgen){
 
       if(graph){
          std::cout << generacion << " ";
-         std::cout << evaluar_solucion(mejor_generacion) << std::endl;
+         std::cout << f_mejor_generacion << std::endl;
       }
 
       if(v){
