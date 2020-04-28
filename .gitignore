@@ -5,8 +5,8 @@
 *_result
 *_graph
 *.png
-generar_entrega.sh
-
+*.sh
+*.gp
 
 # Prerequisites
 *.d
