@@ -5,7 +5,8 @@
 *_result
 *_graph
 *.png
-
+*.sh
+*.gp
 
 # Prerequisites
 *.d
