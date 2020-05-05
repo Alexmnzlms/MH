@@ -3,9 +3,9 @@
 Después de la correción de la práctica anterior, se han implementado varios cambios con respecto a las siguientes partes:
 
 \begin{itemize}
-   \item Se ha modificado el calculo de la infactibilidad y se han redistribuido las funciones de cada algoritmo.
+   \item Se ha modificado el cálculo de la infactibilidad y se han redistribuido las funciones de cada algoritmo.
    \item Función Objetivo Greedy: Ahora se tiene en cuenta el parámetro $ \lambda $ para calcular la función objetivo.
-   \item Búsqueda Local: Se ha modificado el operador de vecino, debido a los errores en el calculo de la solución. Ya no se factoriza el calculo de la infacibilidad, por lo que el tiempo de ejecución del algoritmo ha aumentado. Además, había un fallo a la hora de calcular la Tasa\_C de la solución. Cuando se recalculaba la desviación general para obtener la función objetivo, no se estaban recalculando los centroides de los clusters. Por ello, la solución obtenida era incorrecta y presentaba una altísima infactibilidad.
+   \item Búsqueda Local: Se ha modificado el operador de vecino, debido a los errores en el cálculo de la solución. Ya no se factoriza el cálculo de la infacibilidad, por lo que el tiempo de ejecución del algoritmo ha aumentado. Además, había un fallo a la hora de calcular la Tasa\_C de la solución. Cuando se recalculaba la desviación general para obtener la función objetivo, no se estaban recalculando los centroides de los clusters. Por ello, la solución obtenida era incorrecta y presentaba una altísima infactibilidad.
 \end{itemize}
 Ambos cambios se encuentran reflejados en los apartados que explican los algoritmos greedy y búsqueda local.\\
 Debido a estos cambios, he repetido las pruebas de la práctica anterior con las mismas semillas y los mismos conjuntos de datos:
@@ -56,7 +56,7 @@ Debido a estos cambios, he repetido las pruebas de la práctica anterior con las
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccccccccc}
-\multicolumn{13}{c}{Resultados globales ORIGINALES en el PAR con 20\% de restricciones} \\
+\multicolumn{13}{c}{NUEVOS Resultados globales en el PAR con 20\% de restricciones} \\
 \multirow{2}{*}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
  & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
 \textbf{K-medias Restringido Débil} & 0,60 & 31 & 0,95 & 0,007 & 1.659,37 & 212 & 1.873,68 & 0,386 & 0,85 & 4 & 0,90 & 0,006 \\

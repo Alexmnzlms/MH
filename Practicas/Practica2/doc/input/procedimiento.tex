@@ -41,10 +41,10 @@ Los operadores de los algoritmos descritos anteriormente se implementan como mé
 \newpage
 \section{Guía de Uso}
 El programa se compila utilizando la orden \textbf{make}.\\
-Para ejcutar el programa es necesario ejecutar el archivo \textbf{BIN/clustering\_exe} $[semilla]$ $[conjunto]$ $[algoritmo]$ $[verbose]$.
+Para ejecutar el programa es necesario ejecutar el archivo \textbf{BIN/clustering\_exe} $[semilla]$ $[conjunto]$ $[algoritmo]$ $[verbose]$.
 Estos parámetros se configuran de la siguiente manera:
 \begin{itemize}
-   \item $[semilla]$: Es el numero de semilla que se quiere ejecutar.
+   \item $[semilla]$: Es el número de semilla que se quiere ejecutar.
    \begin{itemize}
       \item $[1-5]$: Ejecutan desde la primera semilla hasta la que se pase como argumento
       \item $[0]$: Si se introduce el 0, el programa entra en modo gráfico. Esto significa que genera un output de datos para poder pintar una gráfica de la evolución del valor de la función objetivo con el paso de las generaciones ---Solo funciona para algoritmos genéticos y meméticos---.
@@ -64,7 +64,7 @@ Estos parámetros se configuran de la siguiente manera:
       \item $[AGG\_UN]$: Algoritmo genético con operador de cruce uniforme y esquema generacional.
       \item $[AGG\_SF]$: Algoritmo genético con operador de cruce segmento fijo y esquema generacional.
       \item $[AGE\_UN]$: Algoritmo genético con operador de cruce uniforme y esquema estacionario.
-      \item $[AGE\_SF]$: Algoritmo genético con operador de cruce segmento fijo y esquema Estacionario.
+      \item $[AGE\_SF]$: Algoritmo genético con operador de cruce segmento fijo y esquema estacionario.
       \item $[AM\_10-1.0]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones a todos los cromosomas
       \item $[AM\_10-0.1]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los cromosomas
       \item $[AM\_10-0.1mej]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los mejores cromosomas
@@ -73,7 +73,7 @@ Estos parámetros se configuran de la siguiente manera:
    \item $[Verbose]$: Muestra por pantalla la traza de ejecución del algoritmo.
 \end{itemize}
 
-Como ejemplo básico, para obtener los resultados que se muestran a continuación, se debe ejecutar: \textbf{BIN/clustering\_exe} 5 0 $[algoritmo]$
+Como ejemplo básico, para obtener los resultados que se muestran a continuación, se debe ejecutar:\\ \textbf{BIN/clustering\_exe} 5 0 $[algoritmo]$
 
 La estructura de ficheros es la siguiente:
 \begin{itemize}

@@ -12,8 +12,8 @@
 %    Pareja(int,int): set vecindario
 % \end{minted}
 
-En los algoritmos de búsquedas basados en poblaciones necesitamos almacenar un conjunto de soluciones, al que llamaremos población. A cada solución de la población la llamaremos cromosoma. Para cada iteración del algoritmos, diremos que se crea una nueva generación de cromosomas que sustituye a los cromosomas anteriores de la población. A cada posición dentro de un cromosoma se la denomina gen\\
-Almacenamos en una variable el número de cromosomas que tiene una población. Además, almacenaremos cada generación de la población en una matriz. También debemos tener otra matriz para almacenar los cromosomas seleccionados en cada generación. Las evaluaciones las almacenaremos en una variable que almacena el numero de llamadas que se hace a la función que evalúa una solución.\\
+En los algoritmos de búsquedas basados en poblaciones necesitamos almacenar un conjunto de soluciones, al que llamaremos población. A cada solución de la población la llamaremos cromosoma. Para cada iteración del algoritmo, diremos que se crea una nueva generación de cromosomas que sustituye a los cromosomas anteriores de la población. A cada posición dentro de un cromosoma se la denomina gen.\\
+Almacenamos en una variable el número de cromosomas que tiene una población. Además, almacenaremos cada generación de la población en una matriz. También debemos tener otra matriz para almacenar los cromosomas seleccionados en cada generación. Las evaluaciones las guardaremos en una variable que almacena el número de llamadas que se hace a la función que evalúa una solución.\\
 Para ahorrar evaluaciones, a cada cromosoma, se le asocia un valor de su funcion objetivo que se calcula una sola vez. Estos valores se almacenan en vectores.
 También se almacena en un vector la mejor solución encontrada hasta el momento y su valoración.
 \begin{minted}
@@ -30,21 +30,23 @@ También se almacena en un vector la mejor solución encontrada hasta el momento
 \end{minted}
 
 \subsection{Descripción del algoritmo}
-Los algoritmos se nombran de la siguiente manera \textbf{AG[Esquema]\_[Cruce]}. Se han implementado las versiones \textbf{AGG\_UN}, \textbf{AGG\_SF}, \textbf{AGE\_UN}, \textbf{AGE\_SF}. Para facilitar la descripción, se describirán por separado los operadores de cruce de los esquemas de selección y reemplazo.
+Los algoritmos se nombran de la siguiente manera \textbf{AG[Esquema]\_[Cruce]}.\\
+Se han implementado las versiones \textbf{AGG\_UN}, \textbf{AGG\_SF}, \textbf{AGE\_UN}, \textbf{AGE\_SF}. \\
+Para facilitar la descripción, se describirán por separado los operadores de cruce de los esquemas de selección y reemplazo.
 
 \subsubsection{Operadores de cruze}
 Hay dos operadores de cruce:
 \begin{itemize}
    \item \textbf{Operador de cruce uniforme [UN]}: El operador de cruce uniforme, se basa en escoger $ n/2 $ números aleatorios en el rango $[0,n-1]$. De uno de los dos padres, seleccionamos los genes que coincidan con estos números y los copiamos en la descendencia. Los genes que quedan por asignar se obtienen del segundo padre.
-   \item \textbf{Operador de segmento fijo [SF]}: El operador de segmento fijo, se basa en generar dos números aleatorios \emph{r} y \emph{v} en el rango $[0,n-1]$. Seleccionamos uno de los padros y copiamos en la descendencia el rango de genes $ [r,((r+v)\,mod\,n) - 1] $. El rsto de genes se determinan de la misma manera que en el operador de cruce uniforme.\\
+   \item \textbf{Operador de segmento fijo [SF]}: El operador de segmento fijo, se basa en generar dos números aleatorios \emph{r} y \emph{v} en el rango $[0,n-1]$. Seleccionamos uno de los padres y copiamos en la descendencia el rango de genes $ [r,((r+v)\,mod\,n) - 1] $. El resto de genes se determinan de la misma manera que en el operador de cruce uniforme.\\
    Este operador esta sesgado. Si seleccionamos el segmento de datos del padre que mejor valor de la función objetivo tenga, estamos \textbf{favoreciendo la explotación} y si lo hacemos al revés, estaremos \textbf{favoreciendo la exploración}. En este caso, se favorece la \textbf{explotación}.
 \end{itemize}
 \newpage
 \subsubsection{Esquemas de reemplazo y selección}
 Hay dos esquemas de reemplazo y selección:
 \begin{itemize}
-   \item \textbf{Generacional [G]}: El esquema generacional funciona de la siguiente manera: seleccionamos tantos cromosomas como cromosomas tenga la población ---50 en nuestro caso---. La forma de selección se basa en realizar un torneo binario, es decir, enfrentar a dos cromosomas aleatorios y añadir a la selección el que mejor valor tenga en su función objetivo. Una vez tenemos la selección, generamos tantos cromosomas como cromosomas haya en nuestra selección, utilizando el operador de cruce que corresponda. En el esquema generacional hay un 70\% de probabilidad de cruce, así que aplicando esperanza matemática, solo el 70\% de las parejas cruzan, y el otro 30\% se mantiene igual. Una vez se han cruzado los cromosomas de la población, se aplica el operador de mutación. Cada gen tiene un 0.001\% de probabilidad de mutación. Si un gen muta, cambia aleatoriamente su valor a otro posible cluster. Cuando todos los cromosomas han mutado, se aplica el operador de reparación que arregla las posibles infactibilidades en las soluciones --- haber dejado un cluster vacío, por ejemplo---. Finalmente, se aplica el elitismo. El elitismo se basa en que, después de haber obtenido una nueva generación de cromosomas, se comprueba que la mejor solución de la generación anterior este presente en la nueva generación. Si no esta presente, se sustituye por el peor cromosoma de la generación.
-   \item \textbf{Estacionario [E]}: El esquema estacionario funciona de forma similar al generacional. En cuanto a la selección, en el esquema estacionario solo se seleccionan 2 cromosomas de cada generación, y como es lógico, su probabilidad de cruce es 100\%. A esta selección , tambien se le aplica el operador de mutación y de reparación ---En las mismas condiciones que en el esquema generacional---. A la hora de devolver estos cromosomas a la población, se compara el mejor de la selección contra el peor de la población, y se añade a la población el mejor de los dos. Despues, se comparan el segundo mejor contra el segundo peor y se realiza el mismo proceso.
+   \item \textbf{Generacional [G]}: El esquema generacional funciona de la siguiente manera: seleccionamos tantos cromosomas como cromosomas tenga la población ---50 en nuestro caso---. La forma de selección se basa en realizar un torneo binario, es decir, enfrentar a dos cromosomas aleatorios y añadir a la selección el que mejor valor tenga en su función objetivo. Una vez tenemos la selección, generamos tantos cromosomas como cromosomas haya en nuestra selección, utilizando el operador de cruce que corresponda. En el esquema generacional hay un 70\% de probabilidad de cruce, así que aplicando esperanza matemática, solo el 70\% de las parejas cruzan, y el otro 30\% se mantiene igual. Una vez se han cruzado los cromosomas de la población, se aplica el operador de mutación. Cada gen tiene un 0.001\% de probabilidad de mutación. Si un gen muta, cambia aleatoriamente su valor a otro posible cluster. Cuando todos los cromosomas han mutado, se aplica el operador de reparación que arregla las posibles infactibilidades en las soluciones --- haber dejado un cluster vacío, por ejemplo---. Finalmente, se aplica el elitismo. El elitismo se basa en que, después de haber obtenido una nueva generación de cromosomas, se comprueba que la mejor solución de la generación anterior este presente en la nueva generación. Si no está presente, se sustituye por el peor cromosoma de la generación.
+   \item \textbf{Estacionario [E]}: El esquema estacionario funciona de forma similar al generacional. En cuanto a la selección, en el esquema estacionario solo se seleccionan 2 cromosomas de cada generación, y como es lógico, su probabilidad de cruce es 100\%. A esta selección , también se le aplica el operador de mutación y de reparación ---En las mismas condiciones que en el esquema generacional---. A la hora de devolver estos cromosomas a la población, se compara el mejor de la selección contra el peor de la población, y se añade a la población el mejor de los dos. Después, se comparan el segundo mejor contra el segundo peor y se realiza el mismo proceso.
 \end{itemize}
 El criterio de parada del algortimo es no superar las 100000 evaluaciones.
 
@@ -76,7 +78,7 @@ Mientras evaluaciones menor que 100000
 \newpage
 \subsection{Operadores propios}
 \begin{itemize}
-   \item Operador \textbf{operador\_seleccion(t)}: Selecciona t elementos de la poblacion y los añade a la selección.
+   \item Operador \textbf{operador\_seleccion(t)}: Selecciona t elementos de la población y los añade a la selección.
    \begin{minted}
    [fontsize=\footnotesize, linenos]
    {cpp}

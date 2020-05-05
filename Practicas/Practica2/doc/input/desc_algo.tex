@@ -5,14 +5,14 @@
 
 Todos los algoritmos implementados comparten la misma función objetivo: $ F_{objetivo} = \bar{C} + (infeasibility \cdot \lambda) $\\
 \\
-El valor esta función se calcula como la suma de la \textbf{desviación general} ($ \bar{C} $) sumada a la infactibilidad de la partición (\emph{infeasibility}) escalada por un parámetro ($ \lambda $). Este parametro tiene la función de dar relevancia al término \emph{infeasibility}. Si se establece correctamente, primero da prioridad a reducir las restricciones incumplidas por encima de la desviación general.\\ Este parametro se calcula como: $ \lambda = \frac{\left \lceil D \right \rceil}{\left | R \right |}$. Siendo D la distancia entre los dos puntos más lejanos y R el número total de restricciones. \\
+El valor esta función se calcula como la suma de la \textbf{desviación general} ($ \bar{C} $) y la infactibilidad de la partición (\emph{infeasibility}) escalada por un parámetro ($ \lambda $). Este parámetro tiene la función de dar relevancia al término \emph{infeasibility}. Si se establece correctamente, primero da prioridad a reducir las restricciones incumplidas por encima de la desviación general.\\ Este parámetro se calcula como: $ \lambda = \frac{\left \lceil D \right \rceil}{\left | R \right |}$. Siendo D la distancia entre los dos puntos más lejanos y R el número total de restricciones. \\
 El objetivo de los algoritmos descritos a continuación es minimizar el valor de esta función objetivo.
 
 \begin{itemize}
    \item \textbf{K-medias Restringido Débil}: Algoritmo de heurística greedy que se basa en asignar un elemento al cluster de cuyo centroide se encuentre más cercano de manera iterativa, hasta obtener el mejor ajuste posible.
-   \item \textbf{Búsqueda Local}: Algoritmo de búsqueda basado en trayectorias, se basa en la exploracion de vecindarios para obtener la mejor solución posible.
+   \item \textbf{Búsqueda Local}: Algoritmo de búsqueda basado en trayectorias, se vale de la exploración de vecindarios para obtener la mejor solución posible.
    \item \textbf{Algoritmos Genéticos}: Algoritmos de búsqueda basado en poblaciones. En esta práctica implementamos un esquema generacional y uno estacionario, y los combinamos con dos operadores de cruce, uno uniforme y otro de segmento fijo, obteniendo así 4 algoritmos distintos.
-   \item \textbf{Algoritmos Meméticos}: Algoritmos de búsqueda basado en poblaciones. Se basa en la implementación de un algortimo genetico con un esquema generacional, con la diferencia que cada determinado numero de generaciones, se aplica una búsqueda local a un determinado numero de cromosomas. En esta práctica se implementan 3 versiones que se desarrollarán más adelante.
+   \item \textbf{Algoritmos Meméticos}: Algoritmos de búsqueda basado en poblaciones. Se basa en la implementación de un algortimo genético con un esquema generacional, con la diferencia de que cada determinado número de generaciones, se aplica una búsqueda local a un determinado número de cromosomas. En esta práctica se implementan 3 versiones que se desarrollarán más adelante.
 
 \end{itemize}
 

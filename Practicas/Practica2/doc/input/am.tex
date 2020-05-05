@@ -29,14 +29,14 @@ Los algortimos meméticos se basan en la unión de los algoritmos genéticos con
 
 
 \subsection{Descripción del algoritmo}
-Los algoritmos memeticos implementados en esta practica, están construidos sobre un algoritmo genético, con esquema generacional y que utiliza el operador de cruce uniforme, es decir, \textbf{AGG\_UN}, puesto que es el algoritmo genético generacional que mejores resultados ha ofrecido durante las pruebas.
+Los algoritmos meméticos implementados en esta práctica, están construidos sobre un algoritmo genético, con esquema generacional y que utiliza el operador de cruce uniforme, es decir, \textbf{AGG\_UN}, puesto que es el algoritmo genético generacional que mejores resultados ha ofrecido durante las pruebas.
 Se implementan 3 versiones de algoritmos meméticos:
 \begin{itemize}
    \item \textbf{AM\_10-1.0}: Esta versión aplica una BLS cada 10 generaciones a todos los elementos de la población.
    \item \textbf{AM\_10-0.1}: Esta versión aplica una BLS cada 10 generaciones a 1 elemento de la población.
    \item \textbf{AM\_10-0.1mej}: Esta versión aplica una BLS cada 10 generaciones al mejor elemento de la población.
 \end{itemize}
-La Búsqueda Local Suave (\textbf{BLS}) es una variación de la búsqueda local que se centra en perder el mayor numero posible de evaluaciones. Existe un número máximo de fallos que puede cometer la BLS. La BLS recorre de menara aleatoria los genes de un cromosoma. Si puede mejorar el cromosoma, aplica el mejor cambio posible, y si no puede mejorarlo más, acumula un fallo. La BLS termina cuando se han recorrido todos los genes o cuando se ha superado el máximo de fallos.
+La Búsqueda Local Suave (\textbf{BLS}) es una variación de la búsqueda local que se centra en perder el menor número posible de evaluaciones. Existe un número máximo de fallos que puede cometer la BLS. La BLS recorre de manera aleatoria los genes de un cromosoma. Si puede mejorar el cromosoma, aplica el mejor cambio posible, y si no puede mejorarlo más, acumula un fallo. La BLS termina cuando se han recorrido todos los genes o cuando se ha superado el máximo de fallos.
 
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
