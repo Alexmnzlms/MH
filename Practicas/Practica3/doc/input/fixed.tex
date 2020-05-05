@@ -1,0 +1,66 @@
+\newpage
+\section{Cambios Práctica 1}
+Después de la correción de la práctica anterior, se han implementado varios cambios con respecto a las siguientes partes:
+
+\begin{itemize}
+   \item Se ha modificado el cálculo de la infactibilidad y se han redistribuido las funciones de cada algoritmo.
+   \item Función Objetivo Greedy: Ahora se tiene en cuenta el parámetro $ \lambda $ para calcular la función objetivo.
+   \item Búsqueda Local: Se ha modificado el operador de vecino, debido a los errores en el cálculo de la solución. Ya no se factoriza el cálculo de la infacibilidad, por lo que el tiempo de ejecución del algoritmo ha aumentado. Además, había un fallo a la hora de calcular la Tasa\_C de la solución. Cuando se recalculaba la desviación general para obtener la función objetivo, no se estaban recalculando los centroides de los clusters. Por ello, la solución obtenida era incorrecta y presentaba una altísima infactibilidad.
+\end{itemize}
+Ambos cambios se encuentran reflejados en los apartados que explican los algoritmos greedy y búsqueda local.\\
+Debido a estos cambios, he repetido las pruebas de la práctica anterior con las mismas semillas y los mismos conjuntos de datos:
+\begin{itemize}
+   \item 1584565171
+   \item 1584764782
+   \item 1584565259
+   \item 1584564539
+   \item 1522565615
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccccccc}
+\multicolumn{13}{c}{Resultados globales ORIGINALES en el PAR con 10\% de restricciones} \\
+\multirow{2}{*}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
+ & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
+\textbf{K-medias Restringido Débil} & 0,70 & 36 & 37,10 & 0,005 & 1.599,44 & 190 & 1.789,04 & 0,153 & 0,87 & 6 & 6,87 & 0,007 \\
+\textbf{Búsqueda Local} & 1,03 & 261 & 6,88 & 0,034 & 671,73 & 472 & 1.627,00 & 1,350 & 2,37 & 255 & 9,79 & 0,036 \\ \hline
+\end{tabular}%
+}
+
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccccccc}
+\multicolumn{13}{c}{NUEVOS Resultados globales en el PAR con 10\% de restricciones} \\
+\multirow{2}{*}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
+ & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
+\textbf{K-medias Restringido Débil} & 0,70 & 36 & 1,52 & 0,006 & 1.599,44 & 190 & 1.983,49 & 0,161 & 0,87 & 6 & 1,04 & 0,006 \\
+\textbf{Búsqueda Local} & 0,60 & 0 & 0,60 & 0,570 & 1.718,06 & 188 & 2.099,27 & 37,253 & 0,85 & 0 & 0,85 & 0,607 \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccccccc}
+\multicolumn{13}{c}{Resultados globales ORIGINALES en el PAR con 20\% de restricciones} \\
+\multirow{2}{*}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
+ & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
+\textbf{K-medias Restringido Débil} & 0,60 & 31 & 31,60 & 0,005 & 1.659,37 & 212 & 1.870,97 & 0,351 & 0,85 & 4 & 4,45 & 0,004 \\
+\textbf{Búsqueda Local} & 1,37 & 511 & 7,11 & 0,036 & 715,42 & 1.015 & 1.705,59 & 1,403 & 3,50 & 509 & 10,89 & 0,044 \\ \hline
+\end{tabular}%
+}
+
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccccccc}
+\multicolumn{13}{c}{NUEVOS Resultados globales en el PAR con 20\% de restricciones} \\
+\multirow{2}{*}{} & \multicolumn{4}{c}{\textbf{Iris}} & \multicolumn{4}{c}{\textbf{Ecoli}} & \multicolumn{4}{c}{\textbf{Rand}} \\
+ & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} & \textbf{Tasa\_C} & \textbf{Tasa\_inf} & \textbf{Agr.} & \textbf{T} \\
+\textbf{K-medias Restringido Débil} & 0,60 & 31 & 0,95 & 0,007 & 1.659,37 & 212 & 1.873,68 & 0,386 & 0,85 & 4 & 0,90 & 0,006 \\
+\textbf{Búsqueda Local} & 0,60 & 0 & 0,60 & 0,673 & 1.667,17 & 394 & 2.066,21 & 40,36 & 0,85 & 0 & 0,85 & 0,676 \\ \hline
+\end{tabular}%
+}
+\end{table}

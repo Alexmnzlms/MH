@@ -1,0 +1,77 @@
+\newpage
+
+\section{Experimentos}
+\subsection{Graficas}
+A modo de extra visual, he generado dos graficas. Estas gráficas muestran cómo se reduce el valor de la función objetivo según aumenta el número de generaciones de cromosomas. Concretamente ambas gráficas muestran los resultados sobre el conjunto \emph{Ecoli} con un 10\% de restricciones y una semilla.\\
+\\
+En la Figura 6.2 vemos la comparativa entre los 4 tipos de algoritmos geneticos implementados.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=1\textwidth]{../Practica2/graph/AG_graph.png}
+   \caption{Algoritmo genéticos}
+\end{figure}
+Podemos notar que los algoritmos que implementan un esquema generacional, convergen muy rápidamente a una solución óptima. Esto se explica porque en un esquema generacional se escogen y evalúan 50 cromosomas ---en nuestro caso--- por generación, mientras que en el esquema estacionario simplemente se seleccionan y evalúan 2. Por ello vemos que la curva de los estacionaros desciende suavemente y alcanza soluciones de la misma calidad, pero habiendo alcanzado un número notablemente mayor de generaciones.\\
+\newpage
+En la figura 6.3 vemos la misma gráfica que antes, pero ahora centrada en los algoritmos meméticos.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=1\textwidth]{../Practica2/graph/AM_graph.png}
+   \caption{Algortimos meméticos}
+\end{figure}
+
+Vemos que es una curiosa gráfica. Los pequeños llanos representan la progresión normal del algoritmo genético. Por otro lado, las pronunciadas ---prácticamente verticales--- reducciones en el valor de la función objetivo, son provocadas por la BLS. Podemos ver así la gran repercusión que tiene aplicar la BLS a los cromosomas de la población, tanto en la mejora del valor de la función objetivo como en el número de generaciones que se alcanza. Aplicar la BLS, es un proceso sumamente costoso en evaluaciones, por tanto, se tarda mucho menos tiempo en agotar el máximo de evaluaciones posible. Finalmente se aprecia, que llega un momento en que estos algoritmos se estancan en un óptimo ---cosa que sucede bastante deprisa--- y no pueden escapar de él ni siquiera con ayuda de la BLS.
+
+\newpage
+\subsection{Exploración vs Explotación en segmento fijo}
+Como segundo extra, se ha decido comprobar, como afecta el sesgo del operador de cruce por segmento fijo, a las posibles soluciones. Estas pruebas se han realizado con los conjuntos de \emph{Ecoli} y \emph{Newthyroid}, puesto que son los que obtienen soluciones más diversas. Recordar también que este estudio busca saber como afecta este sesgo a estos conjuntos de datos en concreto. Sabemos por el teorema de ``No free lunch'' que una metaheurística que sea muy buena para determinado problema, puede ser nefasta para otro.\\
+En primer lugar, definamos el sesgo del operador de cruce por segmento fijo. Si en este operador los genes que se seleccionan de manera fija, son los del mejor de los dos padres, estamos favoreciendo la \textbf{explotación} ---puesto que nos quedamos con un mayor número de genes de una mejor solución--- y si estos son del peor de los padres, favorecemos la \textbf{exploración} puesto que diversificamos la solución, con la esperanza de que esto nos permita encontrar una solución mejor en el futuro.
+
+Viendo los resultados, notamos otra vez que lo que es mejor en el conjunto \emph{Ecoli}, es menos óptimo para \emph{Newthyroid}. \emph{Ecoli} se ve favorecido por la explotación de la solución, mientras que \emph{Newthyroid} se ve favorecido por la exploración. Esta tendencia sucede cuando hablamos del conjunto de 10\% de restricciones, mientras que esto no pasa con el conjunto de 20\% ---en el que en ambos conjuntos, la explotación favorece a encontrar el óptimo.\\
+Respecto a \emph{Ecoli} y \emph{Newthyroid} para el 20\%, la diferencia que produce este sesgo en la solución puede deberse a que, en \emph{Ecoli} el espacio de soluciones es más complejo ---debido a la mayor longitud de los cromosomas y el número de cluster--- lo que hace que explotar buenas soluciones sea mejor opción que explorar unas nuevas, mientras que en \emph{Newthyroid} al ser un espacio mas ``simple'', la exploración favorece encontrar mejores soluciones.
+
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccccc}
+\multicolumn{1}{l}{} & \multicolumn{8}{c}{Exploración VS Explotación en Segmento Fijo 10\%} \\ \cline{2-9}
+\multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Ecoli}} & \multicolumn{4}{c|}{\textbf{Newthyroid}} \\ \cline{2-9}
+\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{AGG\_SF Explotación}} & 977,12 & 149 & 1.278,12 & 155,63 & 276,95 & 29 & 321,87 & \multicolumn{1}{c|}{62,21} \\
+\multicolumn{1}{|c|}{\textbf{AGG\_SF Exploración}} & 1.252,10 & 368 & 1.997,92 & 159,36 & 270,80 & 15 & 293,88 & \multicolumn{1}{c|}{62,25} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_SF Explotación}} & 947,54 & 124 & 1.198,31 & 158,03 & 267,36 & 45 & 337,18 & \multicolumn{1}{c|}{62,25} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_SF Exploración}} & 1.030,86 & 348 & 1.735,77 & 161,51 & 269,57 & 29 & 314,80 & \multicolumn{1}{c|}{62,23} \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccccc}
+\multicolumn{1}{l}{} & \multicolumn{8}{c}{Exploración VS Explotación en Segmento Fijo 10\%} \\ \cline{2-9}
+\multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Ecoli}} & \multicolumn{4}{c|}{\textbf{Newthyroid}} \\ \cline{2-9}
+\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_C}}} & \multicolumn{1}{c|}{\textit{\textbf{Tasa\_inf}}} & \multicolumn{1}{c|}{\textit{\textbf{Agr.}}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{AGG\_SF Explotación}} & 946,03 & 175 & 1.123,67 & 207,23 & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{81,74} \\
+\multicolumn{1}{|c|}{\textbf{AGG\_SF Exploración}} & 1.154,02 & 543 & 1.704,17 & 233,60 & 268,84 & 67 & 320,20 & \multicolumn{1}{c|}{91,51} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_SF Explotación}} & 950,07 & 148 & 1.099,96 & 208,72 & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{81,10} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_SF Exploración}} & 961,84 & 201 & 1.165,01 & 236,76 & 273,01 & 106 & 354,20 & \multicolumn{1}{c|}{91,52} \\ \hline
+\end{tabular}%
+}
+\end{table}
+\newpage
+Finalmente, en la siguiente figura, vemos la gráfica que compara el valor de la función objetivo con el número de generaciones para las diferentes configuraciones del operador de cruce por segmento fijo. También se han añadido los algoritmos genéticos con operador de cruce uniforme, para hacer más interesante la comparación. Estos datos se han obtenido para la ejecución de una semilla en \emph{Ecoli} 10\%
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=1\textwidth]{../Practica2/graph/extra_graph.png}
+   \caption{}
+\end{figure}
+
+Finalmente, podemos concluir que si bien existe diferencia en las soluciones debido al sesgo de este operador de cruce, estas no son lo suficientemente grandes, como para establecer que una configuración sea mejor que otra.

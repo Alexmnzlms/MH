@@ -1,0 +1,92 @@
+\chapter{Descripción de los algoritmos de comparación}
+%Descripción en pseudocódigo de los algoritmos de comparación.
+\section{K-medias Restringido Débil}
+\subsection{Descripción del algoritmo}
+El funcionamiento de este algoritmo funciona de la siguiente manera:\\
+Se presupone que los valores de los centroides antes de comenzar con la ejecución son aleatorios.\\
+Se establece un orden aleatorio para recorrer los nodos, pero que se mantenga en todas las iteraciones del algoritmo. Por cada iteración, se asigna a cada elemento $ x_{i} \in X $ un cluster $ c_{i} $. El criterio de asignación es siempre el mismo: se asigna al cluster que menos infactibilidad provoque y en caso de todas las asignaciones provoquen la misma infactibilidad, se asignará al cluster cuyo centroide  $ \mu_{i} $ sea más cercano.
+El algoritmo iterara hasta que no se produzca un cambio en el estado de la solución --- en la matriz de clusters --- y entonces terminará.\\
+Es importante remarcar que es posible que el algoritmo se quede iterando de manera infinita si entra en un ciclo de asignaciones, esto se puede evitar eligiendo la semilla de generación de números aleatorios de manera correcta.
+
+\subsection{Pseudocódigo del algoritmo}
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+int: i = 0
+bool: cambio_c
+int: vector[] rsi
+double: matriz[][] solucion_ant
+
+Guardar en solucion_ant la matriz cluster
+
+Para cada número de 0...i:
+   Añadir número a vector rsi
+Ordenar rsi aleatoriamente
+
+Hacer:
+   cambio_c = falso
+   Para cada indice j en rsi:
+      asignar_cluster(j)
+   Para cada cluster c:
+      Si fila c de solucion_ant es distinta a la fila c de clusters:
+         calcular_centroide(c)
+         cambio_c = verdadero
+   Guardar en solucion_ant la matriz cluster
+
+   Si cambio_c:
+      Vaciar los clusters
+
+   i++
+Mientras: cambio_c
+
+desviacion_general()
+f_objetivo = desv_gen + infactibilidad
+\end{minted}
+
+\subsection{Operadores propios}
+\begin{itemize}
+   \item Operador \textbf{asignar\_cluster(elemento n)}: Este operador asigna el elemento n a un cluster siguiendo el criterio de asignación: De los que menos infactibilidad provoquen, el que tenga la menor distancia.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   int: c, r_min, d_min, d = 0
+   Pareja(int,int): vector[] r
+
+   Para cada cluster i:
+      Añadir la pareja (restricciones_incumplidas(n,i) , i) a r
+
+   Ordenar r en orden ascendente
+
+   r_min = r[0]
+   d_min = Infinito
+   Para cada indice j de 0...tamaño(r)
+      d = distancia_nodo_cluster(n, r[j].segundo)
+      Si d < d_min:
+         d_min = d
+         c = r[j].segundo
+
+   infactibilidad += r_min
+   Añadir n al cluster c
+   \end{minted}
+
+   \item Operador \textbf{restricciones\_incumplidas(elemento n, cluster c)}: Este operador calcula el número de restricciones incumplidas que provoca la asignación del elemento n al cluster c.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   incumplidas = 0
+
+   Para cada elemento i del cluster c:
+      Buscar en restricciones la pareja (n,elemento i)
+      Si existe Y valor es -1:
+         incumplidas++
+
+   Para los cluster del conjunto distintos de c:
+      Para cada elemento i del cluster j:
+         Buscar en restricciones la pareja (n,elemento i)
+         Si existe Y valor es 1:
+            incumplidas++
+
+   Devolver incumplidas
+
+   \end{minted}
+\end{itemize}

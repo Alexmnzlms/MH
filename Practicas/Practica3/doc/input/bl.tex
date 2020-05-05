@@ -1,0 +1,132 @@
+\chapter{Métodos de búsqueda}
+\section{Búsqueda Local}
+%MAX 2 PAGS
+%Descripción en pseudocódigo de la estructura del método de búsqueda y de todas aquellas operaciones relevantes de cada algoritmo. Este contenido, específico a cada algoritmo se detallará en los correspondientes guiones de prácticas. El pseudocódigo deberá forzosamente reflejar la implementación/ el desarrollo realizados y no ser una descripción genérica extraída de las transparencias de clase o de cualquier otra fuente. La descripción de cada algoritmo no deberá ocupar más de 2 páginas.
+%Para esta primera práctica se incluirá la descripción en pseudocódigo del método de exploración del entorno, el operador de generación de vecino y la generación de soluciones aleatorias empleadas en el algoritmo de BL.
+\subsection{Datos propios}
+En la búsqueda local es necesario controlar de alguna manera que vecinos se han generado y cuáles puede generar aún, por tanto, almaceno en un set el \textbf{vecindario} correspondiente a la solución que se está evaluando actualmente. El vecindario no es más que las posibles cambios que se pueden realizar en el vector solución, partiendo de un estado determinado.
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+   Pareja(int,int): set vecindario
+\end{minted}
+
+\subsection{Descripción del algoritmo}
+Lo primero es general la solución inicial de la que partirá la búsqueda local. Esta solución es completamente aleatoria. Una vez generada, generamos también el vecindario. Almacenamos los valores de función objetivo e infactibilidad así como el vector solución en variables auxiliares.\\
+Comenzamos a generar vecinos, cada vez que se explora uno nuevo, se elimina del vecindario y si la función objetivo actual no mejora a la que almacenamos previamente, descartamos la función objetivo y la infactibilidad, recuperando las que teníamos almacenadas y generamos otro vecino.\\
+Continuaremos así hasta que encontremos un vecino cuya función objetivo mejore a la almacenada, volvemos a guardar una copia de la infactibilidad, la función objetivo así cómo una copia del vector solución.\\
+Seguiremos generando vecinos hasta que o bien las evaluaciones superen las 100000 o bien que no queden vecinos que explorar --- el vecindario esta vacío---.\\
+Como consideración, antes de salir del bucle principal leemos el estado de la solución para el ultimo vecino generado.
+\newpage
+\subsection{Pseudocódigo del algoritmo}
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+double: f_objetivo_ant, infactibilidad_ant
+int: vector[] solucion_ant
+int: i
+
+solucion_inicial()
+generar_vecindario()
+
+f_objetivo_ant = f_objetivo
+solucion_ant = solucion
+infactibilidad_ant = infactibilidad
+
+Hacer:
+   generar_vecino()
+   i++
+
+   Si nueva f_objetivo es menor que f_objetivo_ant:
+      f_objetivo_ant = f_objetivo
+      solucion_ant = solucion
+      infactibilidad_ant = infactibilidad
+      generar_vecindario()
+
+   Si no:
+      solucion = solucion_ant
+      infactibilidad = infactibilidad_ant
+
+   Si no quedan vecinos que generar:
+      Leer solucion actual
+
+Mientras: i menor que 100000 Y quedan vecinos que explorar
+\end{minted}
+
+\subsection{Operadores propios}
+\begin{itemize}
+   \item Operador \textbf{solucion\_inicial()}: Genera una solucion inicial aleatoria. Rellena la matriz de clusters aleatoriamente asegurándose de que al menos hay mínimo un elemento en cada fila de la matriz y después carga estos datos en el vector solucion.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   int: vector[] index
+   int: matriz[][] c
+
+   Para número n de 0...i:
+      Añadir n a index
+
+   Ordenar index aleatoriamente
+
+   Para cada fila j en c:
+      Añadir a j elemento de index
+      Pasar al siguiente elemento
+
+   Para los elementos restantes en index:
+      Añadir a fila aleatoria 0...k de c elemento de index
+      Pasar al siguiente elemento
+
+   Para cada número n de 0...k:
+      Para los elementos e de la fila n de c:
+         Añadir n a solucion en la posición c[n][e]
+
+   Para cada número n de 0...k:
+      calcular_centroide(n)
+   \end{minted}
+   \newpage
+
+   \item Operador \textbf{generar\_vecindario()}: Genera el vecindario correspondiente a una solución determinada. Genera todos los posibles cambios que se pueden hacer en el vector solucion y almacena las parejas (elemento, cluster) en el set vecindario.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   Vaciar vecindario
+
+   Para cada elemento e en posiciones:
+      Para cada número n de 0...k:
+         Si n es distinto al cluster al que pertenece e
+         Y en el cluster al que pertenece e hay al menos 1 elemento:
+            Insertar en vecindario Pareja (e,n)
+   \end{minted}
+   \item Operador \textbf{generar\_vecino()}: Generar un vecino se basa en generar una pareja aleatoria (elemento, cluster) y comprobar si existe en el vecindario, si no existe, se prueba con otra. Si existe, se elimina el elemento de la matriz de clusters, se resta a la infactibilidad total, la infactibilidad producida por la antigua asignación y se suma la infactibilidad producida por la nueva, por último se añade el elemento a la fila correspondiente de la matriz de cluster y se actualiza el vector solucion.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   bool: salir = falso
+   int: pos, n, c
+
+   Mientras no salir Y quedan vecinos que explorar:
+      salir = falso
+      pos = número aleatorio 0...i
+      n = número aleatorio 0...k
+      Buscar Pareja (pos,n) en vecindario
+
+      Si Pareja (pos,n) existe en vecindario:
+         salir = verdadero
+         Borrar Pareja (pos,n) de vecindario
+
+         Para cada cluster j en el conjunto de cluster:
+            Vaciar j
+
+         Para cada elemento e de la solucion:
+            Introducir e en el cluster solucion[e]
+
+         solucion[pos] = n
+
+         Para cada cluster j en el conjunto de cluster:
+            calcular_centroide(j)
+
+         desviacion_general()
+         infactibilidad_solucion()
+         f_objetivo = desv_gen + (infactibilidad*lambda)
+   \end{minted}
+
+\end{itemize}
