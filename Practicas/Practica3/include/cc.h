@@ -92,8 +92,6 @@ private:
    void busqueda_local_suave(std:: vector<int> & sol, double & f_sol);
    void aplicar_BLS(double p, bool mejor);
 
-
-
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy(bool v = false);

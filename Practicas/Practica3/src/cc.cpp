@@ -277,7 +277,7 @@ void CCP::generar_solucion(){
 
 void CCP::generar_vecino(){
    bool salir = false;
-   int pos, n;
+   int pos, n, c;
    while(!salir && quedan_vecinos()){
       salir = false;
       pos = Randint(0,solucion.size());
@@ -287,19 +287,27 @@ void CCP::generar_vecino(){
       if(it != vecindario.end()){
          salir = true;
          vecindario.erase(it);
+
+         c = solucion[pos];
+         solucion[pos] = -1;
          for( int i = 0; i < n_cluster; i++){
             clusters[i].clear();
          }
          for(unsigned j = 0; j < solucion.size(); j++){
+            if(solucion[j] != -1){
                clusters[solucion[j]].push_back(j);
+            }
          }
+         infactibilidad -= restricciones_incumplidas(pos,c);
+         infactibilidad += restricciones_incumplidas(pos,n);
          solucion[pos] = n;
          clusters[solucion[pos]].push_back(pos);
+
          for( int i = 0; i < n_cluster; i++){
             calcular_centroide(i);
          }
          desviacion_general();
-         infactibilidad_solucion();
+         //infactibilidad_solucion();
          f_objetivo = desv_gen + (infactibilidad*lambda);
       }
    }
@@ -1129,6 +1137,7 @@ void CCP::mostrar_solucion(bool completo){
    std::cout << "Funcion Objetivo: " << f_objetivo << std::endl;
    std::cout << "Desviacion general: " << desv_gen << std::endl;
    std::cout << "Infactibilidad: " << infactibilidad << std::endl;
+   std::cout << "Real: " << calcular_infact_sol(solucion) << std::endl;
    std::cout << "Lambda: " << lambda << std::endl;
    if(completo){
       std::cout << "Restricciones: " << restricciones.size() << std::endl;
