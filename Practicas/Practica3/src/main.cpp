@@ -137,6 +137,7 @@ int main(int argc, char ** argv){
    bool mostrar_bl = false;
    bool mostrar_ag = false;
    bool mostrar_am = false;
+   bool mostrar_bmb = false;
 
    int tipo_ag = 0;
    int operador_ag = 0;
@@ -175,6 +176,7 @@ int main(int argc, char ** argv){
    char am2_code[] = "AM_10-0.1";
    char am3_code[] = "AM_10-0.1mej";
    char sem_code[] = "SEM";
+   char bmb_code[] = "BMB";
 
    if(strcmp(argv[3],greedy_code) == 0){
       mostrar_greedy = true;
@@ -218,6 +220,8 @@ int main(int argc, char ** argv){
       mostrar_am = true;
    } else if(strcmp(argv[3],sem_code) == 0){
       nueva_semilla = true;
+   } else if(strcmp(argv[3],bmb_code) == 0){
+      mostrar_bmb = true;
    }
 
    if(argc > 4){
@@ -251,6 +255,9 @@ int main(int argc, char ** argv){
 
    vector<vector<double>> am;
    vector<double> am_media;
+
+   vector<vector<double>> bmb;
+   vector<double> bmb_media;
 
    if(nueva_semilla){
       vector<unsigned> sems;
@@ -574,6 +581,78 @@ int main(int argc, char ** argv){
                cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
                cout << c+1 << "          ";
                for(auto it = am_media.begin(); it != am_media.end(); ++it){
+                  cout << *it << "          ";
+               }
+               cout << endl;
+               cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+            }
+         }
+      }
+      cout << endl;
+      cout << endl;
+   }
+
+   if(mostrar_bmb){
+      cout << "----------------- Tabla de resultados BMB -----------------" << endl;
+      for(int c = 0; c < n_conjuntos_datos; c++){
+         if(usar_conjunto[c]){
+            bmb.clear();
+
+            for(int i = 0; i < n_iteraciones; i++){
+               Set_random(semillas[i]);
+               CCP par(n_k[c],datos[c],restricciones[c]);
+
+               tini= clock();
+               par.BMB(solucion_completa);
+               tfin= clock();
+
+               double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
+               vector<double> fila;
+               fila = par.fila_datos(1);
+               fila.push_back(tiempo);
+               bmb.push_back(fila);
+
+               if(solucion_completa){
+                  cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+                  cout << titulos[c] << endl;
+                  cout << "Iteracion: " << i+1 << endl;
+                  cout << "Semilla: " << semillas[i] << endl;
+                  par.mostrar_solucion(true);
+                  cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+               }
+
+               if(mostrar_iteracion){
+                  if(i == 0){
+                     cout << titulos[c] << endl;
+                     cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Evaluaciones" << "          " << "T" << endl;
+                     cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+                  }
+                  cout << i+1 << "          ";
+                  for(auto it = fila.begin(); it != fila.end(); ++it){
+                     cout << *it << "          ";
+                  }
+                  cout << endl;
+                  cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+               }
+            }
+
+            if(mostrar_media){
+               bmb_media.clear();
+               for(int i = 0; i < (int) bmb[0].size(); i++){
+                  bmb_media.push_back(0);
+               }
+
+               for(int i = 0; i < (int) bmb.size(); i++){
+                  for(int j = 0; j < (int) bmb[i].size(); j++){
+                     bmb_media[j] += (bmb[i][j] / n_iteraciones);
+                  }
+               }
+
+               cout << "Media: " << titulos[c] << " BMB" << endl;
+               cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Evaluaciones" << "          " << "T" << endl;
+               cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+               cout << c+1 << "          ";
+               for(auto it = bmb_media.begin(); it != bmb_media.end(); ++it){
                   cout << *it << "          ";
                }
                cout << endl;

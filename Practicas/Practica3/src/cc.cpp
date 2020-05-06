@@ -1078,6 +1078,26 @@ void CCP::AM(int n, double p, bool mejor, bool v, bool graph, bool ignore_eval,i
    leer_mejor_generado();
    gen_ag_am = generacion;
 }
+
+void CCP::BMB(bool v){
+   std::vector<int> mejor_sol;
+   double f_sol;
+   double mejor = 100000.0;
+   int eval = 0;
+   for(int i = 0; i < 10; i++){
+      busqueda_local(v);
+      eval += eval_bl;
+      f_sol = evaluar_solucion(solucion);
+      if(f_sol < mejor){
+         mejor_sol = solucion;
+         mejor = f_sol;
+      }
+   }
+
+   solucion = mejor_sol;
+   leer_solucion();
+   eval_bl = eval;
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////

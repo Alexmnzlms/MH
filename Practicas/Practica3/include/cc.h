@@ -93,12 +93,14 @@ private:
    void aplicar_BLS(double p, bool mejor);
 
 
+
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy(bool v = false);
    void busqueda_local(bool v = false);
    void AG(int g, int n, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void AM(int n, double p, bool mejor = false, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
+   void BMB(bool v = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos(int n);
