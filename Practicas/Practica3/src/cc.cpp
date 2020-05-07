@@ -133,6 +133,10 @@ void CCP::calcular_lambda(){
 void CCP::infactibilidad_solucion(){
    infactibilidad = calcular_infact_sol(solucion);
 }
+
+void CCP::calc_f_objetivo(){
+   f_objetivo = desv_gen + (infactibilidad * lambda);
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -275,7 +279,7 @@ void CCP::generar_solucion(){
    }
 }
 
-void CCP::generar_vecino(){
+void CCP::generar_vecino(bool bl){
    bool salir = false;
    int pos, n, c;
    while(!salir && quedan_vecinos()){
@@ -286,7 +290,9 @@ void CCP::generar_vecino(){
       auto it = vecindario.find(pareja);
       if(it != vecindario.end()){
          salir = true;
-         vecindario.erase(it);
+         if(bl){
+            vecindario.erase(it);
+         }
 
          c = solucion[pos];
          solucion[pos] = -1;
@@ -308,7 +314,7 @@ void CCP::generar_vecino(){
          }
          desviacion_general();
          //infactibilidad_solucion();
-         f_objetivo = desv_gen + (infactibilidad*lambda);
+         calc_f_objetivo();
       }
    }
 }
@@ -334,7 +340,7 @@ void CCP::leer_solucion(){
    }
    desviacion_general();
    infactibilidad_solucion();
-   f_objetivo = desv_gen + (infactibilidad*lambda);
+   calc_f_objetivo();
 }
 
 void CCP::leer_vecino(){
@@ -346,7 +352,7 @@ void CCP::leer_vecino(){
       calcular_centroide(i);
    }
    desviacion_general();
-   f_objetivo = desv_gen + (infactibilidad*lambda);
+   calc_f_objetivo();
 }
 
 bool CCP::quedan_vecinos(){
@@ -712,7 +718,7 @@ void CCP::leer_mejor_generado(){
    }
    desviacion_general();
    infactibilidad_solucion();
-   f_objetivo = desv_gen + (infactibilidad*lambda);
+   calc_f_objetivo();
 }
 
 void CCP::aplicar_generacional(){
@@ -917,8 +923,8 @@ int CCP::greedy(bool v){
    generar_solucion();
    desviacion_general();
    infactibilidad_solucion();
+   calc_f_objetivo();
 
-   f_objetivo = desv_gen + infactibilidad * lambda;
    it_greedy = i;
    return i;
 }
@@ -1105,6 +1111,39 @@ void CCP::BMB(bool v){
    solucion = mejor_sol;
    leer_solucion();
    eval_bl = eval;
+}
+
+void CCP::ES(bool v){
+   double mu = 0.3;
+   double phi = mu;
+   double beta;
+
+   solucion_inicial();
+   leer_solucion();
+   desviacion_general();
+   infactibilidad_solucion();
+   calc_f_objetivo();
+
+
+   double t_0 = (mu * f_objetivo) / (-1 * log(phi));
+   double t_f = 0.001;
+   double t_actual = t_0;
+
+   int max_vecinos = 10 * ((int) solucion.size());
+   int max_exitos = 0.1 * max_vecinos;
+   int vecinos, exitos;
+
+   std::vector<int> solucion_ant;
+   double f_objetivo_ant;
+   double diferencia;
+
+   while(t_actual <= t_f){
+      generar_vecindario();
+
+      while(vecinos < n_vecinos && exitos < max_exitos){
+         generar_vecino();
+      }
+   }
 }
 /////////////////////////////////////////////////////////////////////////////////
 

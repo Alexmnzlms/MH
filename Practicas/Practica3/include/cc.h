@@ -11,6 +11,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <algorithm>
+#include <cmath>
 #include "random.h"
 
 class CCP {
@@ -52,6 +53,7 @@ private:
    void desviacion_general();
    void calcular_lambda();
    void infactibilidad_solucion();
+   void calc_f_objetivo();
 
    double distancia_nodo_cluster(const int n, const int c);
    double distancia_nodo_nodo(const int n, const int m);
@@ -64,7 +66,7 @@ private:
    std::vector<int> crear_solucion();
    void solucion_inicial();
    void generar_solucion();
-   void generar_vecino();
+   void generar_vecino(bool bl = true);
    void generar_vecindario();
    void leer_solucion();
    void leer_vecino();
@@ -99,6 +101,7 @@ public:
    void AG(int g, int n, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void AM(int n, double p, bool mejor = false, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void BMB(bool v = false);
+   void ES(bool v = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos(int n);
