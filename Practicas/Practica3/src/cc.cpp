@@ -343,18 +343,6 @@ void CCP::leer_solucion(){
    calc_f_objetivo();
 }
 
-void CCP::leer_vecino(){
-   limpiar_clusters();
-   for( unsigned i = 0; i < solucion.size(); i++){
-      clusters[solucion[i]].push_back(i);
-   }
-   for(int i = 0; i < n_cluster; i++){
-      calcular_centroide(i);
-   }
-   desviacion_general();
-   calc_f_objetivo();
-}
-
 bool CCP::quedan_vecinos(){
    if(vecindario.size() > 0){
       return true;
@@ -956,10 +944,6 @@ void CCP::busqueda_local(bool v){
       else{
          solucion = solucion_ant;
          infactibilidad = infactibilidad_ant;
-      }
-      if(!quedan_vecinos()){
-         //std::cout << "No quedan vecinos con los que probar" << std::endl;
-         leer_vecino();
       }
       if(i >= 100000){
          //std::cout << "Num Max Evaluaciones" << std::endl;

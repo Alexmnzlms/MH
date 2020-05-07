@@ -69,7 +69,6 @@ private:
    void generar_vecino(bool bl = true);
    void generar_vecindario();
    void leer_solucion();
-   void leer_vecino();
    bool quedan_vecinos();
 
    void generacion_inicial();
