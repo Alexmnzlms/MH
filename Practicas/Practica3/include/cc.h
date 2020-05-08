@@ -93,14 +93,17 @@ private:
    void busqueda_local_suave(std:: vector<int> & sol, double & f_sol);
    void aplicar_BLS(double p, bool mejor);
 
+   void mutacion_ILS();
+
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy(bool v = false);
-   void busqueda_local(bool v = false);
+   void busqueda_local(bool v = false, bool sol_ini = true);
    void AG(int g, int n, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void AM(int n, double p, bool mejor = false, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void BMB(bool v = false);
-   void ES(bool v = false);
+   void ES(bool v = false, bool sol_ini = true);
+   void ILS(int metodo, bool v = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos(int n);

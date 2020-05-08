@@ -293,7 +293,6 @@ void CCP::generar_vecino(bool bl){
          if(bl){
             vecindario.erase(it);
          }
-
          c = solucion[pos];
          solucion[pos] = -1;
          for( int i = 0; i < n_cluster; i++){
@@ -870,6 +869,27 @@ void CCP::aplicar_BLS(double p, bool mejor){
    }
 }
 /////////////////////////////////////////////////////////////////////////////////
+void CCP::mutacion_ILS(){
+   std::vector<int> index;
+   int tam = (int) solucion.size();
+   int r = Randint(0,tam);
+   int v = Randint(0,tam);
+   int fin = ((r+v)%tam) - 1;
+
+   for(int i = r; i != fin+1; i = (i+1)%tam){
+      index.push_back(i);
+   }
+
+   for(int i = 0; i < tam; i++){
+      if(index.end() != std::find(index.begin(),index.end(),i)){
+         solucion[i] = Randint(0,n_cluster);
+      }
+   }
+
+   reparar_solucion(solucion);
+   leer_solucion();
+}
+/////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 int CCP::greedy(bool v){
@@ -917,11 +937,15 @@ int CCP::greedy(bool v){
    return i;
 }
 
-void CCP::busqueda_local(bool v){
+void CCP::busqueda_local(bool v, bool sol_ini){
    double f_objetivo_ant, infactibilidad_ant;
    int i = 0;
    std::vector<int> solucion_ant;
-   solucion_inicial();
+
+   if(sol_ini){
+      solucion_inicial();
+   }
+
    leer_solucion();
    generar_vecindario();
    f_objetivo_ant = f_objetivo;
@@ -1097,37 +1121,139 @@ void CCP::BMB(bool v){
    eval_bl = eval;
 }
 
-void CCP::ES(bool v){
+void CCP::ES(bool v, bool sol_ini){
    double mu = 0.3;
    double phi = mu;
-   double beta;
 
-   solucion_inicial();
+   if(sol_ini){
+      solucion_inicial();
+   }
+
    leer_solucion();
-   desviacion_general();
-   infactibilidad_solucion();
-   calc_f_objetivo();
-
 
    double t_0 = (mu * f_objetivo) / (-1 * log(phi));
-   double t_f = 0.001;
+   double t_f = 0.001;//0.001;
    double t_actual = t_0;
 
    int max_vecinos = 10 * ((int) solucion.size());
    int max_exitos = 0.1 * max_vecinos;
-   int vecinos, exitos;
+   int vecinos, exitos = 1, eval = 0;
+   double uniforme;
 
-   std::vector<int> solucion_ant;
-   double f_objetivo_ant;
+   std::vector<int> mejor_sol = solucion;
+   double f_objetivo_mejor = f_objetivo;
+   std::vector<int> solucion_acp = solucion;
+   double f_objetivo_acp = f_objetivo;
    double diferencia;
 
-   while(t_actual <= t_f){
+   while(eval < 100000 && t_actual > t_f && exitos != 0){
+      //std::cout << "TEMPERATURA " << t_actual << std::endl;
       generar_vecindario();
+      vecinos = 0;
+      exitos = 0;
 
-      while(vecinos < n_vecinos && exitos < max_exitos){
-         generar_vecino();
+      while(vecinos <= max_vecinos && exitos <= max_exitos){
+         generar_vecino(false);
+         vecinos++;
+         eval++;
+         diferencia = f_objetivo - f_objetivo_acp;
+         uniforme = Rand();
+
+         if(v){
+            std::cout << "--------------------------------------" << std::endl;
+            std::cout << "TEMPERATURA INI " << t_0 << std::endl;
+            std::cout << "TEMPERATURA " << t_actual << std::endl;
+            std::cout << "Evaluaciones " << eval << std::endl;
+            std::cout << "Vecino " << f_objetivo << std::endl;
+            std::cout << "Aceptado " << f_objetivo_acp << std::endl;
+            std::cout << "Diferencia " << diferencia << std::endl;
+            std::cout << "Exponencial " << exp((-1 * diferencia) / t_actual) << std::endl;
+            std::cout << "Mejor " << f_objetivo_mejor << std::endl;
+            std::cout << "Vecinos: " << vecinos << std::endl;
+            std::cout << "Vecinos max " << max_vecinos << std::endl;
+            std::cout << "Vecindario " << vecindario.size() << std::endl;
+            std::cout << "Exitos: " << exitos << std::endl;
+            std::cout << "Exitos max " << max_exitos << std::endl;
+            if( vecinos == exitos){
+               std::cout << "YES" << std::endl;
+            } else {
+               std::cout << "NO - " << vecinos - exitos << std::endl;
+            }
+            std::cout << "--------------------------------------" << std::endl;
+         }
+
+         // std::cout << uniforme << " -> " << exp((-1 * diferencia) / t_actual) << " | " << diferencia << " / " << t_actual << std::endl;
+         if((diferencia < 0) || (uniforme <= exp((-diferencia) / t_actual))){
+            exitos++;
+            //vecinos = 0;
+            solucion_acp = solucion;
+            f_objetivo_acp = f_objetivo;
+            leer_solucion();
+            generar_vecindario();
+
+            if(f_objetivo_acp < f_objetivo_mejor){
+               mejor_sol = solucion_acp;
+               f_objetivo_mejor = f_objetivo_acp;
+               if(v){
+                  mostrar_solucion(true);
+               }
+            }
+         }
+
       }
+      // solucion = solucion_acp;
+      // f_objetivo = f_objetivo_acp;
+      // leer_solucion();
+      // double beta = (t_0 - t_f) / ( (100000/max_vecinos)*t_0*t_f );
+      // t_actual = t_actual / (1 + beta * t_actual);
+      t_actual = t_actual * 0.92;
    }
+
+   solucion = mejor_sol;
+   leer_solucion();
+
+   eval_bl = eval;
+}
+
+void CCP::ILS(int metodo, bool v){
+   int eval = 0;
+   solucion_inicial();
+   leer_solucion();
+
+   std::vector<int> mejor_sol = solucion;
+   double f_mejor_sol = f_objetivo;
+
+   for(int i = 0; i <= 10; i++){
+      // std::cout << "Inicial " << f_objetivo << std::endl;
+      if(metodo == 0){
+         busqueda_local(v, false);
+         leer_solucion();
+
+      } else {
+         ES(v, false);
+         leer_solucion();
+      }
+
+      if(f_objetivo < f_mejor_sol){
+         mejor_sol = solucion;
+         f_mejor_sol = f_objetivo;
+      }
+
+      // std::cout << "Final " << f_objetivo << std::endl;
+      // std::cout << "Mejor " << f_mejor_sol << std::endl;
+      // std::cout << "Iteracion " << i << std::endl;
+
+      solucion = mejor_sol;
+      leer_solucion();
+      mutacion_ILS();
+
+      eval += eval_bl;
+
+   }
+
+   solucion = mejor_sol;
+   leer_solucion();
+   eval_bl = eval;
 }
 /////////////////////////////////////////////////////////////////////////////////
 
