@@ -937,7 +937,7 @@ int CCP::greedy(bool v){
    return i;
 }
 
-void CCP::busqueda_local(bool v, bool sol_ini){
+void CCP::busqueda_local(bool v, bool sol_ini, int neval){
    double f_objetivo_ant, infactibilidad_ant;
    int i = 0;
    std::vector<int> solucion_ant;
@@ -969,11 +969,12 @@ void CCP::busqueda_local(bool v, bool sol_ini){
          solucion = solucion_ant;
          infactibilidad = infactibilidad_ant;
       }
-      if(i >= 100000){
+      if(i >= neval){
          //std::cout << "Num Max Evaluaciones" << std::endl;
       }
-   }while(i < 100000 && quedan_vecinos());
+   }while(i < neval && quedan_vecinos());
    //std::cout << "Num Evaluaciones: " << i << std::endl;
+   leer_solucion();
    eval_bl = i;
 }
 
@@ -1121,7 +1122,7 @@ void CCP::BMB(bool v){
    eval_bl = eval;
 }
 
-void CCP::ES(bool v, bool sol_ini){
+void CCP::ES(bool v, bool sol_ini, int neval){
    double mu = 0.3;
    double phi = mu;
 
@@ -1146,7 +1147,7 @@ void CCP::ES(bool v, bool sol_ini){
    double f_objetivo_acp = f_objetivo;
    double diferencia;
 
-   while(eval < 100000 && t_actual > t_f && exitos != 0){
+   while(eval < neval && t_actual > t_f && exitos != 0){
       //std::cout << "TEMPERATURA " << t_actual << std::endl;
       generar_vecindario();
       vecinos = 0;
@@ -1158,29 +1159,6 @@ void CCP::ES(bool v, bool sol_ini){
          eval++;
          diferencia = f_objetivo - f_objetivo_acp;
          uniforme = Rand();
-
-         if(v){
-            std::cout << "--------------------------------------" << std::endl;
-            std::cout << "TEMPERATURA INI " << t_0 << std::endl;
-            std::cout << "TEMPERATURA " << t_actual << std::endl;
-            std::cout << "Evaluaciones " << eval << std::endl;
-            std::cout << "Vecino " << f_objetivo << std::endl;
-            std::cout << "Aceptado " << f_objetivo_acp << std::endl;
-            std::cout << "Diferencia " << diferencia << std::endl;
-            std::cout << "Exponencial " << exp((-1 * diferencia) / t_actual) << std::endl;
-            std::cout << "Mejor " << f_objetivo_mejor << std::endl;
-            std::cout << "Vecinos: " << vecinos << std::endl;
-            std::cout << "Vecinos max " << max_vecinos << std::endl;
-            std::cout << "Vecindario " << vecindario.size() << std::endl;
-            std::cout << "Exitos: " << exitos << std::endl;
-            std::cout << "Exitos max " << max_exitos << std::endl;
-            if( vecinos == exitos){
-               std::cout << "YES" << std::endl;
-            } else {
-               std::cout << "NO - " << vecinos - exitos << std::endl;
-            }
-            std::cout << "--------------------------------------" << std::endl;
-         }
 
          // std::cout << uniforme << " -> " << exp((-1 * diferencia) / t_actual) << " | " << diferencia << " / " << t_actual << std::endl;
          if((diferencia < 0) || (uniforme <= exp((-diferencia) / t_actual))){
@@ -1195,12 +1173,42 @@ void CCP::ES(bool v, bool sol_ini){
                mejor_sol = solucion_acp;
                f_objetivo_mejor = f_objetivo_acp;
                if(v){
-                  mostrar_solucion(true);
+                  //mostrar_solucion(true);
                }
             }
          }
 
+         if(v){
+            std::cout << "--------------------------------------" << std::endl;
+            std::cout << "TEMPERATURA INI: " << t_0 << std::endl;
+            std::cout << "TEMPERATURA: " << t_actual << std::endl;
+            std::cout << "Mejor solucion: " << f_objetivo_mejor << std::endl;
+            std::cout << "Evaluaciones: " << eval << std::endl;
+            std::cout << "Vecino actual: " << f_objetivo << std::endl;
+            std::cout << "Ultimo aceptado: " << f_objetivo_acp << std::endl;
+            std::cout << "Vecinos: " << vecinos << std::endl;
+            std::cout << "Exitos: " << exitos << std::endl;
+            std::cout << "Diferencia: " << diferencia << std::endl;
+            std::cout << "Probabilidad: " << uniforme << std::endl;
+            std::cout << "Metropoli: " << exp(-diferencia / t_actual) << std::endl;
+            if( vecinos == exitos){
+               std::cout << "YES" << std::endl;
+            } else {
+               std::cout << "NO - " << vecinos - exitos << std::endl;
+            }
+            if((diferencia < 0) || (uniforme <= exp(-diferencia / t_actual))){
+               std::cout << "ACEPTADO" << std::endl;
+            } else {
+               std::cout << "XXXXXXXX" << std::endl;
+            }
+            std::cout << "--------------------------------------" << std::endl;
+            // std::cout << eval << " " << f_objetivo_mejor << std::endl;
+         }
+
       }
+
+
+
       // solucion = solucion_acp;
       // f_objetivo = f_objetivo_acp;
       // leer_solucion();
@@ -1226,11 +1234,11 @@ void CCP::ILS(int metodo, bool v){
    for(int i = 0; i <= 10; i++){
       // std::cout << "Inicial " << f_objetivo << std::endl;
       if(metodo == 0){
-         busqueda_local(v, false);
+         busqueda_local(v, false, 10000);
          leer_solucion();
 
       } else {
-         ES(v, false);
+         ES(v, false, 10000);
          leer_solucion();
       }
 

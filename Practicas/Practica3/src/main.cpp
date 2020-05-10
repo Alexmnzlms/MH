@@ -130,7 +130,7 @@ int main(int argc, char ** argv){
    bool grafica_genetico = false;
 
    bool solucion_completa = false;
-   bool mostrar_iteracion = false;
+   bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
    bool mostrar_greedy = false;
@@ -184,7 +184,7 @@ int main(int argc, char ** argv){
    char sem_code[] = "SEM";
    char bmb_code[] = "BMB";
    char es_code[] = "ES";
-   char ilsbl_code[] = "ILS-BL";
+   char ilsbl_code[] = "ILS";
    char ilses_code[] = "ILS-ES";
 
    if(strcmp(argv[3],greedy_code) == 0){

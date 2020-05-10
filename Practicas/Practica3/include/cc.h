@@ -98,11 +98,11 @@ private:
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy(bool v = false);
-   void busqueda_local(bool v = false, bool sol_ini = true);
+   void busqueda_local(bool v = false, bool sol_ini = true, int neval = 100000);
    void AG(int g, int n, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void AM(int n, double p, bool mejor = false, bool v = false, bool graph = false, bool ignore_eval=false, int maxgen = 0);
    void BMB(bool v = false);
-   void ES(bool v = false, bool sol_ini = true);
+   void ES(bool v = false, bool sol_ini = true, int neval = 100000);
    void ILS(int metodo, bool v = false);
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
