@@ -318,6 +318,40 @@ void CCP::generar_vecino(bool bl){
    }
 }
 
+void CCP::generar_vecino_es(){
+   bool salir = false;
+   int pos, n, c;
+   while(!salir){
+      salir = false;
+      pos = Randint(0,solucion.size());
+      n = Randint(0,n_cluster);
+      if((clusters[n].size() - 1) > 0){
+         salir = true;
+         c = solucion[pos];
+         solucion[pos] = -1;
+         for( int i = 0; i < n_cluster; i++){
+            clusters[i].clear();
+         }
+         for(unsigned j = 0; j < solucion.size(); j++){
+            if(solucion[j] != -1){
+               clusters[solucion[j]].push_back(j);
+            }
+         }
+         infactibilidad -= restricciones_incumplidas(pos,c);
+         infactibilidad += restricciones_incumplidas(pos,n);
+         solucion[pos] = n;
+         clusters[solucion[pos]].push_back(pos);
+
+         for( int i = 0; i < n_cluster; i++){
+            calcular_centroide(i);
+         }
+         desviacion_general();
+         //infactibilidad_solucion();
+         calc_f_objetivo();
+      }
+   }
+}
+
 void CCP::generar_vecindario(){
    vecindario.clear();
    for(unsigned i = 0; i < posiciones.size(); i++){
@@ -327,6 +361,15 @@ void CCP::generar_vecindario(){
          }
       }
    }
+   // std::cout << "F objetivo: " << f_objetivo << std::endl;
+   // for(auto it = solucion.begin(); it != solucion.end(); ++it){
+   //    std::cout << *it;
+   // }
+   // std::cout << std::endl;
+   // for(auto it = vecindario.begin(); it != vecindario.end(); ++it){
+   //    std::cout << "(" << it->first << "," << it->second << ")";
+   // }
+   // std::cout << std::endl;
 }
 
 void CCP::leer_solucion(){
@@ -937,7 +980,7 @@ int CCP::greedy(bool v){
    return i;
 }
 
-void CCP::busqueda_local(bool v, bool sol_ini, int neval){
+void CCP::busqueda_local(bool v, bool sol_ini, int neval, bool graph){
    double f_objetivo_ant, infactibilidad_ant;
    int i = 0;
    std::vector<int> solucion_ant;
@@ -969,8 +1012,8 @@ void CCP::busqueda_local(bool v, bool sol_ini, int neval){
          solucion = solucion_ant;
          infactibilidad = infactibilidad_ant;
       }
-      if(i >= neval){
-         //std::cout << "Num Max Evaluaciones" << std::endl;
+      if(graph){
+         std::cout << i << " " << f_objetivo_ant << std::endl;
       }
    }while(i < neval && quedan_vecinos());
    //std::cout << "Num Evaluaciones: " << i << std::endl;
@@ -1122,7 +1165,7 @@ void CCP::BMB(bool v){
    eval_bl = eval;
 }
 
-void CCP::ES(bool v, bool sol_ini, int neval){
+void CCP::ES(bool v, bool sol_ini, int neval, bool graph, int n_graph){
    double mu = 0.3;
    double phi = mu;
 
@@ -1146,36 +1189,40 @@ void CCP::ES(bool v, bool sol_ini, int neval){
    std::vector<int> solucion_acp = solucion;
    double f_objetivo_acp = f_objetivo;
    double diferencia;
+   bool aceptacion;
 
    while(eval < neval && t_actual > t_f && exitos != 0){
-      //std::cout << "TEMPERATURA " << t_actual << std::endl;
-      generar_vecindario();
       vecinos = 0;
       exitos = 0;
 
-      while(vecinos <= max_vecinos && exitos <= max_exitos){
-         generar_vecino(false);
+      while(vecinos < max_vecinos && exitos < max_exitos){
+         generar_vecino_es();
          vecinos++;
          eval++;
          diferencia = f_objetivo - f_objetivo_acp;
          uniforme = Rand();
-
-         // std::cout << uniforme << " -> " << exp((-1 * diferencia) / t_actual) << " | " << diferencia << " / " << t_actual << std::endl;
-         if((diferencia < 0) || (uniforme <= exp((-diferencia) / t_actual))){
+         aceptacion = false;
+         if(diferencia < 0){
+            aceptacion = true;
+         } else if (uniforme <= exp((-diferencia) / t_actual)){
+            aceptacion = true;
+         }
+         if(aceptacion){
             exitos++;
-            //vecinos = 0;
             solucion_acp = solucion;
             f_objetivo_acp = f_objetivo;
             leer_solucion();
-            generar_vecindario();
 
-            if(f_objetivo_acp < f_objetivo_mejor){
-               mejor_sol = solucion_acp;
-               f_objetivo_mejor = f_objetivo_acp;
+            if(f_objetivo < f_objetivo_mejor){
+               mejor_sol = solucion;
+               f_objetivo_mejor = f_objetivo;
                if(v){
-                  //mostrar_solucion(true);
+                  mostrar_solucion(true);
                }
             }
+         } else {
+            solucion = solucion_acp;
+            leer_solucion();
          }
 
          if(v){
@@ -1196,29 +1243,36 @@ void CCP::ES(bool v, bool sol_ini, int neval){
             } else {
                std::cout << "NO - " << vecinos - exitos << std::endl;
             }
-            if((diferencia < 0) || (uniforme <= exp(-diferencia / t_actual))){
+            if((diferencia < 0) /*|| (uniforme <= exp(-diferencia / t_actual))*/){
                std::cout << "ACEPTADO" << std::endl;
             } else {
                std::cout << "XXXXXXXX" << std::endl;
             }
             std::cout << "--------------------------------------" << std::endl;
-            // std::cout << eval << " " << f_objetivo_mejor << std::endl;
          }
-
+         if(graph){
+            if(n_graph == 0){
+               std::cout << eval << " " << f_objetivo << std::endl;
+            } else if(n_graph == 1){
+               std::cout << eval << " " << f_objetivo_acp << std::endl;
+            } else {
+               std::cout << eval << " " << f_objetivo_mejor << std::endl;
+            }
+         }
       }
 
-
-
-      // solucion = solucion_acp;
-      // f_objetivo = f_objetivo_acp;
-      // leer_solucion();
-      // double beta = (t_0 - t_f) / ( (100000/max_vecinos)*t_0*t_f );
+      solucion = solucion_acp;
+      f_objetivo = f_objetivo_acp;
+      leer_solucion();
+      // double beta = (t_0 - t_f) / ( (neval/max_vecinos)*t_0*t_f );
       // t_actual = t_actual / (1 + beta * t_actual);
-      t_actual = t_actual * 0.92;
+      t_actual = t_actual * 0.9;
    }
-
    solucion = mejor_sol;
    leer_solucion();
+   if(v){
+      mostrar_solucion(true);
+   }
 
    eval_bl = eval;
 }
@@ -1232,7 +1286,10 @@ void CCP::ILS(int metodo, bool v){
    double f_mejor_sol = f_objetivo;
 
    for(int i = 0; i <= 10; i++){
-      // std::cout << "Inicial " << f_objetivo << std::endl;
+      if(v){
+         std::cout << "Inicial " << f_objetivo << std::endl;
+      }
+      
       if(metodo == 0){
          busqueda_local(v, false, 10000);
          leer_solucion();
@@ -1247,9 +1304,11 @@ void CCP::ILS(int metodo, bool v){
          f_mejor_sol = f_objetivo;
       }
 
-      // std::cout << "Final " << f_objetivo << std::endl;
-      // std::cout << "Mejor " << f_mejor_sol << std::endl;
-      // std::cout << "Iteracion " << i << std::endl;
+      if(v){
+         std::cout << "Final " << f_objetivo << std::endl;
+         std::cout << "Mejor " << f_mejor_sol << std::endl;
+         std::cout << "Iteracion " << i << std::endl;
+      }
 
       solucion = mejor_sol;
       leer_solucion();

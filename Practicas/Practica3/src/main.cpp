@@ -128,6 +128,9 @@ int main(int argc, char ** argv){
    double semillas [5] = {/*123452244*/2024614690, 2024676296, 2024677261, 2024740484, 2024740899};
    bool nueva_semilla = false;
    bool grafica_genetico = false;
+   bool grafica_es = false;
+   bool grafica_bl = false;
+   int n_graph_es = -1;
 
    bool solucion_completa = false;
    bool mostrar_iteracion = true;
@@ -161,9 +164,6 @@ int main(int argc, char ** argv){
    vector<string> restricciones {"data/rand_set_const_10.const", "data/iris_set_const_10.const", "data/ecoli_set_const_10.const", "data/newthyroid_set_const_10.const", "data/rand_set_const_20.const", "data/iris_set_const_20.const", "data/ecoli_set_const_20.const", "data/newthyroid_set_const_20.const"};
 
    n_iteraciones = atoi(argv[1]);
-   if(n_iteraciones == 0){
-      grafica_genetico = true;
-   }
    if(atoi(argv[2]) == 0){
       for(int i = 0; i < n_conjuntos_datos; i++){
          usar_conjunto[i] = true;
@@ -242,15 +242,26 @@ int main(int argc, char ** argv){
       busqueda_ils = 1;
       nombre_ils = argv[3];
    }
+   if(n_iteraciones == 0){
+      if(mostrar_ag || mostrar_am){
+         grafica_genetico = true;
+      } else if(mostrar_es){
+         grafica_es = true;
+      } else if(mostrar_bl){
+         grafica_bl = true;
+      }
+   }
 
    if(argc > 4){
       char verbose[] = "v";
       if(strcmp(verbose, argv[4]) == 0){
          solucion_completa = true;
+      } else {
+         n_graph_es = atoi(argv[4]);
       }
    }
 
-   if(!grafica_genetico){
+   if(!grafica_genetico && !grafica_es && !grafica_bl){
       cout << "Ejecutando programa CCP" << endl;
 
       cout << "Semillas utilizadas: {";
@@ -325,6 +336,26 @@ int main(int argc, char ** argv){
                par.mostrar_agm();
                return(0);
             }
+         }
+      }
+   }
+   if(grafica_es){
+      for(int c = 0; c < n_conjuntos_datos; c++){
+         if(usar_conjunto[c]){
+            Set_random(semillas[0]);
+            CCP par(n_k[c],datos[c],restricciones[c]);
+            par.ES(false, true, 100000, true, n_graph_es);
+            return(0);
+         }
+      }
+   }
+   if(grafica_bl){
+      for(int c = 0; c < n_conjuntos_datos; c++){
+         if(usar_conjunto[c]){
+            Set_random(semillas[0]);
+            CCP par(n_k[c],datos[c],restricciones[c]);
+            par.busqueda_local(false, true, 100000, true);
+            return(0);
          }
       }
    }
