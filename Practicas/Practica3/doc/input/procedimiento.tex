@@ -47,7 +47,8 @@ Estos parámetros se configuran de la siguiente manera:
    \item $[semilla]$: Es el número de semilla que se quiere ejecutar.
    \begin{itemize}
       \item $[1-5]$: Ejecutan desde la primera semilla hasta la que se pase como argumento
-      \item $[0]$: Si se introduce el 0, el programa entra en modo gráfico. Esto significa que genera un output de datos para poder pintar una gráfica de la evolución del valor de la función objetivo con el paso de las generaciones ---Solo funciona para algoritmos genéticos y meméticos---.
+      \item $[0]$: Si se introduce el 0, el programa entra en modo gráfico. Esto significa que genera un output de datos para poder pintar una gráfica de la evolución del valor de la función objetivo con el paso de las generaciones ---Solo funciona para algoritmos genéticos y meméticos, busqueda local y enfriamiento simulado---.
+      Si se utiliza para enfriamiento simulado debe proporcinarse un numero [0-2] para realizar los distintos gráficos.
    \end{itemize}
    \item $[conjunto]$: Numero del conjunto que se quiere ejecutar.
    \begin{itemize}
@@ -68,6 +69,10 @@ Estos parámetros se configuran de la siguiente manera:
       \item $[AM\_10-1.0]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones a todos los cromosomas
       \item $[AM\_10-0.1]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los cromosomas
       \item $[AM\_10-0.1mej]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los mejores cromosomas
+      \item $[BMB]$: Búsqueda Multiarranque Básica.
+      \item $[ES]$: Enfriamiento Simulado.
+      \item $[ILS]$: Búsqueda Local Iterativa.
+      \item $[ILS-ES]$: Búsqueda Local Iterativa con enfriamiento simulado.
       \item $[SEM]$: Activa el modo búsqueda de semillas.
    \end{itemize}
    \item $[Verbose]$: Muestra por pantalla la traza de ejecución del algoritmo.
