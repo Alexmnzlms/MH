@@ -325,7 +325,7 @@ void CCP::generar_vecino_es(){
       salir = false;
       pos = Randint(0,solucion.size());
       n = Randint(0,n_cluster);
-      if((clusters[n].size() - 1) > 0){
+      if((clusters[solucion[pos]].size() - 1) > 0){
          salir = true;
          c = solucion[pos];
          solucion[pos] = -1;
@@ -372,7 +372,7 @@ void CCP::generar_vecindario(){
    // std::cout << std::endl;
 }
 
-void CCP::leer_solucion(){
+void CCP::leer_solucion(int n){
    limpiar_clusters();
    for( unsigned i = 0; i < solucion.size(); i++){
       clusters[solucion[i]].push_back(i);
@@ -381,7 +381,12 @@ void CCP::leer_solucion(){
       calcular_centroide(i);
    }
    desviacion_general();
-   infactibilidad_solucion();
+   if(n < 0){
+      infactibilidad_solucion();
+   } else {
+      infactibilidad = n;
+   }
+
    calc_f_objetivo();
 }
 
@@ -1151,7 +1156,7 @@ void CCP::BMB(bool v){
    double mejor = 100000.0;
    int eval = 0;
    for(int i = 0; i < 10; i++){
-      busqueda_local(v);
+      busqueda_local(v,true,10000);
       eval += eval_bl;
       f_sol = evaluar_solucion(solucion);
       if(f_sol < mejor){
@@ -1188,6 +1193,7 @@ void CCP::ES(bool v, bool sol_ini, int neval, bool graph, int n_graph){
    double f_objetivo_mejor = f_objetivo;
    std::vector<int> solucion_acp = solucion;
    double f_objetivo_acp = f_objetivo;
+   int infactibilidad_ant = infactibilidad;
    double diferencia;
    bool aceptacion;
 
@@ -1196,6 +1202,7 @@ void CCP::ES(bool v, bool sol_ini, int neval, bool graph, int n_graph){
       exitos = 0;
 
       while(vecinos < max_vecinos && exitos < max_exitos){
+         infactibilidad_ant = infactibilidad;
          generar_vecino_es();
          vecinos++;
          eval++;
@@ -1211,7 +1218,7 @@ void CCP::ES(bool v, bool sol_ini, int neval, bool graph, int n_graph){
             exitos++;
             solucion_acp = solucion;
             f_objetivo_acp = f_objetivo;
-            leer_solucion();
+            //leer_solucion();
 
             if(f_objetivo < f_objetivo_mejor){
                mejor_sol = solucion;
@@ -1222,7 +1229,7 @@ void CCP::ES(bool v, bool sol_ini, int neval, bool graph, int n_graph){
             }
          } else {
             solucion = solucion_acp;
-            leer_solucion();
+            leer_solucion(infactibilidad_ant);
          }
 
          if(v){
@@ -1289,7 +1296,7 @@ void CCP::ILS(int metodo, bool v){
       if(v){
          std::cout << "Inicial " << f_objetivo << std::endl;
       }
-      
+
       if(metodo == 0){
          busqueda_local(v, false, 10000);
          leer_solucion();
