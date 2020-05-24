@@ -1,10 +1,76 @@
 \newpage
 \section{Búsqueda Local Iterativa}
 \subsection{Descripción del algoritmo}
+La Búsqueda Local Iterativa o ILS (Iterative Local Search) es similar a la BMB. Ambos algoritmos se basan en repetir un proceso de búsqueda (BL por ejemplo) de manera iterativa quedándose con la mejor solución encontrada hasta la fecha. Sin embargo las principal diferencia de la ILS respecto a la BMB, es que la ILS parte de una solución aleatoria y después de aplicar el proceso de búsqueda, aplica un operador de mutación a la solución obtenida y esta se utiliza como solución de partida en la siguiente iteración.\\
+Este operador de mutación es distinto al usado en los algoritmos genéticos, dado que no solo muta un gen con una probabilidad p, si no que muta un conjunto de tamaño aleatorio de posiciones del vector solución. De esta forma, partimos de una solución "optima" y conseguimos diversificar manteniendo parte de la solución de manera que el proceso de búsqueda pueda explotar la misma.
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
+int: f_objetivo_mejor = infinito
+int: vector[] mejor_solucion
 
+Para i = 0 hasta 9:
+   solucion = Busqueda Local/Enfriamiento Simulado con 1000 iteraciones sin solucion inicial
+   f_objetivo = evaluar_solucion(solucion)
+
+   Si f_objetivo < f_objetivo_mejor:
+      mejor_solucion = solucion
+      f_objetivo_mejor = f_objetivo
+
+   mutacion_ILS()
+
+Devolver mejor_solucion
 \end{minted}
 \subsection{Operadores propios}
+\begin{itemize}
+   \item Operador \textbf{mutacion\_ILS}:
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   int: vector [] index
+   int: tam = tamaño de la solucion
+   int: r = numero aleatorio entre 0 y tam
+   int: v = numero aleatorio entre 0 y tam
+   int: fin  = ((r+v) mod tam) - 1
+
+   Para i = r hasta i != fin + 1:
+      Añadir i a index
+
+   Para i = 0 hasta tam:
+      Si i no esta en index:
+         solucion[i] = numero aleatorio entre 0 y n_cluster
+
+   reparar_solucion(solucion)
+   \end{minted}
+   \item Operador \textbf{reparar\_solucion(sol)}: Repara las infactibilidades presentes en un vector solución.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   bool: reparacion = falso
+   int: aleatorio
+   int: tam_sol = tamaño sol - 1
+   int matriz c
+   int: vector c_vacio
+
+   Para i = 0 hasta tamaño de sol:
+      Añadir i a c[sol[i]]
+
+   Para i = 0 hasta numero de cluster:
+      Si c[i] esta vacio:
+         reparacion = verdadero
+         Añadir i a c_vacio
+
+
+   Si reparacion:
+      Recorrer el vector c_vacio:
+         aleatorio = Numero aleatorio entre 0 y tam_sol
+         Mientras haya al menos un elemento en c[sol[aleatorio]]:
+            aleatorio = Numero aleatorio entre 0 y tam_sol
+
+         Eliminar aleatorio de c[sol[aleatorio]]
+         Actualizar sol[aleatorio] a elemento actual de c_vacio
+         Añadir aleatorio a c[sol[aleatorio]]
+   \end{minted}
+
+\end{itemize}

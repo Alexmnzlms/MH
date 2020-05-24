@@ -13,11 +13,87 @@ Existen dos condiciones de aceptación de una solución:
 \end{itemize}
 El criterio de Metropolis nos permite combinar la diversificación de la solución cuando la temperatura es alta, dado que siempre se cumplirá la condición del criterio de Metropolis (para temperaturas muy altas es de interés notar que el criterio de Metropolis es superior a 1), con la explotación de la mejor solución. A medida que la temperatura actual decrece, esta condición reduce drásticamente su valor, permitiendo la explotación de la solución unicamente aceptando una solución cuando mejora el valor de la función objetivo de la solución actual.
 Cuando se acepta una solución, se toma como solución de partida a la hora de generar vecinos nuevos. También se almacena cual es la mejor solución encontrada hasta el momento, siento esta la solución final del algoritmo.
-La condición de para del algoritmo es que supere 100000 iteraciones, que la temperatura actual $t_{k} = 0$ o que exista un $L(T)$ en el que no se haya aceptado ninguna solución.
+La condición de para del algoritmo es que supere 100000 iteraciones, que la temperatura actual $t_{k} <= 0.001$ o que exista un $L(T)$ en el que no se haya aceptado ninguna solución.
 Se utiliza un esquema de enfriamiento proporcional debido a que, durante la realización de esta práctica, se hizo notable que el enfriamiento de cauchy modificado que se proporciona, reducía drásticamente la temperatura en las primeras iteraciones, impidiendo así una correcta diversificación de la solución.
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
 
+int: t_inicial, t_final, t_actual, vecinos, exitos, eval
+double: f_objetivo_acp, f_objetivo_mejor
+int: vector[] solucion_ant, solucion_mejor
+
+solucion_inicial()
+
+t_inical = (mu * f_objetivo) / (-1 * log(phi))
+t_final = 0.01
+t_actual = t_inical
+
+Mientras eval < max_eval Y t_actual > t_final Y exitos != 0:
+   vecinos = 0
+   exitos = 0
+
+   Mientras vecinos < max_vecinos Y exitos < max_exitos:
+      generar_vecino_es()
+      vecinos++
+      eval++
+      diferencia = f_objetivo - f_objetivo_acp;
+      uniforme = numero aleatorio entre 0 y 1
+
+      Si diferencia < 0 O uniforme <= exp((-diferencia) / t_actual):
+         exitos++
+         solucion_acp = solucion
+         f_objetivo_acp = f_objetivo
+
+         Si f_objetivo < f_objetivo_mejor:
+            solucion_mejor = solucion
+            f_objetivo_mejor = f_objetivo
+
+      Si no:
+         solucion = solucion_acp
+
+   solucion = solucion_acp
+   f_objetivo = f_objetivo_acp
+   t_actual = 0.9*t_actual
+
+solucion = solucion_mejor
+f_objetivo = f_objetivo_mejor
+
 \end{minted}
+
+\subsection{Operadores propios}
+\begin{itemize}
+   \item Operador \textbf{generar\_vecino\_es()}: Mismo planteamiento que el operador vecino de la búsqueda local, pero como en ES no es necesario controlar que no se repita un vecino, ya no es necesario implementar la estructura del vecindario.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   bool: salir = falso
+   int: pos, n, c
+
+   Mientras no salir Y quedan vecinos que explorar:
+      salir = falso
+      pos = número aleatorio 0...i
+      n = número aleatorio 0...k
+
+      Si el tamaño del cluster de solucion[pos] - 1 > 0:
+         salir = verdadero
+         Borrar Pareja (pos,n) de vecindario
+         c = solucion[pos]
+         Marcar solucion[pos] como invalido
+
+         Para cada cluster j en el conjunto de cluster:
+            Vaciar j
+
+         Para cada elemento e de la solucion:
+            Si e es valido:
+               Introducir e en el cluster solucion[e]
+
+         infactibilidad -= restricciones_incumplidas(pos,c)
+         infactibilidad += restricciones_incumplidas(pos,n)
+         solucion[pos] = n
+         Añadir pos al cluster n
+         desviacion_general()
+         f_objetivo = desv_gen + (infactibilidad*lambda)
+   \end{minted}
+\end{itemize}

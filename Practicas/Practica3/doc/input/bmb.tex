@@ -1,17 +1,20 @@
 \newpage
 \section{Búsqueda Multiarranque Básica}
 \subsection{Descripción del algoritmo}
-La Búsqueda Multiarranque Básica es un algoritmo de búsqueda basado en trayectorias que se basa en la búsqueda local. BMB realiza un total de 10 busquedas locales secuenciales. Estas búsquedas locales se realizan bajo las mismas condiciones: se realizan 10 BL y cada una de ellas tiene un máximo de 10000 iteraciones. La solución que aporta BMB es la solución cuya función objetivo es minima de entre todas las soluciones encontradas por las diferentes BL. Debido a que este algortimo simplemente se implementa sobre el algortimo de busqueda local, no posee ni operadores propios ni estructuras de datos especiales.\\
-Como cada búsqueda local comienza en un punto aleatorio del espacio de soluciones, aumentamos la diversificación del algortimo.
+La Búsqueda Multiarranque Básica es un algoritmo de búsqueda basado en trayectorias que se basa en la búsqueda local. BMB realiza un total de 10 búsquedas locales secuenciales. Estas búsquedas locales se realizan bajo las mismas condiciones: se realizan 10 BL y cada una de ellas tiene un máximo de 10000 iteraciones. La solución que aporta BMB es la solución cuya función objetivo es minima de entre todas las soluciones encontradas por las diferentes BL. Debido a que este algoritmo simplemente se implementa sobre el algoritmo de búsqueda local, no posee ni operadores propios ni estructuras de datos especiales.\\
+Como cada búsqueda local comienza en un punto aleatorio del espacio de soluciones, aumentamos la diversificación del algoritmo.
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]
 {cpp}
-   f_objetivo_mejor = infinito
+   int: f_objetivo_mejor = infinito
+   int: vector[] mejor_solucion
+
    Para i = 0 hasta 9:
       solucion = Busqueda Local con 1000 iteraciones
       f_objetivo = evaluar_solucion(solucion)
-      si f_objetivo < f_objetivo_mejor:
+      
+      Si f_objetivo < f_objetivo_mejor:
          mejor_solucion = solucion
          f_objetivo_mejor = f_objetivo
 
