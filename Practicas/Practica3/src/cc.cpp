@@ -921,8 +921,7 @@ void CCP::mutacion_ILS(){
    std::vector<int> index;
    int tam = (int) solucion.size();
    int r = Randint(0,tam);
-   int v = Randint(0,tam);
-   int fin = ((r+v)%tam) - 1;
+   int fin = ((r+(int)(0.1*tam))%tam) - 1;
 
    for(int i = r; i != fin+1; i = (i+1)%tam){
       index.push_back(i);
