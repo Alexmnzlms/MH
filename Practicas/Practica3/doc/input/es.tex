@@ -1,11 +1,11 @@
 \newpage
 \section{Enfriamiento Simulado}
 \subsection{Descripción del algoritmo}
-El enfriamiento simulado es una modificación de la búsqueda local que nos permite aportar un componente de diversificación del que la BL clásica carece. El algoritmo simula el proceso de enfriamiento físico de un sistema, de manera que cuando la temperatura es alta el sistema se encuentra excitado y por tanto se potencia la diversificación y según decrece la temperatura, la diversificación da paso la exploración de la mejor solución encontrada. \\
-Primero se calcula la temperatura inicial de la siguiente manera: $ \frac{\mu \cdot F_{objetivo}}{-1log(\phi)} $. \\
+El enfriamiento simulado es una modificación de la búsqueda local que nos permite aportar un componente de diversificación del que la BL clásica carece. El algoritmo simula el proceso de enfriamiento físico de un sistema, de manera que cuando la temperatura es alta el sistema se encuentra excitado y por tanto se potencia la diversificación y según decrece la temperatura, la diversificación da paso la explotación de la mejor solución encontrada. \\
+Primero se calcula la temperatura inicial de la siguiente manera: $ \frac{\mu \cdot F_{objetivo}}{-log(\phi)} $. \\
 El proceso que rige como la temperatura decrece se conoce como el esquema de enfriamiento y en esta implementación del algoritmo se adapta un esquema proporcional ($t_{k+1} = \alpha \cdot t_{k}$).\\
-Llamaremos $L(T)$ al bucle de enfriamiento interno, es decir, el bucle en el que se generan y aceptaran soluciones en función de la temperatura actual. $L(T)$ finaliza cunado el numero de vecinos generados supera un numero máximo o el numero de soluciones aceptadas supera un umbral.
-En nuestro caso el numero máximo de vecinos es 10 veces el tamaño de la solución y el numero de soluciones aceptadas ses un 10\% del numero máximo de vecinos.\\
+Llamaremos $L(T)$ al bucle de enfriamiento interno, es decir, el bucle en el que se generarán y aceptarán soluciones en función de la temperatura actual. $L(T)$ finaliza cuando el número de vecinos generados supera un número máximo o el número de soluciones aceptadas supera un umbral.
+En nuestro caso el número máximo de vecinos es 10 veces el tamaño de la solución y el número de soluciones aceptadas es un 10\% del número máximo de vecinos.\\
 Existen dos condiciones de aceptación de una solución:
 \begin{itemize}
    \item El valor objetivo de la solución generada es inferior al valor de la función objetivo de la ultima solución aceptada.
@@ -14,7 +14,7 @@ Existen dos condiciones de aceptación de una solución:
 \end{itemize}
 El criterio de Metropolis nos permite combinar la diversificación de la solución cuando la temperatura es alta, dado que siempre se cumplirá la condición del criterio de Metropolis (para temperaturas muy altas es de interés notar que el criterio de Metropolis es superior a 1), con la explotación de la mejor solución. A medida que la temperatura actual decrece, esta condición reduce drásticamente su valor, permitiendo la explotación de la solución unicamente aceptando una solución cuando mejora el valor de la función objetivo de la solución actual.
 Cuando se acepta una solución, se toma como solución de partida a la hora de generar vecinos nuevos. También se almacena cual es la mejor solución encontrada hasta el momento, siento esta la solución final del algoritmo.
-La condición de para del algoritmo es que supere 100000 iteraciones, que la temperatura actual $t_{k} <= 0.001$ o que exista un $L(T)$ en el que no se haya aceptado ninguna solución.
+La condición de parada del algoritmo es que supere 100000 iteraciones, que la temperatura actual $t_{k} <= 0.001$ o que exista un $L(T)$ en el que no se haya aceptado ninguna solución.
 Se utiliza un esquema de enfriamiento proporcional debido a que, durante la realización de esta práctica, se hizo notable que el enfriamiento de cauchy modificado que se proporciona, reducía drásticamente la temperatura en las primeras iteraciones, impidiendo así una correcta diversificación de la solución.
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
@@ -79,7 +79,6 @@ f_objetivo = f_objetivo_mejor
 
       Si el tamaño del cluster de solucion[pos] - 1 > 0:
          salir = verdadero
-         Borrar Pareja (pos,n) de vecindario
          c = solucion[pos]
          Marcar solucion[pos] como invalido
 
