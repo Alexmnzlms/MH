@@ -1,8 +1,8 @@
 \newpage
-\section{Búsqueda Local Iterativa}
+\section{Iterated Local Search}
 \subsection{Descripción del algoritmo}
-La Búsqueda Local Iterativa o ILS (Iterative Local Search) es similar a la BMB. Ambos algoritmos se basan en repetir un proceso de búsqueda (BL por ejemplo) de manera iterativa quedándose con la mejor solución encontrada hasta la fecha. Sin embargo las principal diferencia de la ILS respecto a la BMB, es que la ILS parte de una solución aleatoria y después de aplicar el proceso de búsqueda, aplica un operador de mutación a la solución obtenida y esta se utiliza como solución de partida en la siguiente iteración.\\
-Este operador de mutación es distinto al usado en los algoritmos genéticos, dado que no solo muta un gen con una probabilidad p, si no que muta un conjunto de tamaño aleatorio de posiciones del vector solución. De esta forma, partimos de una solución "optima" y conseguimos diversificar manteniendo parte de la solución de manera que el proceso de búsqueda pueda explotar la misma.
+La Iterated Local Search (ILS) es similar a la BMB. Ambos algoritmos se basan en repetir un proceso de búsqueda (BL por ejemplo) de manera iterativa quedándose con la mejor solución encontrada hasta la fecha. Sin embargo las principal diferencia de la ILS respecto a la BMB, es que la ILS parte de una solución aleatoria y después de aplicar el proceso de búsqueda, aplica un operador de mutación a la solución obtenida y esta se utiliza como solución de partida en la siguiente iteración.\\
+Este operador de mutación es distinto al usado en los algoritmos genéticos, dado que no solo muta un gen con una probabilidad p, si no que muta un conjunto de tamaño aleatorio de posiciones del vector solución. De esta forma, partimos de una solución `optima' y conseguimos diversificar manteniendo parte de la solución de manera que el proceso de búsqueda pueda explotar la misma.
 \subsection{Pseudocódigo del algoritmo}
 \begin{minted}
 [fontsize=\footnotesize, linenos]

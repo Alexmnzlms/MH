@@ -15,11 +15,11 @@ El objetivo de los algoritmos descritos a continuación es minimizar el valor de
    \item \textbf{Algoritmos Meméticos}: Algoritmos de búsqueda basado en poblaciones. Se basa en la implementación de un algortimo genético con un esquema generacional, con la diferencia de que cada determinado número de generaciones, se aplica una búsqueda local a un determinado número de cromosomas. En esta práctica se implementan 3 versiones que se desarrollarán más adelante.
    \item \textbf{Búsqueda Multiarranque Básica}: Algoritmo de búsqueda basado en trayectorias. Se basa en realizar una búsqueda local partiendo de soluciones aleatorias distintas (10 BL con 10000 iteraciones) y guardar la solución cuyo valor de función objetivo es minima. La solución que aporta la BMB es la solución guardada, es decir, la minima.
    \item \textbf{Enfriamiento Simulado}: Algoritmo de búsqueda basado en trayectorias. Este algoritmo trata de replicar el proceso de enfriamiento de un sistema fisico. El proceso de busqueda lleva asociado una temperatura. Cuando la temperatura es alta, se aceptan soluciones con peor valor de la función objetivo y segun va disminuyendo la temperatura, solo se aceptan soluciones mejores.
-   \item \textbf{Búsqueda Local Iterativa (Iterative Local Search)}: Algortimo de búsqueda basado en trayectorias. Similar a la Búsqueda Multiarranque Básica, con la diferencia de que a la solución de una BL se le aplica un operador de mutación y se ejecuta la siguiente BL comenzando en esta solución.
-   \item \textbf{Búsqueda Local Iterativa - Enfriamiento Simulado}: Algoritmo de búsqueda basado en trayectorias. Mismo algoritmo que la ILS pero se aplica el enfriamiento simulado en lugar de la búsqueda local.
+   \item \textbf{Iterated Local Search}: Algortimo de búsqueda basado en trayectorias. Similar a la Búsqueda Multiarranque Básica, con la diferencia de que a la solución de una BL se le aplica un operador de mutación y se ejecuta la siguiente BL comenzando en esta solución.
+   \item \textbf{Iterated Local Search - Enfriamiento Simulado}: Algoritmo de búsqueda basado en trayectorias. Mismo algoritmo que la ILS pero se aplica el enfriamiento simulado en lugar de la búsqueda local.
 
 \end{itemize}
-
+\newpage
 \section{Representación de los datos}
 Los datos comunes a ambos algoritmos se representan de la siguiente manera:
 
