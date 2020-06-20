@@ -1334,26 +1334,22 @@ void CCP::iniciar_universe(){
    for(int i = 0; i < tam_multiverse; i++){
       universe.push_back(crear_solucion());
    }
-   for(auto it = universe.begin(); it != universe.end(); ++it){
-      f_universe.push_back(evaluar_solucion(*it));
-   }
 }
 
-std::vector<std::pair<double,int>> CCP::sort_universes(){
+void CCP::sort_universes(){
+   sorted_universe.clear();
    std::vector<std::pair<double,int>> sorted;
    for(int i = 0; i < tam_multiverse; i++){
-      sorted.push_back(std::make_pair(f_universe[i], i));
+      sorted_universe.push_back(std::make_pair(f_universe[i], i));
    }
 
-   std::sort(sorted.begin(); sorted.end());
-
-   return sorted;
+   std::sort(sorted_universe.begin(), sorted_universe.end());
 }
 
 void CCP::normalize_inflation_rate(){
    double squared_sum = 0;
    for(int i = 0; i < tam_multiverse; i++){
-      squared_sum = (f_universe[i]*f_universe[i])
+      squared_sum = (f_universe[i]*f_universe[i]);
    }
 
    squared_sum = sqrt(squared_sum);
@@ -1363,21 +1359,66 @@ void CCP::normalize_inflation_rate(){
    }
 }
 
+void CCP::evaluate_fitness(){
+   for(auto it = universe.begin(); it != universe.end(); ++it){
+      f_universe.push_back(evaluar_solucion(*it));
+   }
+
+   normalize_inflation_rate();
+}
+
+
+int CCP::roulette_wheel_selection(){
+   double suma = 0;
+   for(int i = 0; i < tam_multiverse; i++){
+      suma += (1 - f_universe[i]);
+   }
+
+   double random = Randfloat(0,suma);
+   double acumulado = 0;
+   int index = 0;
+
+   while(random > acumulado){
+      acumulado += 1 - f_universe[index];
+      index++;
+   }
+
+   return index - 1;
+
+}
+
 void CCP::MVO(){
-   tam_multiverso = 10;
+   tam_multiverse = 10;
    iniciar_universe();
    int max_iter = 100000;
+   int iter = 0;
    double min = 0.2;
    double max = 1.0;
+   double p = 1/6;
    double wep, tdr;
    int best_universe;
-   wep = min;
-   tdr = 1.0;
 
-   std::vector<std::pair<double,int>> sorted_universe = sort_universes();
+   int black_hole_index, white_hole_index;
 
+   while(iter < max_iter){
+      evaluate_fitness();
+      sort_universes();
 
-
+      for(int i = 0; i < tam_multiverse; i++){
+         wep = min + iter * ((max - min)/max_iter);
+         tdr = 1.0 - ((pow(iter,p))/(pow(max_iter,p)));
+         black_hole_index = i;
+         for(int j = 0; j < (int) universe[i].size(); j++){
+            double r1 = Rand();
+            if(r1 < f_universe[i]){
+               white_hole_index = roulette_wheel_selection();
+               universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j];
+            }
+         }
+      }
+      mostrar_universo();
+      iter++;
+   }
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -1465,6 +1506,23 @@ void CCP::mostrar_generacion(){
    std::cout << " F: " << f_mejor_generacion << std::endl;
 
    std::cout << "Evaluaciones: " << ind_eval << std::endl;
+}
+
+void CCP::mostrar_universo(){
+   std::cout << "Tamaño de la poblacion: " << (int) universe.size() << std::endl;
+
+   for(int i = 0; i < (int) universe.size(); i++){
+      for(int j = 0; j < (int) universe[i].size(); j++){
+         std::cout << universe[i][j];
+      }
+      std::cout << " F: " << f_universe[i] << std::endl;
+   }
+
+   std::cout << "Mejor generado: ";
+   for(int j = 0; j < (int) universe[sorted_universe[0].second].size(); j++){
+      std::cout << universe[sorted_universe[0].second][j];
+   }
+   std::cout << " F: " << sorted_universe[0].first << std::endl;
 }
 
 void CCP::mostrar_seleccion(){

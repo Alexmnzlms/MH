@@ -143,6 +143,7 @@ int main(int argc, char ** argv){
    bool mostrar_bmb = false;
    bool mostrar_es = false;
    bool mostrar_ils = false;
+   bool mostrar_mvo = false;
 
    int tipo_ag = 0;
    int operador_ag = 0;
@@ -186,6 +187,7 @@ int main(int argc, char ** argv){
    char es_code[] = "ES";
    char ilsbl_code[] = "ILS";
    char ilses_code[] = "ILS-ES";
+   char mvo_code[] = "MVO";
 
    if(strcmp(argv[3],greedy_code) == 0){
       mostrar_greedy = true;
@@ -241,6 +243,8 @@ int main(int argc, char ** argv){
       mostrar_ils = true;
       busqueda_ils = 1;
       nombre_ils = argv[3];
+   } else if(strcmp(argv[3],mvo_code) == 0){
+      mostrar_mvo = true;
    }
    if(n_iteraciones == 0){
       if(mostrar_ag || mostrar_am){
@@ -294,6 +298,9 @@ int main(int argc, char ** argv){
 
    vector<vector<double>> ils;
    vector<double> ils_media;
+
+   vector<vector<double>> mvo;
+   vector<double> mvo_media;
 
    if(nueva_semilla){
       vector<unsigned> sems;
@@ -853,6 +860,78 @@ int main(int argc, char ** argv){
                cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
                cout << c+1 << "          ";
                for(auto it = ils_media.begin(); it != ils_media.end(); ++it){
+                  cout << *it << "          ";
+               }
+               cout << endl;
+               cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+            }
+         }
+      }
+      cout << endl;
+      cout << endl;
+   }
+
+   if(mostrar_mvo){
+      cout << "----------------- Tabla de resultados MVO -----------------" << endl;
+      for(int c = 0; c < n_conjuntos_datos; c++){
+         if(usar_conjunto[c]){
+            mvo.clear();
+
+            for(int i = 0; i < n_iteraciones; i++){
+               Set_random(semillas[i]);
+               CCP par(n_k[c],datos[c],restricciones[c]);
+
+               tini= clock();
+               par.MVO();
+               tfin= clock();
+
+               double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
+               vector<double> fila;
+               fila = par.fila_datos(2);
+               fila.push_back(tiempo);
+               mvo.push_back(fila);
+
+               if(solucion_completa){
+                  cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+                  cout << titulos[c] << endl;
+                  cout << "Iteracion: " << i+1 << endl;
+                  cout << "Semilla: " << semillas[i] << endl;
+                  par.mostrar_solucion(true);
+                  cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+               }
+
+               if(mostrar_iteracion){
+                  if(i == 0){
+                     cout << titulos[c] << endl;
+                     cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Generaciones" << "          " << "Evaluaciones" << "          " << "T" << endl;
+                     cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+                  }
+                  cout << i+1 << "          ";
+                  for(auto it = fila.begin(); it != fila.end(); ++it){
+                     cout << *it << "          ";
+                  }
+                  cout << endl;
+                  cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+               }
+            }
+
+            if(mostrar_media){
+               mvo_media.clear();
+               for(int i = 0; i < (int) mvo[0].size(); i++){
+                  mvo_media.push_back(0);
+               }
+
+               for(int i = 0; i < (int) mvo.size(); i++){
+                  for(int j = 0; j < (int) mvo[i].size(); j++){
+                     mvo_media[j] += (mvo[i][j] / n_iteraciones);
+                  }
+               }
+
+               cout << "Media: " << titulos[c] << " MVO " << endl;
+               cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Generaciones" << "          " << "Evaluaciones" << "          " << "T" << endl;
+               cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+               cout << c+1 << "          ";
+               for(auto it = mvo_media.begin(); it != mvo_media.end(); ++it){
                   cout << *it << "          ";
                }
                cout << endl;
