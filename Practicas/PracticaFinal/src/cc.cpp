@@ -1328,6 +1328,57 @@ void CCP::ILS(int metodo, bool v){
    leer_solucion();
    eval_bl = eval;
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+void CCP::iniciar_universe(){
+   for(int i = 0; i < tam_multiverse; i++){
+      universe.push_back(crear_solucion());
+   }
+   for(auto it = universe.begin(); it != universe.end(); ++it){
+      f_universe.push_back(evaluar_solucion(*it));
+   }
+}
+
+std::vector<std::pair<double,int>> CCP::sort_universes(){
+   std::vector<std::pair<double,int>> sorted;
+   for(int i = 0; i < tam_multiverse; i++){
+      sorted.push_back(std::make_pair(f_universe[i], i));
+   }
+
+   std::sort(sorted.begin(); sorted.end());
+
+   return sorted;
+}
+
+void CCP::normalize_inflation_rate(){
+   double squared_sum = 0;
+   for(int i = 0; i < tam_multiverse; i++){
+      squared_sum = (f_universe[i]*f_universe[i])
+   }
+
+   squared_sum = sqrt(squared_sum);
+
+   for(int i = 0; i < tam_multiverse; i++){
+      f_universe[i] = f_universe[i]/squared_sum;
+   }
+}
+
+void CCP::MVO(){
+   tam_multiverso = 10;
+   iniciar_universe();
+   int max_iter = 100000;
+   double min = 0.2;
+   double max = 1.0;
+   double wep, tdr;
+   int best_universe;
+   wep = min;
+   tdr = 1.0;
+
+   std::vector<std::pair<double,int>> sorted_universe = sort_universes();
+
+
+
+}
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////

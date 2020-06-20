@@ -23,10 +23,10 @@ private:
    std::map<std::pair<int,int>,int> restricciones;
    std::vector<double> d_intracluster;
    std::vector<int> solucion;
-
+//////////////////////////////////////////////////////////////////////////////////
    std::set<std::pair<int,int>> vecindario;
    std::vector<std::vector<int>> clusters;
-
+//////////////////////////////////////////////////////////////////////////////////
    int poblacion;
    int ind_eval;
    std::vector<std::vector<int>> generacion;
@@ -35,34 +35,39 @@ private:
    std::vector<double> f_seleccion;
    std::vector<int> mejor_generacion;
    double f_mejor_generacion;
-
+//////////////////////////////////////////////////////////////////////////////////
    double desv_gen;
    double infactibilidad;
    double lambda;
    double f_objetivo;
-
+/////////////////////////////////////////////////////////////////////////////////
    int it_greedy;
    int eval_bl;
    int gen_ag_am;
-
+//////////////////////////////////////////////////////////////////////////////////
+   int tam_multiverse;
+   std::vector<std::vector<int>> universe;
+   std::vector<double>> f_universe;
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
    void cargar_posiciones(const std::string archivo);
    void cargar_restricciones(const std::string archivo);
-
+//////////////////////////////////////////////////////////////////////////////////
    void calcular_centroide(const int i);
    void distancia_intracluster(const int i);
    void desviacion_general();
    void calcular_lambda();
    void infactibilidad_solucion();
    void calc_f_objetivo();
-
+//////////////////////////////////////////////////////////////////////////////////
    double distancia_nodo_cluster(const int n, const int c);
    double distancia_nodo_nodo(const int n, const int m);
    double restricciones_incumplidas(const int n, const int c);
-
+//////////////////////////////////////////////////////////////////////////////////
    void asignar_cluster(const int n);
    int buscar_cluster(const int n);
    void limpiar_clusters();
-
+//////////////////////////////////////////////////////////////////////////////////
    std::vector<int> crear_solucion();
    void solucion_inicial();
    void generar_solucion();
@@ -71,7 +76,7 @@ private:
    void generar_vecindario();
    void leer_solucion(int n = -1);
    bool quedan_vecinos();
-
+//////////////////////////////////////////////////////////////////////////////////
    void generacion_inicial();
    int calcular_infact_sol(std::vector<int> & sol);
    double evaluar_solucion(std::vector<int> & sol);
@@ -93,9 +98,13 @@ private:
    bool mejor_valor(std::vector<int> & sol, double & f_sol,int i);
    void busqueda_local_suave(std:: vector<int> & sol, double & f_sol);
    void aplicar_BLS(double p, bool mejor);
-
+//////////////////////////////////////////////////////////////////////////////////
    void mutacion_ILS();
-
+//////////////////////////////////////////////////////////////////////////////////
+   void iniciar_universo();
+   std::vector<std::pair<double,int>> sort_universes();
+   void normalize_inflation_rate();
+//////////////////////////////////////////////////////////////////////////////////
 public:
    CCP(const int n, const std::string p, const std::string r);
    int greedy(bool v = false);
@@ -105,6 +114,9 @@ public:
    void BMB(bool v = false);
    void ES(bool v = false, bool sol_ini = true, int neval = 100000, bool graph = false, int n_graph = -1);
    void ILS(int metodo, bool v = false);
+//////////////////////////////////////////////////////////////////////////////////
+   void MVO();
+//////////////////////////////////////////////////////////////////////////////////
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);
    std::vector<double> fila_datos(int n);
