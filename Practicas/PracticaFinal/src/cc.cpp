@@ -1397,41 +1397,16 @@ int CCP::roulette_wheel_selection(){
 
 }
 
-int CCP::tdr_mutation(int n, double tdr){
-   int best_universe = sorted_universe[0].second;
-   int num_neighbour = n_cluster * tdr;
-   std::vector<int> neighborhood;
-   int random;
-   std::vector<int>::iterator it;
-
-   if(num_neighbour > 0){
-      for(int i = 0; i < num_neighbour; i++){
-         do {
-            random = Randint(0,n_cluster);
-            it = std::find(neighborhood.begin(), neighborhood.end(), random);
-         } while(it != neighborhood.end());
-
-         neighborhood.push_back(random);
-      }
-
-      random = Randint(0,num_neighbour);
-
-      return neighborhood[random];
-   } else {
-      return universe[best_universe][n];
-   }
-
-}
-
 void CCP::MVO(){
    tam_multiverse = 30;
    iniciar_universe();
-   int max_iter = 10000;
+   int max_iter = 100000;
    int iter = 0;
    double min = 0.2;
    double max = 1.0;
-   double p = 1.0/6.0;
+   double p = 3.0;
    double wep, tdr;
+   int best_universe;
 
    int black_hole_index, white_hole_index;
 
@@ -1441,7 +1416,7 @@ void CCP::MVO(){
 
       for(int i = 0; i < tam_multiverse; i++){
          wep = min + iter * ((max - min)/max_iter);
-         tdr = 1.0 - (pow(iter,p)/pow(max_iter,p));
+         tdr = 1.0 - (pow(iter,1.0/p)/pow(max_iter,1.0/p));
 
          black_hole_index = i;
          for(int j = 0; j < (int) universe[i].size(); j++){
@@ -1452,16 +1427,29 @@ void CCP::MVO(){
             }
             double r2 = Rand();
             if(r2 < wep){
-               int val = tdr_mutation(j,tdr);
-               universe[i][j] = val;
+               double r3 = Rand();
+               double r4 = Rand();
+               best_universe = sorted_universe[0].second;
+               int travel = tdr * r4 * (n_cluster-1);
+               int new_val;
+               if(r3 < 0.5){
+                  new_val = (universe[best_universe][j] + travel) % n_cluster;
+               } else {
+                  new_val = (universe[best_universe][j] - travel);
+                  if(new_val < 0){
+                     new_val += n_cluster;
+                  }
+               }
+               universe[i][j] = new_val;
             }
          }
          reparar_solucion(universe[i]);
          // mostrar_universo(iter);
       }
-      mostrar_universo(iter);
-      std::cout << "WEP: " << wep << std::endl;
-      std::cout << "TDR: " << tdr << std::endl;
+      // mostrar_universo(iter);
+      // std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+      // std::cout << "WEP: " << wep << std::endl;
+      // std::cout << "TDR: " << tdr << std::endl;
       // std::cout << "POW: " << ((pow((double)iter,p))/(pow((double)max_iter,p))) << std::endl;
       // std::cout << "POW iter: " << pow(iter,p) << std::endl;
       // std::cout << "POW max_iter: " << pow(max_iter,p) << std::endl;
