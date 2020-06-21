@@ -132,7 +132,7 @@ int main(int argc, char ** argv){
    bool grafica_bl = false;
    int n_graph_es = -1;
 
-   bool solucion_completa = false;
+   bool solucion_completa = true;
    bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
@@ -887,7 +887,7 @@ int main(int argc, char ** argv){
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;
                vector<double> fila;
-               fila = par.fila_datos(2);
+               fila = par.fila_datos(0);
                fila.push_back(tiempo);
                mvo.push_back(fila);
 
@@ -903,7 +903,7 @@ int main(int argc, char ** argv){
                if(mostrar_iteracion){
                   if(i == 0){
                      cout << titulos[c] << endl;
-                     cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Generaciones" << "          " << "Evaluaciones" << "          " << "T" << endl;
+                     cout << "i" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Evaluaciones" << "          " << "T" << endl;
                      cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
                   }
                   cout << i+1 << "          ";
@@ -928,7 +928,7 @@ int main(int argc, char ** argv){
                }
 
                cout << "Media: " << titulos[c] << " MVO " << endl;
-               cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Generaciones" << "          " << "Evaluaciones" << "          " << "T" << endl;
+               cout << "c" << "          " << "Tasa_C" << "          " << "Tasa_inf" << "          " << "Lambda" << "          " << "Agr." << "          " << "Evaluaciones" << "          " << "T" << endl;
                cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
                cout << c+1 << "          ";
                for(auto it = mvo_media.begin(); it != mvo_media.end(); ++it){

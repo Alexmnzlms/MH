@@ -47,5 +47,9 @@ float Randfloat(float low, float high)
 /* Genera un número aleatorio real en el intervalo [low,...,high[
    (incluyendo 'low' pero sin incluir 'high') */
 {
-    return (low + (high-(low))*Rand());
+   float n = (low + (high-(low))*Rand());
+   if(n < 0){
+      return -1.0 * n;
+   }
+   return n;
 }

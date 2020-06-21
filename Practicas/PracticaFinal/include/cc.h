@@ -127,7 +127,7 @@ public:
    void mostrar_seleccion();
    void mostrar_agm();
 //////////////////////////////////////////////////////////////////////////////////
-   void mostrar_universo();
+   void mostrar_universo(int n);
 
 };
 
