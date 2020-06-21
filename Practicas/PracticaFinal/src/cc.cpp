@@ -1397,8 +1397,34 @@ int CCP::roulette_wheel_selection(){
 
 }
 
+int CCP::tdr_mutation(int n, double tdr){
+   int best_universe = sorted_universe[0].second;
+   int num_neighbour = n_cluster * tdr;
+   std::vector<int> neighborhood;
+   int random;
+   std::vector<int>::iterator it;
+
+   if(num_neighbour > 0){
+      for(int i = 0; i < num_neighbour; i++){
+         do {
+            random = Randint(0,n_cluster);
+            it = std::find(neighborhood.begin(), neighborhood.end(), random);
+         } while(it != neighborhood.end());
+
+         neighborhood.push_back(random);
+      }
+
+      random = Randint(0,num_neighbour);
+
+      return neighborhood[random];
+   } else {
+      return universe[best_universe][n];
+   }
+
+}
+
 void CCP::MVO(){
-   tam_multiverse = 50;
+   tam_multiverse = 30;
    iniciar_universe();
    int max_iter = 10000;
    int iter = 0;
@@ -1406,7 +1432,6 @@ void CCP::MVO(){
    double max = 1.0;
    double p = 1.0/6.0;
    double wep, tdr;
-   int best_universe;
 
    int black_hole_index, white_hole_index;
 
@@ -1427,19 +1452,8 @@ void CCP::MVO(){
             }
             double r2 = Rand();
             if(r2 < wep){
-               double r3 = Rand();
-               double r4 = Rand();
-               best_universe = sorted_universe[0].second;
-               if(r3 < 0.5){
-                  // std::cout << (universe[best_universe][j] + (int)(tdr * r4 * n_cluster)) % n_cluster << std::endl;
-                  universe[i][j] = (universe[best_universe][j] + (int)(tdr * r4 * n_cluster * 10)) % n_cluster;
-               } else {
-                  // std::cout << (universe[best_universe][j] + (int)(tdr * r4 * n_cluster)) % n_cluster << std::endl;
-                  universe[i][j] = (universe[best_universe][j] - (int)(tdr * r4 * n_cluster * 10)) % n_cluster;
-                  if (universe[i][j] < 0.0){
-                     universe[i][j] *= -1;
-                  }
-               }
+               int val = tdr_mutation(j,tdr);
+               universe[i][j] = val;
             }
          }
          reparar_solucion(universe[i]);

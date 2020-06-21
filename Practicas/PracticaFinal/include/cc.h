@@ -107,6 +107,7 @@ private:
    void normalize_inflation_rate();
    void evaluate_fitness();
    int roulette_wheel_selection();
+   int tdr_mutation(int n,double tdr);
 //////////////////////////////////////////////////////////////////////////////////
 public:
    CCP(const int n, const std::string p, const std::string r);
