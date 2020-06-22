@@ -1404,7 +1404,7 @@ void CCP::MVO(){
    int iter = 0;
    double min = 0.2;
    double max = 1.0;
-   double p = 3.0;
+   double p = 6.0;
    double wep, tdr;
    int best_universe;
 
@@ -1422,7 +1422,7 @@ void CCP::MVO(){
          for(int j = 0; j < (int) universe[i].size(); j++){
             double r1 = Rand();
             if(r1 < f_universe[i]){
-               white_hole_index = roulette_wheel_selection();
+               white_hole_index = 0;//roulette_wheel_selection();
                universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j];
             }
             double r2 = Rand();
@@ -1430,15 +1430,16 @@ void CCP::MVO(){
                double r3 = Rand();
                double r4 = Rand();
                best_universe = sorted_universe[0].second;
-               int travel = tdr * r4 * (n_cluster-1);
                int new_val;
-               if(r3 < 0.5){
-                  new_val = (universe[best_universe][j] + travel) % n_cluster;
-               } else {
-                  new_val = (universe[best_universe][j] - travel);
-                  if(new_val < 0){
-                     new_val += n_cluster;
+               if(r4 < tdr){
+                  if(r3 < 0.5){
+                     new_val = universe[best_universe][j];
+                     new_val = Randint(0,n_cluster);
+                  } else {
+                     new_val = Randint(0,n_cluster);
                   }
+               } else {
+                  new_val = universe[i][j];
                }
                universe[i][j] = new_val;
             }
@@ -1446,10 +1447,10 @@ void CCP::MVO(){
          reparar_solucion(universe[i]);
          // mostrar_universo(iter);
       }
-      // mostrar_universo(iter);
+      mostrar_universo(iter);
       // std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
-      // std::cout << "WEP: " << wep << std::endl;
-      // std::cout << "TDR: " << tdr << std::endl;
+      std::cout << "WEP: " << wep << std::endl;
+      std::cout << "TDR: " << tdr << std::endl;
       // std::cout << "POW: " << ((pow((double)iter,p))/(pow((double)max_iter,p))) << std::endl;
       // std::cout << "POW iter: " << pow(iter,p) << std::endl;
       // std::cout << "POW max_iter: " << pow(max_iter,p) << std::endl;
