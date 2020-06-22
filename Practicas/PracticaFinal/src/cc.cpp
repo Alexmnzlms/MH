@@ -1364,15 +1364,13 @@ void CCP::evaluate_fitness(){
    for(auto it = universe.begin(); it != universe.end(); ++it){
       f_universe.push_back(evaluar_solucion(*it));
    }
-
-   normalize_inflation_rate();
 }
 
 
 int CCP::roulette_wheel_selection(){
    double suma = 0;
    for(int i = 0; i < tam_multiverse; i++){
-      suma += (1 - f_universe[i]);
+      suma += (1.0 - f_universe[i]);
    }
 
    float random = Randfloat(0,suma);
@@ -1383,7 +1381,7 @@ int CCP::roulette_wheel_selection(){
 
    while(random >= acumulado){
       // std::cout << "acumulado: " << acumulado << std::endl;
-      acumulado += 1 - f_universe[index];
+      acumulado += (1.0 - f_universe[index]);
       index++;
    }
 
@@ -1398,7 +1396,7 @@ int CCP::roulette_wheel_selection(){
 }
 
 void CCP::MVO(){
-   tam_multiverse = 30;
+   tam_multiverse = 10;
    iniciar_universe();
    int max_iter = 100000;
    int iter = 0;
@@ -1411,8 +1409,18 @@ void CCP::MVO(){
    int black_hole_index, white_hole_index;
 
    while(iter < max_iter){
+
       evaluate_fitness();
+
+      if(iter > 0 && (iter % 10) == 0){
+         for(int i = 0; i < 0.5*tam_multiverse; i++){
+            busqueda_local_suave(universe[sorted_universe[i].second], f_universe[sorted_universe[i].second]);
+         }
+      }
+
+      normalize_inflation_rate();
       sort_universes();
+      int mutacion = 0;
 
       for(int i = 0; i < tam_multiverse; i++){
          wep = min + iter * ((max - min)/max_iter);
@@ -1422,7 +1430,7 @@ void CCP::MVO(){
          for(int j = 0; j < (int) universe[i].size(); j++){
             double r1 = Rand();
             if(r1 < f_universe[i]){
-               white_hole_index = 0;//roulette_wheel_selection();
+               white_hole_index = roulette_wheel_selection();
                universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j];
             }
             double r2 = Rand();
@@ -1430,27 +1438,30 @@ void CCP::MVO(){
                double r3 = Rand();
                double r4 = Rand();
                best_universe = sorted_universe[0].second;
-               int new_val;
+               int new_val = universe[i][j];
                if(r4 < tdr){
+                  mutacion++;
                   if(r3 < 0.5){
-                     new_val = universe[best_universe][j];
-                     new_val = Randint(0,n_cluster);
+                     if(universe[best_universe][j] != 0){
+                        new_val = Randint(0,universe[best_universe][j]+1);
+                     }
                   } else {
-                     new_val = Randint(0,n_cluster);
+                     if(universe[best_universe][j] != (n_cluster - 1)){
+                        new_val = Randint(universe[best_universe][j]+1,n_cluster);
+                     }
                   }
-               } else {
-                  new_val = universe[i][j];
                }
                universe[i][j] = new_val;
+               reparar_solucion(universe[i]);
             }
          }
-         reparar_solucion(universe[i]);
          // mostrar_universo(iter);
       }
-      mostrar_universo(iter);
-      // std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+      // mostrar_universo(iter);
+      std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
       std::cout << "WEP: " << wep << std::endl;
       std::cout << "TDR: " << tdr << std::endl;
+      std::cout << "Mutaciones: " << mutacion << std::endl;
       // std::cout << "POW: " << ((pow((double)iter,p))/(pow((double)max_iter,p))) << std::endl;
       // std::cout << "POW iter: " << pow(iter,p) << std::endl;
       // std::cout << "POW max_iter: " << pow(max_iter,p) << std::endl;
