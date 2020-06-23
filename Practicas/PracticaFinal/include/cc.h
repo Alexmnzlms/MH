@@ -47,7 +47,7 @@ private:
 //////////////////////////////////////////////////////////////////////////////////
    int tam_multiverse;
    std::vector<std::vector<int>> universe;
-   std::vector<double> f_universe;
+   std::vector<int> universe_infact;
    std::vector<std::pair<double,int>> sorted_universe;
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +107,7 @@ private:
    void normalize_inflation_rate();
    void evaluate_fitness();
    int roulette_wheel_selection();
+   void change_value(int i, int j, int ant, int post);
 //////////////////////////////////////////////////////////////////////////////////
 public:
    CCP(const int n, const std::string p, const std::string r);

@@ -1334,43 +1334,61 @@ void CCP::iniciar_universe(){
    for(int i = 0; i < tam_multiverse; i++){
       universe.push_back(crear_solucion());
    }
+   for(int i = 0; i < tam_multiverse; i++){
+      universe_infact.push_back(calcular_infact_sol(universe[i]));
+   }
 }
 
 void CCP::sort_universes(){
    sorted_universe.clear();
-   std::vector<std::pair<double,int>> sorted;
    for(int i = 0; i < tam_multiverse; i++){
-      sorted_universe.push_back(std::make_pair(f_universe[i], i));
+
+      for( int k = 0; k < n_cluster; k++){
+         clusters[k].clear();
+      }
+
+      for(unsigned j = 0; j < universe[i].size(); j++){
+         clusters[universe[i][j]].push_back(j);
+      }
+
+      for( int k = 0; k < n_cluster; k++){
+         calcular_centroide(k);
+      }
+
+      desviacion_general();
+
+      double f_obj = desv_gen + (universe_infact[i] * lambda);
+      sorted_universe.push_back(std::make_pair(f_obj,i));
    }
 
+   normalize_inflation_rate();
    std::sort(sorted_universe.begin(), sorted_universe.end());
 }
 
 void CCP::normalize_inflation_rate(){
    double max = 0.0;
    for(int i = 0; i < tam_multiverse; i++){
-      if(max < f_universe[i]){
-         max = f_universe[i];
+      if(max < sorted_universe[i].first){
+         max = sorted_universe[i].first;
       }
    }
 
    for(int i = 0; i < tam_multiverse; i++){
-      f_universe[i] = f_universe[i]/max;
+      sorted_universe[i].first = sorted_universe[i].first/max;
    }
 }
 
-void CCP::evaluate_fitness(){
-   f_universe.clear();
-   for(auto it = universe.begin(); it != universe.end(); ++it){
-      f_universe.push_back(evaluar_solucion(*it));
-   }
-}
-
+// void CCP::evaluate_fitness(){
+//    f_universe.clear();
+//    for(auto it = universe.begin(); it != universe.end(); ++it){
+//       f_universe.push_back(evaluar_solucion(*it));
+//    }
+// }
 
 int CCP::roulette_wheel_selection(){
    double suma = 0;
    for(int i = 0; i < tam_multiverse; i++){
-      suma += (1.0 - f_universe[i]);
+      suma += (1.0 - sorted_universe[i].first);
    }
 
    float random = Randfloat(0,suma);
@@ -1381,7 +1399,7 @@ int CCP::roulette_wheel_selection(){
 
    while(random >= acumulado){
       // std::cout << "acumulado: " << acumulado << std::endl;
-      acumulado += (1.0 - f_universe[index]);
+      acumulado += (1.0 - sorted_universe[index].first);
       index++;
    }
 
@@ -1395,8 +1413,35 @@ int CCP::roulette_wheel_selection(){
 
 }
 
+void CCP::change_value(int i, int j, int ant, int post){
+   universe[i][j] = -1;
+   for( int i = 0; i < n_cluster; i++){
+      clusters[i].clear();
+   }
+   for(unsigned j = 0; j < solucion.size(); j++){
+      if(universe[i][j] != -1){
+         clusters[universe[i][j]].push_back(j);
+      }
+   }
+
+   bool invalido = false;
+   for( int i = 0; i < n_cluster; i++){
+      if(clusters[i].size() == (unsigned) 0){
+         invalido = true;
+      }
+   }
+
+   if(!invalido){
+      universe_infact[i] -= restricciones_incumplidas(j,ant);
+      universe_infact[i] += restricciones_incumplidas(j,post);
+      universe[i][j] = post;
+   } else {
+      universe[i][j] = ant;
+   }
+}
+
 void CCP::MVO(){
-   tam_multiverse = 10;
+   tam_multiverse = 30;
    iniciar_universe();
    int max_iter = 100000;
    int iter = 0;
@@ -1406,19 +1451,19 @@ void CCP::MVO(){
    double wep, tdr;
    int best_universe;
 
-   int black_hole_index, white_hole_index;
+   // int black_hole_index, white_hole_index;
+   int white_hole_index;
 
    while(iter < max_iter){
+      // evaluate_fitness();
 
-      evaluate_fitness();
+      // if(iter > 0 && (iter % 10) == 0){
+      //    for(int i = 0; i < 0.5*tam_multiverse; i++){
+      //       busqueda_local_suave(universe[sorted_universe[i].second], f_universe[sorted_universe[i].second]);
+      //    }
+      // }
 
-      if(iter > 0 && (iter % 10) == 0){
-         for(int i = 0; i < 0.5*tam_multiverse; i++){
-            busqueda_local_suave(universe[sorted_universe[i].second], f_universe[sorted_universe[i].second]);
-         }
-      }
-
-      normalize_inflation_rate();
+      // normalize_inflation_rate();
       sort_universes();
       int mutacion = 0;
 
@@ -1426,12 +1471,13 @@ void CCP::MVO(){
          wep = min + iter * ((max - min)/max_iter);
          tdr = 1.0 - (pow(iter,1.0/p)/pow(max_iter,1.0/p));
 
-         black_hole_index = i;
+         //black_hole_index = i;
          for(int j = 0; j < (int) universe[i].size(); j++){
             double r1 = Rand();
-            if(r1 < f_universe[i]){
+            if(r1 < sorted_universe[i].first){
                white_hole_index = roulette_wheel_selection();
-               universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j];
+               // universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j];
+               change_value(i,j,universe[i][j],universe[sorted_universe[white_hole_index].second][j]);
             }
             double r2 = Rand();
             if(r2 < wep){
@@ -1451,17 +1497,18 @@ void CCP::MVO(){
                      }
                   }
                }
-               universe[i][j] = new_val;
-               reparar_solucion(universe[i]);
+               // universe[i][j] = new_val;
+               change_value(i,j,universe[i][j],new_val);
+               // reparar_solucion(universe[i]);
             }
          }
          // mostrar_universo(iter);
       }
-      // mostrar_universo(iter);
-      std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+      mostrar_universo(iter);
+      // std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
       std::cout << "WEP: " << wep << std::endl;
       std::cout << "TDR: " << tdr << std::endl;
-      std::cout << "Mutaciones: " << mutacion << std::endl;
+      // std::cout << "Mutaciones: " << mutacion << std::endl;
       // std::cout << "POW: " << ((pow((double)iter,p))/(pow((double)max_iter,p))) << std::endl;
       // std::cout << "POW iter: " << pow(iter,p) << std::endl;
       // std::cout << "POW max_iter: " << pow(max_iter,p) << std::endl;
@@ -1570,15 +1617,17 @@ void CCP::mostrar_universo(int n){
       for(int j = 0; j < (int) universe[i].size(); j++){
          std::cout << universe[i][j];
       }
-      std::cout << " F: " << f_universe[i] << std::endl;
+      //std::cout << " F: " << sorted_universe[i].first << std::endl;
+      std::cout << std::endl;
    }
 
    std::cout << "Mejor generado: ";
    for(int j = 0; j < (int) universe[sorted_universe[0].second].size(); j++){
       std::cout << universe[sorted_universe[0].second][j];
    }
-   std::cout << " F: " << sorted_universe[0].first << std::endl;
-   std::cout << "F sin normalizar: " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+   //std::cout << " F: " << sorted_universe[0].first << std::endl;
+   std::cout << std::endl;
+   std::cout << " F sin normalizar: " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
    std::cout << "Evaluaciones: " << n << std::endl;
 }
 
