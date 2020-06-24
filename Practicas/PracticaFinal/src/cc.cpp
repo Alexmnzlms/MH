@@ -1396,6 +1396,7 @@ int CCP::roulette_wheel_selection(){
 
 void CCP::local_search_mvo(std::vector<int> & sol){
    int iter = 0, iter_max = 1000;
+   int fallos = 0;
    double f_ant;
    std::vector<int> sol_ant;
    int infactibilidad_ant;
@@ -1406,7 +1407,7 @@ void CCP::local_search_mvo(std::vector<int> & sol){
    int pos, n, c;
    bool salir;
 
-   while(iter < iter_max){
+   while(iter < iter_max && fallos < 500){
       sol_ant = solucion;
       f_ant = f_objetivo;
       infactibilidad_ant = infactibilidad;
@@ -1446,8 +1447,10 @@ void CCP::local_search_mvo(std::vector<int> & sol){
          f_objetivo = f_ant;
          sol = sol_ant;
          infactibilidad = infactibilidad_ant;
-         leer_solucion();
+         leer_solucion(infactibilidad);
+         fallos++;
       }
+
       iter++;
    }
 
