@@ -1377,7 +1377,7 @@ void CCP::evaluate_fitness(){
 int CCP::roulette_wheel_selection(){
    double suma = 0;
    for(int i = 0; i < tam_multiverse; i++){
-      suma += (1.0 - f_universe[i]);
+      suma += (1.0 - sorted_universe[i].first);
    }
 
    float random = Randfloat(0,suma);
@@ -1388,7 +1388,7 @@ int CCP::roulette_wheel_selection(){
 
    while(random >= acumulado){
       // std::cout << "acumulado: " << acumulado << std::endl;
-      acumulado += (1.0 - f_universe[index]);
+      acumulado += (1.0 - sorted_universe[i].first]);
       index++;
    }
 
