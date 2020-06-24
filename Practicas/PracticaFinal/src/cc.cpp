@@ -1432,7 +1432,7 @@ void CCP::local_search_mvo(std::vector<int> & sol){
             for( int i = 0; i < n_cluster; i++){
                clusters[i].clear();
             }
-            for(unsigned j = 0; j < sol.size(); j++){
+            for(unsigned j = 0; j < solucion.size(); j++){
                if(solucion[j] != -1){
                   clusters[solucion[j]].push_back(j);
                }
@@ -1453,7 +1453,7 @@ void CCP::local_search_mvo(std::vector<int> & sol){
 
       if(f_objetivo > f_ant){
          f_objetivo = f_ant;
-         sol = sol_ant;
+         solucion = sol_ant;
          infactibilidad = infactibilidad_ant;
          leer_solucion(infactibilidad);
          fallos++;
