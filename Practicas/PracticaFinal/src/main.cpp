@@ -377,7 +377,7 @@ int main(int argc, char ** argv){
          if(usar_conjunto[c]){
             Set_random(semillas[0]);
             CCP par(n_k[c],datos[c],restricciones[c]);
-            par.MVO(true, n_mvo);
+            par.MVO(true, n_mvo, false);
             return(0);
          }
       }
@@ -898,7 +898,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.MVO(false, n_mvo);
+               par.MVO(false, n_mvo, solucion_completa);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;

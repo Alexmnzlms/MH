@@ -119,7 +119,7 @@ public:
    void ES(bool v = false, bool sol_ini = true, int neval = 100000, bool graph = false, int n_graph = -1);
    void ILS(int metodo, bool v = false);
 //////////////////////////////////////////////////////////////////////////////////
-   void MVO(bool graph, int n);
+   void MVO(bool graph, int n, bool v);
 //////////////////////////////////////////////////////////////////////////////////
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);

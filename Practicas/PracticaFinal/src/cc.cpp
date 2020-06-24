@@ -1338,9 +1338,17 @@ void CCP::iniciar_universe(){
 
 void CCP::sort_universes(){
    sorted_universe.clear();
+
+   double max = 0.0;
+   for(int i = 0; i < tam_multiverse; i++){
+      if(max < f_universe[i]){
+         max = f_universe[i];
+      }
+   }
+
    std::vector<std::pair<double,int>> sorted;
    for(int i = 0; i < tam_multiverse; i++){
-      sorted_universe.push_back(std::make_pair(f_universe[i], i));
+      sorted_universe.push_back(std::make_pair((f_universe[i]/max), i));
    }
 
    std::sort(sorted_universe.begin(), sorted_universe.end());
@@ -1457,7 +1465,7 @@ void CCP::local_search_mvo(std::vector<int> & sol){
    sol = solucion;
 }
 
-void CCP::MVO(bool graph, int n){
+void CCP::MVO(bool graph, int n, bool v){
    tam_multiverse = 30;
    iniciar_universe();
    int max_iter = 100000;
@@ -1472,7 +1480,7 @@ void CCP::MVO(bool graph, int n){
 
    int black_hole_index, white_hole_index;
    evaluate_fitness();
-   normalize_inflation_rate();
+   //normalize_inflation_rate();
    sort_universes();
 
    std::vector<int> mejor_sol = universe[sorted_universe[0].second];
@@ -1518,7 +1526,7 @@ void CCP::MVO(bool graph, int n){
          // mostrar_universo(iter);
       }
       evaluate_fitness();
-      normalize_inflation_rate();
+      //normalize_inflation_rate();
       sort_universes();
 
       if(n == 1){
@@ -1526,7 +1534,7 @@ void CCP::MVO(bool graph, int n){
          if( f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second])){
             universe[sorted_universe[tam_multiverse-1].second] = mejor_sol;
             f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol;
-            normalize_inflation_rate();
+            //normalize_inflation_rate();
             sort_universes();
          }
       } else if (n == 2){
@@ -1534,7 +1542,7 @@ void CCP::MVO(bool graph, int n){
             for(int i = 0; i < 0.1*tam_multiverse; i++){
                local_search_mvo(universe[sorted_universe[i].second]);
                f_universe[sorted_universe[i].second] = evaluar_solucion(universe[sorted_universe[i].second]);
-               normalize_inflation_rate();
+               //normalize_inflation_rate();
                sort_universes();
             }
          }
@@ -1542,7 +1550,7 @@ void CCP::MVO(bool graph, int n){
          if( f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second])){
             universe[sorted_universe[tam_multiverse-1].second] = mejor_sol;
             f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol;
-            normalize_inflation_rate();
+            //normalize_inflation_rate();
             sort_universes();
          }
       }
@@ -1564,16 +1572,12 @@ void CCP::MVO(bool graph, int n){
          std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
       }
 
-      // mostrar_universo(iter);
-      // // std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
-      // std::cout << "WEP: " << wep << std::endl;
-      // std::cout << "TDR: " << tdr << std::endl;
-      // std::cout << "POW: " << ((pow((double)iter,p))/(pow((double)max_iter,p))) << std::endl;
-      // std::cout << "POW iter: " << pow(iter,p) << std::endl;
-      // std::cout << "POW max_iter: " << pow(max_iter,p) << std::endl;
-      // std::cout << "iter: " << iter << std::endl;
-      // std::cout << "max_iter: " << max_iter << std::endl;
-      // std::cout << "p: " << p << std::endl;
+      if(v){
+        mostrar_universo(iter);
+        std::cout << "WEP: " << wep << std::endl;
+        std::cout << "TDR: " << tdr << std::endl;
+      }
+
 
       iter++;
    }
@@ -1683,8 +1687,8 @@ void CCP::mostrar_universo(int n){
    for(int j = 0; j < (int) universe[sorted_universe[0].second].size(); j++){
       std::cout << universe[sorted_universe[0].second][j];
    }
-   std::cout << " F: " << sorted_universe[0].first << std::endl;
-   std::cout << "F sin normalizar: " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+   std::cout << " F: " << f_universe[sorted_universe[0].second] << std::endl;
+   //std::cout << "F(normalized): " << sort_universes[0].first << std::endl;
    std::cout << "Evaluaciones: " << n << std::endl;
 }
 
