@@ -1537,7 +1537,16 @@ void CCP::MVO(bool graph, int n, bool v){
             //normalize_inflation_rate();
             sort_universes();
          }
-      } else if (n == 2){
+      } else if(n == 2){
+        if(iter > 0 && (iter % 10) == 0){
+           for(int i = 0; i < 0.1*tam_multiverse; i++){
+              local_search_mvo(universe[sorted_universe[i].second]);
+              f_universe[sorted_universe[i].second] = evaluar_solucion(universe[sorted_universe[i].second]);
+              //normalize_inflation_rate();
+              sort_universes();
+           }
+        }
+      } else if (n == 3){
          if(iter > 0 && (iter % 10) == 0){
             for(int i = 0; i < 0.1*tam_multiverse; i++){
                local_search_mvo(universe[sorted_universe[i].second]);
