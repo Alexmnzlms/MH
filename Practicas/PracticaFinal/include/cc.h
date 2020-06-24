@@ -107,6 +107,7 @@ private:
    void normalize_inflation_rate();
    void evaluate_fitness();
    int roulette_wheel_selection();
+   void local_search_mvo(std::vector<int> & sol);
 //////////////////////////////////////////////////////////////////////////////////
 public:
    CCP(const int n, const std::string p, const std::string r);
@@ -118,7 +119,7 @@ public:
    void ES(bool v = false, bool sol_ini = true, int neval = 100000, bool graph = false, int n_graph = -1);
    void ILS(int metodo, bool v = false);
 //////////////////////////////////////////////////////////////////////////////////
-   void MVO();
+   void MVO(bool graph, int n);
 //////////////////////////////////////////////////////////////////////////////////
    void mostrar_datos();
    void mostrar_solucion(bool completo=false);

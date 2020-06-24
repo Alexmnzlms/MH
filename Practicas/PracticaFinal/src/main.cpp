@@ -130,9 +130,11 @@ int main(int argc, char ** argv){
    bool grafica_genetico = false;
    bool grafica_es = false;
    bool grafica_bl = false;
+   bool grafica_mvo = false;
    int n_graph_es = -1;
+   int n_mvo = -1;
 
-   bool solucion_completa = true;
+   bool solucion_completa = false;
    bool mostrar_iteracion = true;
    bool mostrar_media = true;
 
@@ -253,6 +255,8 @@ int main(int argc, char ** argv){
          grafica_es = true;
       } else if(mostrar_bl){
          grafica_bl = true;
+      } else if(mostrar_mvo){
+         grafica_mvo = true;
       }
    }
 
@@ -262,6 +266,7 @@ int main(int argc, char ** argv){
          solucion_completa = true;
       } else {
          n_graph_es = atoi(argv[4]);
+         n_mvo =  atoi(argv[4]);
       }
    }
 
@@ -362,6 +367,17 @@ int main(int argc, char ** argv){
             Set_random(semillas[0]);
             CCP par(n_k[c],datos[c],restricciones[c]);
             par.busqueda_local(false, true, 100000, true);
+            return(0);
+         }
+      }
+   }
+
+   if(grafica_mvo){
+      for(int c = 0; c < n_conjuntos_datos; c++){
+         if(usar_conjunto[c]){
+            Set_random(semillas[0]);
+            CCP par(n_k[c],datos[c],restricciones[c]);
+            par.MVO(true, n_mvo);
             return(0);
          }
       }
@@ -882,7 +898,7 @@ int main(int argc, char ** argv){
                CCP par(n_k[c],datos[c],restricciones[c]);
 
                tini= clock();
-               par.MVO();
+               par.MVO(false, n_mvo);
                tfin= clock();
 
                double tiempo = (tfin-tini)/(double)CLOCKS_PER_SEC;

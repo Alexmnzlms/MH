@@ -1366,7 +1366,6 @@ void CCP::evaluate_fitness(){
    }
 }
 
-
 int CCP::roulette_wheel_selection(){
    double suma = 0;
    for(int i = 0; i < tam_multiverse; i++){
@@ -1395,32 +1394,91 @@ int CCP::roulette_wheel_selection(){
 
 }
 
-void CCP::MVO(){
-   tam_multiverse = 10;
+void CCP::local_search_mvo(std::vector<int> & sol){
+   int iter = 0, iter_max = 1000;
+   double f_ant;
+   std::vector<int> sol_ant;
+   int infactibilidad_ant;
+
+   solucion = sol;
+   leer_solucion();
+
+   int pos, n, c;
+   bool salir;
+
+   while(iter < iter_max){
+      sol_ant = solucion;
+      f_ant = f_objetivo;
+      infactibilidad_ant = infactibilidad;
+      salir = false;
+
+      while(!salir){
+         salir = false;
+         pos = Randint(0,solucion.size());
+         n = Randint(0,n_cluster);
+         if((clusters[solucion[pos]].size() - 1) > 0){
+            salir = true;
+            c = solucion[pos];
+            solucion[pos] = -1;
+            for( int i = 0; i < n_cluster; i++){
+               clusters[i].clear();
+            }
+            for(unsigned j = 0; j < sol.size(); j++){
+               if(solucion[j] != -1){
+                  clusters[solucion[j]].push_back(j);
+               }
+            }
+            infactibilidad -= restricciones_incumplidas(pos,c);
+            infactibilidad += restricciones_incumplidas(pos,n);
+            solucion[pos] = n;
+            clusters[solucion[pos]].push_back(pos);
+
+            for( int i = 0; i < n_cluster; i++){
+               calcular_centroide(i);
+            }
+            desviacion_general();
+            //infactibilidad_solucion();
+            calc_f_objetivo();
+         }
+      }
+
+      if(f_objetivo > f_ant){
+         f_objetivo = f_ant;
+         sol = sol_ant;
+         infactibilidad = infactibilidad_ant;
+         leer_solucion();
+      }
+      iter++;
+   }
+
+   sol = solucion;
+}
+
+void CCP::MVO(bool graph, int n){
+   tam_multiverse = 30;
    iniciar_universe();
    int max_iter = 100000;
    int iter = 0;
    double min = 0.2;
    double max = 1.0;
-   double p = 6.0;
-   double wep, tdr;
+   double p = (double) n_cluster;
+   double wep, tdr = 0;
    int best_universe;
+   double comp;
+   bool exit = false;
 
    int black_hole_index, white_hole_index;
+   evaluate_fitness();
+   normalize_inflation_rate();
+   sort_universes();
 
-   while(iter < max_iter){
+   std::vector<int> mejor_sol = universe[sorted_universe[0].second];
+   double f_mejor_sol;
 
-      evaluate_fitness();
+   while(iter < max_iter && !exit){
+      mejor_sol = universe[sorted_universe[0].second];
 
-      if(iter > 0 && (iter % 10) == 0){
-         for(int i = 0; i < 0.5*tam_multiverse; i++){
-            busqueda_local_suave(universe[sorted_universe[i].second], f_universe[sorted_universe[i].second]);
-         }
-      }
 
-      normalize_inflation_rate();
-      sort_universes();
-      int mutacion = 0;
 
       for(int i = 0; i < tam_multiverse; i++){
          wep = min + iter * ((max - min)/max_iter);
@@ -1438,17 +1496,16 @@ void CCP::MVO(){
                double r3 = Rand();
                double r4 = Rand();
                best_universe = sorted_universe[0].second;
-               int new_val = universe[i][j];
-               if(r4 < tdr){
-                  mutacion++;
-                  if(r3 < 0.5){
-                     if(universe[best_universe][j] != 0){
-                        new_val = Randint(0,universe[best_universe][j]+1);
-                     }
-                  } else {
-                     if(universe[best_universe][j] != (n_cluster - 1)){
-                        new_val = Randint(universe[best_universe][j]+1,n_cluster);
-                     }
+               int new_val = -1;
+               if(r3 < 0.5){
+                  new_val = universe[best_universe][j] + (int)(tdr * r4 * (n_cluster-1));
+                  if(new_val > (n_cluster - 1)){
+                     new_val = n_cluster - 1;
+                  }
+               } else {
+                  new_val = universe[best_universe][j] - (int)(tdr * r4 * (n_cluster-1));
+                  if(new_val < 0){
+                     new_val = 0;
                   }
                }
                universe[i][j] = new_val;
@@ -1457,11 +1514,57 @@ void CCP::MVO(){
          }
          // mostrar_universo(iter);
       }
+      evaluate_fitness();
+      normalize_inflation_rate();
+      sort_universes();
+
+      if(n == 1){
+         f_mejor_sol = evaluar_solucion(mejor_sol);
+         if( f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second])){
+            universe[sorted_universe[tam_multiverse-1].second] = mejor_sol;
+            f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol;
+            normalize_inflation_rate();
+            sort_universes();
+         }
+      } else if (n == 2){
+         if(iter > 0 && (iter % 10) == 0){
+            for(int i = 0; i < 0.1*tam_multiverse; i++){
+               local_search_mvo(universe[sorted_universe[i].second]);
+               f_universe[sorted_universe[i].second] = evaluar_solucion(universe[sorted_universe[i].second]);
+               normalize_inflation_rate();
+               sort_universes();
+            }
+         }
+         f_mejor_sol = evaluar_solucion(mejor_sol);
+         if( f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second])){
+            universe[sorted_universe[tam_multiverse-1].second] = mejor_sol;
+            f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol;
+            normalize_inflation_rate();
+            sort_universes();
+         }
+      }
+
+      // evaluate_fitness();
+      // normalize_inflation_rate();
+      // sort_universes();
+
+      comp = 0;
+      exit = false;
+      for(int k = 0; k < tam_multiverse; k++){
+         comp += sorted_universe[k].first;
+      }
+      if((comp / tam_multiverse) == 1.0 && (int)(tdr * (n_cluster-1)) == 0){
+         exit = true;
+      }
+
+      if(graph){
+         std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+      }
+
       // mostrar_universo(iter);
-      std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
-      std::cout << "WEP: " << wep << std::endl;
-      std::cout << "TDR: " << tdr << std::endl;
-      std::cout << "Mutaciones: " << mutacion << std::endl;
+      // // std::cout << iter << " " << evaluar_solucion(universe[sorted_universe[0].second]) << std::endl;
+      // std::cout << "WEP: " << wep << std::endl;
+      // std::cout << "TDR: " << tdr << std::endl;
       // std::cout << "POW: " << ((pow((double)iter,p))/(pow((double)max_iter,p))) << std::endl;
       // std::cout << "POW iter: " << pow(iter,p) << std::endl;
       // std::cout << "POW max_iter: " << pow(max_iter,p) << std::endl;
