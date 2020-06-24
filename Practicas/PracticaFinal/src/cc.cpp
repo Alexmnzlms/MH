@@ -1388,7 +1388,7 @@ int CCP::roulette_wheel_selection(){
 
    while(random >= acumulado){
       // std::cout << "acumulado: " << acumulado << std::endl;
-      acumulado += (1.0 - sorted_universe[i].first]);
+      acumulado += (1.0 - sorted_universe[index].first);
       index++;
    }
 
