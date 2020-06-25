@@ -1,0 +1,92 @@
+\chapter{Procedimiento}
+\section{Estructura de datos}
+%Breve explicación del procedimiento considerado para desarrollar la práctica: implementación a partir del código proporcionado en prácticas o a partir de cualquier otro, o uso de un framework de metaheurísticas concreto. Inclusión de un pequeño manual de usuario describiendo el proceso para que el profesor de prácticas pueda replicarlo.
+La implementación de la práctica se ha llevado a cabo en c++.\\
+Para la estructura de datos he optado por una sola clase, llamada CCP --- Constrained Clustering Problem --- en la que están todos los datos necesarios para realizar el problema:
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+int n_cluster;
+std::vector<std::vector<double>> posiciones;
+std::vector<std::vector<double>> centroides;
+std::map<std::pair<int,int>,int> restricciones;
+std::vector<double> d_intracluster;
+std::vector<int> solucion;
+
+std::set<std::pair<int,int>> vecindario;
+std::vector<std::vector<int>> clusters;
+
+int poblacion;
+int ind_eval;
+std::vector<std::vector<int>> generacion;
+std::vector<std::vector<int>> seleccion;
+std::vector<double> f_generacion;
+std::vector<double> f_seleccion;
+std::vector<int> mejor_generacion;
+double f_mejor_generacion;
+
+double desv_gen;
+double infactibilidad;
+double lambda;
+double f_objetivo;
+\end{minted}
+
+He utilizado las clases map, set y vector de la STL. \\
+Las restricciones se almacenan en un map debido a que al ser una estructura de datos de la STL, es posible recorrerlo de forma secuencial con un iterador y ademas, cuenta con el operador find, que permite saber si existe determinada combinación de elementos $ x_{i} $ y si la restricción es de tipo ML o CL. Por tanto me pareció mejor implementación que la propuesta de matriz y lista.\\
+El vecindario se utiliza como una manera para poder saber cuando ha terminado el algoritmo de búsqueda local y no volver a explorar vecinos que ya he explorado previamente. Utilizo un set porque a diferencia del vector, no permite que existan parejas (elemento, cluster) duplicadas y ademas estas se ordenan automáticamente en orden ascendente.\\
+Las matrices de generación y selección se implementan como vectores de vectores de enteros y las funciones objetivo asociadas a los cromosomas se almacenan en vectores de doubles.
+\\
+Los operadores de los algoritmos descritos anteriormente se implementan como métodos de la clase CCP.
+
+\newpage
+\section{Guía de Uso}
+El programa se compila utilizando la orden \textbf{make}.\\
+Para ejecutar el programa es necesario ejecutar el archivo:\\
+ \textbf{BIN/clustering\_exe} $[semilla]$ $[conjunto]$ $[algoritmo]$ $[v]$.\\
+Estos parámetros se configuran de la siguiente manera:
+\begin{itemize}
+   \item $[semilla]$: Es el número de semilla que se quiere ejecutar.
+   \begin{itemize}
+      \item $[1-5]$: Ejecutan desde la primera semilla hasta la que se pase como argumento
+      \item $[0]$: Si se introduce el 0, el programa entra en modo gráfico. Esto significa que genera un output de datos para poder pintar una gráfica de la evolución del valor de la función objetivo con el paso de las generaciones ---Solo funciona para algoritmos genéticos y meméticos, búsqueda local y enfriamiento simulado---.
+      Si se utiliza para enfriamiento simulado debe proporcinarse un numero [0-2] para realizar los distintos gráficos.
+   \end{itemize}
+   \item $[conjunto]$: Numero del conjunto que se quiere ejecutar.
+   \begin{itemize}
+      \item $[Rand]$: 1 para 10\% y 5 para 20\%
+      \item $[Iris]$: 2 para 10\% y 6 para 20\%
+      \item $[Ecoli]$: 3 para 10\% y 7 para 20\%
+      \item $[Newthyroid]$: 4 para 10\% y 8 para 20\%
+      \item $[0]$: Ejecuta todos los conjuntos anteriores
+   \end{itemize}
+   \item $[algortimo]$: Algortimo que se quiere utilizar:
+   \begin{itemize}
+      \item $[G]$: K-medias Restringido Débil.
+      \item $[BL]$: Búsqueda local.
+      \item $[AGG\_UN]$: Algoritmo genético con operador de cruce uniforme y esquema generacional.
+      \item $[AGG\_SF]$: Algoritmo genético con operador de cruce segmento fijo y esquema generacional.
+      \item $[AGE\_UN]$: Algoritmo genético con operador de cruce uniforme y esquema estacionario.
+      \item $[AGE\_SF]$: Algoritmo genético con operador de cruce segmento fijo y esquema estacionario.
+      \item $[AM\_10-1.0]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones a todos los cromosomas
+      \item $[AM\_10-0.1]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los cromosomas
+      \item $[AM\_10-0.1mej]$: Algoritmo memético que aplica la búsqueda local cada 10 generaciones al 10\% de los mejores cromosomas
+      \item $[BMB]$: Búsqueda Multiarranque Básica.
+      \item $[ES]$: Enfriamiento Simulado.
+      \item $[ILS]$: Iterated Local Search.
+      \item $[ILS-ES]$: Iterated Local Search con enfriamiento simulado.
+      \item $[MVO]$: Multi-Verse Optimizer.
+      \item $[SEM]$: Activa el modo búsqueda de semillas.
+   \end{itemize}
+   \item $[v]$(Verbose): Muestra por pantalla la traza de ejecución del algoritmo.
+   \item $[0-3]$: Ejecutan las distintas versiones de MVO.
+\end{itemize}
+
+Como ejemplo básico, para obtener los resultados que se muestran previamente, se debe ejecutar:\\ \textbf{BIN/clustering\_exe} 5 0 $[algoritmo]$
+\newpage
+La estructura de ficheros es la siguiente:
+\begin{itemize}
+   \item cc.h: Cabecera de la clase CCP.
+   \item cc.p: implementación de los métodos de la clase CCP.
+   \item main.cpp: Implentación de la ejecución de los algoritmos greedy y BL.
+   \item random.h y random.cpp : Cabeceras e implementación del generador de aleatorios.
+\end{itemize}

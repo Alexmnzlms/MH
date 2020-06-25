@@ -1338,6 +1338,7 @@ void CCP::iniciar_universe(){
 
 void CCP::sort_universes(){
    sorted_universe.clear();
+   f_universe_normalized.clear();
 
    double max = 0.0;
    for(int i = 0; i < tam_multiverse; i++){
@@ -1346,25 +1347,12 @@ void CCP::sort_universes(){
       }
    }
 
-   std::vector<std::pair<double,int>> sorted;
    for(int i = 0; i < tam_multiverse; i++){
       sorted_universe.push_back(std::make_pair((f_universe[i]/max), i));
+      f_universe_normalized.push_back((f_universe[i]/max));
    }
 
    std::sort(sorted_universe.begin(), sorted_universe.end());
-}
-
-void CCP::normalize_inflation_rate(){
-   double max = 0.0;
-   for(int i = 0; i < tam_multiverse; i++){
-      if(max < f_universe[i]){
-         max = f_universe[i];
-      }
-   }
-
-   for(int i = 0; i < tam_multiverse; i++){
-      f_universe[i] = f_universe[i]/max;
-   }
 }
 
 void CCP::evaluate_fitness(){
@@ -1384,22 +1372,16 @@ int CCP::roulette_wheel_selection(){
    float acumulado = 0.0;
    int index = 0;
 
-   // std::cout << "random: " << random << std::endl;
-
    while(random >= acumulado){
-      // std::cout << "acumulado: " << acumulado << std::endl;
       acumulado += (1.0 - sorted_universe[index].first);
       index++;
    }
-
-   // std::cout << "index: " << index - 1 << std::endl;
 
    if(index - 1 >= tam_multiverse){
       return 0;
    }
 
    return index - 1;
-
 }
 
 void CCP::local_search_mvo(std::vector<int> & sol){
@@ -1446,7 +1428,6 @@ void CCP::local_search_mvo(std::vector<int> & sol){
                calcular_centroide(i);
             }
             desviacion_general();
-            //infactibilidad_solucion();
             calc_f_objetivo();
          }
       }
@@ -1480,7 +1461,6 @@ void CCP::MVO(bool graph, int n, bool v){
 
    int black_hole_index, white_hole_index;
    evaluate_fitness();
-   //normalize_inflation_rate();
    sort_universes();
 
    std::vector<int> mejor_sol = universe[sorted_universe[0].second];
@@ -1489,8 +1469,6 @@ void CCP::MVO(bool graph, int n, bool v){
    while(iter < max_iter && !exit){
       mejor_sol = universe[sorted_universe[0].second];
 
-
-
       for(int i = 0; i < tam_multiverse; i++){
          wep = min + iter * ((max - min)/max_iter);
          tdr = 1.0 - (pow(iter,1.0/p)/pow(max_iter,1.0/p));
@@ -1498,7 +1476,7 @@ void CCP::MVO(bool graph, int n, bool v){
          black_hole_index = i;
          for(int j = 0; j < (int) universe[i].size(); j++){
             double r1 = Rand();
-            if(r1 < f_universe[i]){
+            if(r1 < f_universe_normalized[i]){
                white_hole_index = roulette_wheel_selection();
                universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j];
             }
@@ -1526,7 +1504,6 @@ void CCP::MVO(bool graph, int n, bool v){
          // mostrar_universo(iter);
       }
       evaluate_fitness();
-      //normalize_inflation_rate();
       sort_universes();
 
       if(n == 1){
@@ -1534,7 +1511,6 @@ void CCP::MVO(bool graph, int n, bool v){
          if( f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second])){
             universe[sorted_universe[tam_multiverse-1].second] = mejor_sol;
             f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol;
-            //normalize_inflation_rate();
             sort_universes();
          }
       } else if(n == 2){
@@ -1542,7 +1518,6 @@ void CCP::MVO(bool graph, int n, bool v){
            for(int i = 0; i < 0.1*tam_multiverse; i++){
               local_search_mvo(universe[sorted_universe[i].second]);
               f_universe[sorted_universe[i].second] = evaluar_solucion(universe[sorted_universe[i].second]);
-              //normalize_inflation_rate();
               sort_universes();
            }
         }
@@ -1551,7 +1526,6 @@ void CCP::MVO(bool graph, int n, bool v){
             for(int i = 0; i < 0.1*tam_multiverse; i++){
                local_search_mvo(universe[sorted_universe[i].second]);
                f_universe[sorted_universe[i].second] = evaluar_solucion(universe[sorted_universe[i].second]);
-               //normalize_inflation_rate();
                sort_universes();
             }
          }
@@ -1559,14 +1533,9 @@ void CCP::MVO(bool graph, int n, bool v){
          if( f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second])){
             universe[sorted_universe[tam_multiverse-1].second] = mejor_sol;
             f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol;
-            //normalize_inflation_rate();
             sort_universes();
          }
       }
-
-      // evaluate_fitness();
-      // normalize_inflation_rate();
-      // sort_universes();
 
       comp = 0;
       exit = false;

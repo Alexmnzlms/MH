@@ -3,26 +3,250 @@
 \section{Multi-Verse Optimizer}
 \subsection{Propuesta}
 Como propuesta para el estudio de una metaheurística ya existente he optado por la llamada Multi-Verse Optimizer (MVO).
-Este es un algoritmo basado en poblaciones, como por ejemplo Ant colony Optimization y PSO, que se basa en el concepto del multiverso, es decir, el conjunto de varios universos.
+
+Este es un algoritmo basado en poblaciones, como por ejemplo Ant Colony Optimization y Particle Swarm Optimization, que encuentra su inspiración en la teoría del multiverso. Sin entrar en detalle, la teoría del multiverso establece la existencia de diversos universos distintos al universo en el que vivimos. Estos universos interactúan entre ellos y es este concepto de interacción el que intenta imitar MVO.
+
+En MVO existe un multiverso, formado por varios universos, siendo cada uno de estos una solución candidata a resolver el problema. Estos universos interactúan entre ellos y cambian. Hablaremos de los conceptos de agujero blanco, agujero negro y agujero de gusano --- black hole, white hole y wormhole respectivamente---. A cada universo se le asocia un ratio de inflación en función del valor de su función objetivo. Este ratio está normalizado, por lo que tomará valores entre 0 y 1. Los valores dentro de cada universo se conocen como objetos.
+
+Durante el proceso de optimización se aplican las siguientes reglas:
+\begin{itemize}
+   \item Cuanto mayor sea el ratio de inflación, mayor es la probabilidad de tener un white hole.
+   \item Cuanto mayor sea el ratio de inflación, menor es la probabilidad de tener un black hole.
+   \item Universos con un alto ratio de inflación tienden a mandar objetos a través de white holes.
+   \item Universos con un bajo ratio de inflación tienden a recibir objetos a través de black holes.
+   \item Los objetos de todos los universos deben afrontar movimientos aleatorios hacia el mejor universo a través de un wormhole sin importar el ratio de inflación.
+\end{itemize}
 
 \subsection{Descripción del algoritmo}
+Podemos dividir el algoritmo en dos partes. En la primera parte los universos intercambian objetos entre ellos a través de los black y white holes, mientras que en la segunda los objetos de los universos sufren cambios y son enviados a través de los wormholes.
+
+Comenzamos inicializando el multiverso con universos aleatorio. Después calculamos el valor de la función objetivo de los universos y su ratio de inflación normalizado de la siguiente manera:\\\\ $ ratio\_inflacion\_normalizado = \frac{f\_objetivo}{f\_objetivo\_max} $ \\\\
+
+Ordenaremos los universos en función de su ratio de inflación normalizado.
+Recorreremos ahora todos los objetos de todos los universos. El objeto j del universo i será un black hole. Para seleccionar el universo cuyo objeto j se convertirá en un white hole, establecemos un método de selección de ruleta, en el que cuanto menor sea el ratio de inflación normalizado de un universo, mayor es la posibilidad de seleccionarlo. Establecemos entonces que la probabilidad de que el white hole envíe su valor hacía el black hole es el ratio de inflación normalizado del universo i (el universo en el que existe el balck hole).
+
+De esta forma los universos intercambian objetos constantemente, lo que provoca que el ratio de inflación y el valor de la función objetivo medios disminuya en el conjunto de universos.
+
+Para que el algoritmo no se estanque y se introduzca variedad en las soluciones, permitiendo la exploración del espacio establecemos un wormhole siempre entre el mejor universo del multiverso actual y el universo i.
+
+Calculamos los siguientes coeficientes:
+\begin{itemize}
+   \item $WEP = min + l \times (\frac{max - min}{L})$
+   \item $TDR = 1 - \frac{l^{\frac{1}{p}}}{L^{\frac{1}{p}}}$
+\end{itemize}
+WEP (wormhole existing probability) es la probabilidad de que el objeto j se envíe a través del wormhole.
+TDR (Travel Distance Rate) establece el grado de mutación de la solución, es decir, cuanto mayor sea TDR, más grande es la mutación que se le aplica al objeto j del universo i.
+
+La mutación del objeto j se establece de la siguiente manera: \\\\ $ x_{ij} = X_j \pm TDR \times k-1 \times random $ \\\\ donde $x_{ij}$ es el objeto j del universo i, $X_j$ es el objeto j del mejor universo del multiverso y $k$ es el numero de clusters. Hay un 50\% de posibilidades de que el valor aumente o de que decremente.
+
+Este cambio esta pensado para alterar un universo radicalmente de manera que se potencie la exploración del espacio. TDR y WEP son valores adaptativos, puesto que han resultado ser mas eficaces que valores prefijados a la hora de encontrar buenas soluciones. A medida que TDR disminuye WEP aumenta, esto implica que en las primeras iteraciones las mutaciones son más improbables pero cuando suceden son mutaciones muy grandes, mientras que para mayores valores de WEP las mutaciones son mas comunes pero no introducen cambios tan grandes.
+
+Repetiremos este proceso hasta llegar a las 100000 iteraciones o hasta que $TDR \times k-1 = 0$ y el ratio de inflación medio sea 1, lo que indica que el multiverso se ha estancado en una solución y ya no hay posibilidad de introducir nuevos cambios.
+
 
 \subsection{Adaptación}
+A continuación se detalla la adapación de MVO al problema PAR asi como las mejoras propuestas.
 
 \subsubsection{Estructuras de datos}
+Para representar los universos, el valor de la función objetivo y los demás elementos necesarios se utiliza la siguiente estructura de datos:
 
+\begin{minted}
+[fontsize=\footnotesize, linenos]
+{cpp}
+int tam_multiverse;
+std::vector<std::vector<int>> universe;
+std::vector<double> f_universe;
+std::vector<double> f_universe_normalized;
+std::vector<std::pair<double,int>> sorted_universe;
+\end{minted}
 
-\subsection{Pseudocódigo del algoritmo}
-% \begin{minted}
-%
-% \end{minted}
+He utilizado vectores ya que es muy comodo trabajar con ellos. El vector sorted\_universe es una pareja de ratio de inflación normalizado de un universo y el universo al que pertenece, de esta manera la ordenación del vector es más rápida y se puede acceder a cada universo sabiendo su posición.
 
-\subsection{Operadores propios}
-% \begin{itemize}
-%    \item Operador
-%    \begin{minted}
-%
-%    \end{minted}
-% \end{itemize}
+\subsubsection{Parámetros utilizados}
+\begin{itemize}
+   \item tam\_multiverse: Es el número de universos presentes en el multiverso, es decir, el tamaño de la población. En nuestro caso utilizaremos una población de tamaño 30.
+   \item l y L: l es la iteración actual y L es el número máximo de iteraciones. Para la resolución del problema estableceremos un numero de iteraciones de 100000. Aunque el número máximo de iteraciones sea 100000, nunca las alcanzaremos debido a la condición de parada del algoritmo.
+   \item min y max: Son los valores minimo y máximo respectivamente de WEP. min se establece a 0,2 y max a 1. Esto significa que al principio la probabilidad de intercambio de valores a través de un wormhole es del 20\% y llega al 100\% con el paso de la iteraciones.
+   \item p: Este parametro afecta al calculo de TDR. Por las pruebas realizadas, es importante notar que TDR es un valor que influye significativamente en el comportamiento de MVO. Cuanto mayor es el valor de p, mas rapido disminuye el valor de TDR. p se establece a k, siendo que para \emph{Iris}, \emph{Rand} y \emph{Newthyroid} es 3 y para \emph{Ecoli} es 8. De esta manera a los cojuntos más pequeños les da tiempo a explorar el espacio antes de converger a una solución.
+\end{itemize}
 
 \subsection{Mejoras y modificaciones}
+Se han propuesto dos mejoras para mejorar el desempeño de MVO:
+
+La primera de ellas ha sido no perder la mejor solución encontrada hasta el momento. Después de probar por primera vez MVO, me di cuenta de que si se encontraba una solución muy buena, existía una posibilidad de empeorarla si otras soluciones intercambiaban objetos con ella. Teóricamente esto es bueno, ya que el objetivo es conseguir que la solución no se estanque en un optimo local y explorar lo máximo posible el espacio de soluciones, pero en la practica, al ser las soluciones tan parecidas entre ellas, las posibilidades de empeorar la mejor solución encontrada y de no converger eran bastante altas. De hecho, hasta que el valor TDR no alcanzaba un valor bastante reducido, los universos exploraban el espacio de soluciones de forma caótica --- si bien es cierto que poco a poco la inflación media disminuía en el multiverso---.\\
+Por esto decidi implementar la siguiente mejora: en cada iteración se guarda el mejor universo encontrado hasta el momento. Una vez ha terminado el ciclo de intercambio y mutación entre los universos, se comprueba si la mejor solución del nuevo multiverso es mejor que la mejor solución almacenada. Si no es asi, la mejor solución almacenada se reintroduce en el multiverso siendo sustituida por la peor solución del cojunto. Con esta mejora conseguimos evitar que las buenas soluciones encontradas se pierdan permitiendo aún asi que se encuentren soluciones mejores.
+
+Las segunda mejora implementada ha sido realizar una búsqueda local al 10\% de las soluciones. En nuestro caso a las 3 mejores soluciones del multiverso. La búsqueda local es un híbrido entre la implementada en las prácticas y una búsqueda local suave. Como máximo tiene 1000 iteraciones y 500 fallos --- siendo un fallo cuando al generar un vecino este no mejore a la solución actual ---. \\ Esta búsqueda local se realiza cada 10 iteraciones del algoritmo. Con esto conseguimos mejorar al máximo las buenas soluciones encontradas, aumentando asi sus posibilidades de que compartan información con otros universos y que mejore la inflación media del conjunto.
+
+Por último se ha probado una versión en la que se implementan ambas mejoras que es de hecho, la que mejores soluciones encuentra.
+\newpage
+\subsection{Pseudocódigo del algoritmo}
+\begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   int: tam_multiverse = 30
+   int: max_iter = 100000
+   int: iter = 0
+   double: min = 0.2
+   double: max = 1.0
+   double: p = n_cluster
+   double: wep, tdr = 0
+   int: best_universe
+   double: comp
+   bool: exit = false
+   int: black_hole_index, white_hole_index
+
+   iniciar_universe()
+   evaluate_fitness()
+   sort_universes()
+
+   Mientras iter < max_iter Y no exit:
+
+      Para i = 0 hasta tam_multiverse:
+         calcular wep y tdr
+         black_hole_index = i
+
+         Para j = 0 hasta tamaño de universo i:
+            r1 = numero aleatorio entre 0 y 1
+
+            Si r1 < ratio_infacion_normalizado_i:
+               white_hole_index = roulette_wheel_selection()
+               universe[black_hole_index][j] = universe[sorted_universe[white_hole_index].second][j]
+
+            r2 = numero aleatorio entre 0 y 1
+            Si r2 < wep:
+               r3 = numero aleatorio entre 0 y 1
+               r4 = numero aleatorio entre 0 y 1
+               best_universe = sorted_universe[0].second
+
+               Si r3 < 0.5:
+                  universe[i][j] = universe[best_universe][j] + (tdr * r4 * (n_cluster-1))
+
+               Si no:
+                  universe[i][j] = universe[best_universe][j] - (tdr * r4 * (n_cluster-1))
+
+               reparar_solucion(universe[i])
+
+      evaluate_fitness()
+      sort_universes()
+
+      comp = 0
+      exit = false
+
+      Para k = 0 hasta tam_multiverse:
+         comp += sorted_universe[k].first
+
+      Si (comp / tam_multiverse) == 1.0 Y (tdr * (n_cluster-1)) == 0:
+         exit = true
+
+      iter++
+   }
+   solucion = universe[sorted_universe[0].second]
+   leer_solucion()
+\end{minted}
+
+\newpage
+
+\subsection{Operadores propios}
+\begin{itemize}
+   \item sort\_universes(): Ordena los universos en el vector sorted\_universe.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   double: max = 0.0;
+
+   Para i = 0 hasta tam_multiverse:
+      Si max < f_universe[i]:
+         max = f_universe[i]
+
+   Para i = 0 hasta tam_multiverse:
+      Añadir pareja(f_universe[i]/max , i) a sorted_universe
+      Añadir f_universe[i]/max a f_universe_normalized[i]
+
+   Ordenar sorted_universe
+   \end{minted}
+
+   \item evaluate\_fitness(): Calcula el valor de la función objetivo de los universos.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   Recorrer el vector universe:
+      Añadir evaluar_solucion(universe) a f_universe
+
+   \end{minted}
+
+   \item roulette\_wheel\_selection(): Metodo de selección por ruleta.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   double: suma = 0;
+
+   Para i = 0 hasta tam_multiverse:
+      suma += (1.0 - sorted_universe[i].first);
+
+   random = numero aleatorio entre 0 y suma
+   float: acumulado = 0.0
+   int: index = 0
+
+   Mientras random >= acumulado:
+      acumulado += (1.0 - sorted_universe[index].first)
+      index++
+
+   Devolver index - 1
+   \end{minted}
+
+   \item local\_search\_mvo(sol): Búsqueda local que se aplica a MVO.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   int: iter = 0, iter_max = 1000;
+   int: fallos = 0;
+   double: f_ant;
+   int: vector sol_ant;
+   int infactibilidad_ant;
+
+   solucion = sol;
+
+   Mientras iter < iter_max && fallos < 500:
+      sol_ant = solucion
+      f_ant = f_objetivo
+      infactibilidad_ant = infactibilidad
+      salir = false
+
+      generar_vecino()
+
+      Si f_objetivo > f_ant:
+         f_objetivo = f_ant
+         solucion = sol_ant
+         infactibilidad = infactibilidad_antt
+         fallos++
+
+      iter++;
+   }
+
+   sol = solucion
+   \end{minted}
+
+   \item Mejora 1: Reincorporar la mejor solución.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   f_mejor_sol = evaluar_solucion(mejor_sol)
+   Si f_mejor_sol < evaluar_solucion(universe[sorted_universe[0].second]):
+      universe[sorted_universe[tam_multiverse-1].second] = mejor_sol
+      f_universe[sorted_universe[tam_multiverse-1].second] = f_mejor_sol
+      sort_universes()
+   \end{minted}
+
+   \item Mejora 2: Aplicar búsqueda local.
+   \begin{minted}
+   [fontsize=\footnotesize, linenos]
+   {cpp}
+   Si iter > 0 Y iter mod 10 == 0:
+     Para i = 0 hasta 0.1*tam_multiverse:
+         local_search_mvo(universe[sorted_universe[i].second])
+         f_universe[sorted_universe[i].second] = evaluar_solucion(universe[sorted_universe[i].second])
+         sort_universes()
+   \end{minted}
+
+\end{itemize}
