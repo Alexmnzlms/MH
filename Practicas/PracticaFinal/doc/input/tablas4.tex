@@ -3,15 +3,21 @@
 \section{Tablas}
 
 \subsection{Valores medios}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
 \begin{table}[H]
-\centering
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{ccccccccc}
 \multicolumn{1}{l}{} & \multicolumn{8}{l}{Resultados globales en el PAR con 10\% de restricciones} \\ \cline{2-9}
-\multicolumn{1}{l|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{Iris} & \multicolumn{4}{c|}{Rand} \\ \cline{2-9}
+\multicolumn{1}{l|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Iris}} & \multicolumn{4}{c|}{\textbf{Rand}} \\ \cline{2-9}
 \multicolumn{1}{l|}{} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
 \multicolumn{1}{|c|}{\textbf{K-medias Restringido Débil}} & 0,62 & 15 & 0,9 & \multicolumn{1}{c|}{0,01} & 0,91 & 16 & 1,37 & \multicolumn{1}{c|}{0,00} \\
 \multicolumn{1}{|c|}{\textbf{Búsqueda Local}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,70} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,61} \\
+\multicolumn{1}{|c|}{\textbf{MVO}} & 0,64 & 7 & 0,8 & \multicolumn{1}{c|}{134,36} & 0,92 & 14 & 1,32 & \multicolumn{1}{c|}{135,00} \\
+\multicolumn{1}{|c|}{\textbf{MVO-mej}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{140,86} & 0,79 & 4 & 0,91 & \multicolumn{1}{c|}{141,60} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{172,54} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{172,62} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL-mej}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{177,68} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{177,65} \\
 \multicolumn{1}{|c|}{\textbf{AGG\_UN}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{29,11} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{29,13} \\
 \multicolumn{1}{|c|}{\textbf{AGG\_SF}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{29,24} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{29,27} \\
 \multicolumn{1}{|c|}{\textbf{AGE\_UN}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{29,67} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{29,62} \\
@@ -22,24 +28,26 @@
 \multicolumn{1}{|c|}{\textbf{BMB}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,32} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,32} \\
 \multicolumn{1}{|c|}{\textbf{ES}} & 0,60 & 0 & 0,7 & \multicolumn{1}{c|}{0,35} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,34} \\
 \multicolumn{1}{|c|}{\textbf{ILS}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,15} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,16} \\
-\multicolumn{1}{|c|}{\textbf{ILS-ES}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{1,54} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{1,46} \\
-\multicolumn{1}{|c|}{\textbf{MVO}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\
-\multicolumn{1}{|c|}{\textbf{MVO\_mej}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\
-\multicolumn{1}{|c|}{\textbf{MVO\_BL}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\
-\multicolumn{1}{|c|}{\textbf{MVO\_BL\_mej}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\ \hline
-\end{tabular}
+\multicolumn{1}{|c|}{\textbf{ILS-ES}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{1,54} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{1,46} \\ \hline
+\end{tabular}%
 }
 \end{table}
 
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
 \begin{table}[H]
-\centering
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{ccccccccc}
 \multicolumn{1}{l}{} & \multicolumn{8}{l}{Resultados globales en el PAR con 10\% de restricciones} \\ \cline{2-9}
-\multicolumn{1}{l|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{Ecoli} & \multicolumn{4}{c|}{Newthyroid} \\ \cline{2-9}
+\multicolumn{1}{l|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Ecoli}} & \multicolumn{4}{c|}{\textbf{Newthyroid}} \\ \cline{2-9}
 \multicolumn{1}{l|}{} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
 \multicolumn{1}{|c|}{\textbf{K-medias Restringido Débil}} & 1.669,95 & 179 & 2.033,34 & \multicolumn{1}{c|}{0,34} & 334,76 & 88 & 423,16 & \multicolumn{1}{c|}{0,01} \\
 \multicolumn{1}{|c|}{\textbf{Búsqueda Local}} & 1.791,66 & 329 & 2.457,27 & \multicolumn{1}{c|}{38,34} & 430,97 & 43 & 497,11 & \multicolumn{1}{c|}{2,41} \\
+\multicolumn{1}{|c|}{\textbf{MVO}} & 1.822,71 & 1.143 & 4.137,55 & \multicolumn{1}{c|}{1.696,41} & 274,65 & 88 & 363,05 & \multicolumn{1}{c|}{273,02} \\
+\multicolumn{1}{|c|}{\textbf{MVO-mej}} & 1.493,83 & 938 & 3.393,83 & \multicolumn{1}{c|}{1.805,98} & 262,07 & 63 & 325,07 & \multicolumn{1}{c|}{286,65} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL}} & 920,65 & 93 & 1.109,03 & \multicolumn{1}{c|}{1.987,94} & 270,80 & 15 & 285,80 & \multicolumn{1}{c|}{333,16} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL-mej}} & 926,90 & 66 & 1.061,40 & \multicolumn{1}{c|}{2.030,80} & 270,80 & 15 & 285,80 & \multicolumn{1}{c|}{343,83} \\
 \multicolumn{1}{|c|}{\textbf{AGG\_UN}} & 982,47 & 111 & 1.206,91 & \multicolumn{1}{c|}{151,71} & 273,11 & 31 & 320,18 & \multicolumn{1}{c|}{60,06} \\
 \multicolumn{1}{|c|}{\textbf{AGG\_SF}} & 977,12 & 149 & 1.278,12 & \multicolumn{1}{c|}{152,94} & 276,95 & 29 & 321,87 & \multicolumn{1}{c|}{60,18} \\
 \multicolumn{1}{|c|}{\textbf{AGE\_UN}} & 952,53 & 128 & 1.212,21 & \multicolumn{1}{c|}{156,84} & 269,58 & 29 & 314,80 & \multicolumn{1}{c|}{60,79} \\
@@ -50,11 +58,67 @@
 \multicolumn{1}{|c|}{\textbf{BMB}} & 962,44 & 141 & 1.248,86 & \multicolumn{1}{c|}{11,52} & 270,80 & 15 & 285,80 & \multicolumn{1}{c|}{0,80} \\
 \multicolumn{1}{|c|}{\textbf{ES}} & 919,79 & 92 & 1.106,14 & \multicolumn{1}{c|}{4,36} & 270,80 & 15 & 285,80 & \multicolumn{1}{c|}{1,28} \\
 \multicolumn{1}{|c|}{\textbf{ILS}} & 928,67 & 75 & 1.081,40 & \multicolumn{1}{c|}{4,61} & 270,80 & 15 & 285,80 & \multicolumn{1}{c|}{0,37} \\
-\multicolumn{1}{|c|}{\textbf{ILS-ES}} & 2.308,24 & 1.734 & 5.821,02 & \multicolumn{1}{c|}{4,66} & 364,11 & 145 & 509,11 & \multicolumn{1}{c|}{2,26} \\
-\multicolumn{1}{|c|}{\textbf{MVO}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\
-\multicolumn{1}{|c|}{\textbf{MVO\_mej}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\
-\multicolumn{1}{|c|}{\textbf{MVO\_BL}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\
-\multicolumn{1}{|c|}{\textbf{MVO\_BL\_mej}} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l|}{} \\ \hline
-\end{tabular}
+\multicolumn{1}{|c|}{\textbf{ILS-ES}} & 2.308,24 & 1.734 & 5.821,02 & \multicolumn{1}{c|}{4,66} & 364,11 & 145 & 509,11 & \multicolumn{1}{c|}{2,26} \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table}[H]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccccc}
+\multicolumn{1}{l}{} & \multicolumn{8}{l}{Resultados globales en el PAR con 20\% de restricciones} \\ \cline{2-9}
+\multicolumn{1}{l|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Iris}} & \multicolumn{4}{c|}{\textbf{Rand}} \\ \cline{2-9}
+\multicolumn{1}{l|}{} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{K-medias Restringido Débil}} & 0,60 & 15 & 0,8 & \multicolumn{1}{c|}{0,01} & 0,77 & 11 & 0,93 & \multicolumn{1}{c|}{0,01} \\
+\multicolumn{1}{|c|}{\textbf{Búsqueda Local}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,67} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,64} \\
+\multicolumn{1}{|c|}{\textbf{MVO}} & 0,64 & 14 & 0,8 & \multicolumn{1}{c|}{178,63} & 0,76 & 4 & 0,81 & \multicolumn{1}{c|}{177,79} \\
+\multicolumn{1}{|c|}{\textbf{MVO-mej}} & 0,62 & 2 & 0,6 & \multicolumn{1}{c|}{187,76} & 0,91 & 26 & 1,28 & \multicolumn{1}{c|}{186,92} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{225,81} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{223,09} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL-mej}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{232,34} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{230,42} \\
+\multicolumn{1}{|c|}{\textbf{AGG\_UN}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{38,79} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{38,87} \\
+\multicolumn{1}{|c|}{\textbf{AGG\_SF}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{39,05} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{39,12} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_UN}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{38,81} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{38,81} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_SF}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{39,17} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{39,13} \\
+\multicolumn{1}{|c|}{\textbf{AM(10,1.0)}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{37,04} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,10} \\
+\multicolumn{1}{|c|}{\textbf{AM(10,0.1)}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{37,11} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,15} \\
+\multicolumn{1}{|c|}{\textbf{AM(10,0.1mej)}} & 0,60 & 0 & 0,60 & \multicolumn{1}{c|}{37,10} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{37,18} \\
+\multicolumn{1}{|c|}{\textbf{BMB}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,34} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,33} \\
+\multicolumn{1}{|c|}{\textbf{ES}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,42} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,42} \\
+\multicolumn{1}{|c|}{\textbf{ILS}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{0,20} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{0,19} \\
+\multicolumn{1}{|c|}{\textbf{ILS-ES}} & 0,60 & 0 & 0,6 & \multicolumn{1}{c|}{1,76} & 0,75 & 0 & 0,75 & \multicolumn{1}{c|}{1,75} \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table}[H]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccccccc}
+\multicolumn{1}{l}{} & \multicolumn{8}{l}{Resultados globales en el PAR con 20\% de restricciones} \\ \cline{2-9}
+\multicolumn{1}{l|}{\multirow{2}{*}{}} & \multicolumn{4}{c|}{\textbf{Ecoli}} & \multicolumn{4}{c|}{\textbf{Newthyroid}} \\ \cline{2-9}
+\multicolumn{1}{l|}{} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} & \textit{\textbf{Tasa\_C}} & \textit{\textbf{Tasa\_inf}} & \textit{\textbf{Agr.}} & \multicolumn{1}{c|}{\textbf{T}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{K-medias Restringido Débil}} & 1.642,50 & 146 & 1.790,36 & \multicolumn{1}{c|}{0,23} & 318,22 & 103 & 397,72 & \multicolumn{1}{c|}{0,01} \\
+\multicolumn{1}{|c|}{\textbf{Búsqueda Local}} & 1.673,46 & 340 & 2.018,01 & \multicolumn{1}{c|}{48,48} & 311,87 & 20 & 327,56 & \multicolumn{1}{c|}{3,19} \\
+\multicolumn{1}{|c|}{\textbf{MVO}} & 1.804,98 & 2.330 & 4.165,19 & \multicolumn{1}{c|}{2.251,30} & 270,81 & 142 & 380,15 & \multicolumn{1}{c|}{363,69} \\
+\multicolumn{1}{|c|}{\textbf{MVO-mej}} & 1.592,50 & 1.988 & 3.605,52 & \multicolumn{1}{c|}{2.382,98} & 307,39 & 120 & 399,96 & \multicolumn{1}{c|}{380,18} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL}} & 961,92 & 177 & 1.141,39 & \multicolumn{1}{c|}{2.536,94} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{413,98} \\
+\multicolumn{1}{|c|}{\textbf{MVO\_BL-mej}} & 939,16 & 133 & 1.073,66 & \multicolumn{1}{c|}{2.603,10} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{428,14} \\
+\multicolumn{1}{|c|}{\textbf{AGG\_UN}} & 948,18 & 165 & 1.115,70 & \multicolumn{1}{c|}{204,08} & 269,39 & 62 & 316,75 & \multicolumn{1}{c|}{80,76} \\
+\multicolumn{1}{|c|}{\textbf{AGG\_SF}} & 946,03 & 175 & 1.123,67 & \multicolumn{1}{c|}{204,81} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{81,46} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_UN}} & 942,56 & 189 & 1.134,18 & \multicolumn{1}{c|}{207,88} & 268,46 & 77 & 327,51 & \multicolumn{1}{c|}{80,52} \\
+\multicolumn{1}{|c|}{\textbf{AGE\_SF}} & 950,07 & 148 & 1.099,96 & \multicolumn{1}{c|}{206,69} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{81,01} \\
+\multicolumn{1}{|c|}{\textbf{AM(10,1.0)}} & 917,43 & 123 & 1.041,60 & \multicolumn{1}{c|}{223,52} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{78,11} \\
+\multicolumn{1}{|c|}{\textbf{AM(10,0.1)}} & 927,62 & 98 & 1.026,67 & \multicolumn{1}{c|}{201,03} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{77,53} \\
+\multicolumn{1}{|c|}{\textbf{AM(10,0.1mej)}} & 939,57 & 104 & 1.044,90 & \multicolumn{1}{c|}{203,37} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{77,54} \\
+\multicolumn{1}{|c|}{\textbf{BMB}} & 977,56 & 219 & 1.199,36 & \multicolumn{1}{c|}{12,42} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{0,76} \\
+\multicolumn{1}{|c|}{\textbf{ES}} & 946,10 & 164 & 1.112,00 & \multicolumn{1}{c|}{5,45} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{1,65} \\
+\multicolumn{1}{|c|}{\textbf{ILS}} & 946,08 & 109 & 1.056,68 & \multicolumn{1}{c|}{5,21} & 270,80 & 41 & 302,33 & \multicolumn{1}{c|}{0,49} \\
+\multicolumn{1}{|c|}{\textbf{ILS-ES}} & 2.303,54 & 3.467 & 5.814,47 & \multicolumn{1}{c|}{5,63} & 292,10 & 186 & 434,96 & \multicolumn{1}{c|}{2,82} \\ \hline
+\end{tabular}%
 }
 \end{table}
