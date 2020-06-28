@@ -16,9 +16,17 @@ El código utilizado para encontrar semillas se encuentra en la función \textbf
 
 
 \section{Análisis}
-
+A continuación realizaré un análisis de los resultados aportados por MVO para el problema PAR. Analizaré los conjuntos de \emph{Iris} y \emph{Rand} de manera separada a \emph{Ecoli} y \emph{Newthyroid} ya que considero que la primera pareja de conjuntos poseen menor complejidad para encontrar soluciones optimas al problema, mientras que la segunda pareja --- sobre todo \emph{Ecoli} --- presentan una mayor complejidad para obtener soluciones de calidad.
 
 \subsection{Iris \& Rand}
+Podemos ver que normalmente MVO es capaz de converger a la solución optima encontrada para \emph{Iris} y \emph{Rand} salvo ciertas iteraciones. Esto se debe a que en MVO, es posible una vez alcanzada una buena solución, que esta se pierda al recibir información de otras soluciones, porque como podemos ver en la figura 5.1 y 5.2, aunque MVO alcanza la solución optima, esta se pierde al recibir objetos de otros universos con peor ratio de inflación.
+
+Justo por este motivo se diseñó la mejora basada en reintroducir la mejor solución hasta el momento. Podemos ver que la mejora funciona ya que la convergencia ha mejorado en la mayoría de iteraciones.
+
+Si nos fijamos en la versión mejorada que aplica una búsqueda local (MVO-BL), vemos que la aplicación de una búsqueda local es altamente efectiva, ya que conseguimos que todas las iteraciones converjan en la solución optima.
+
+Como es lógico, la versión que combina ambas mejoras, también converge debido a la búsqueda local.
+
 \begin{figure}[H]
    \centering
    \includegraphics[width=1\textwidth]{../PracticaFinal/iris_bien.png}
@@ -31,10 +39,19 @@ El código utilizado para encontrar semillas se encuentra en la función \textbf
    \caption{Rand con 10\% de Restricciones}
 \end{figure}
 
-
-
+\newpage
 
 \subsection{Ecoli \& Newthyroid}
+A diferencia de \emph{Iris} y \emph{Rand}, \emph{Ecoli} y \emph{Newthyroid} si que presentan más dificultad a la hora de encontrar una solución optima.
+
+Como se puede apreciar, sobre todo en la figura 5.4, la versión basica de MVO tiene el problema de perder la mejor solución. Por esto, las soluciones que aporta para \emph{Ecoli} son nefastas, ya que el algoritmo no explota las soluciones lo suficiente para que converjan a una buena solución, mientras que las soluciones encontradas para \emph{Newthyroid} son malas pero no tan nefastas como las de \emph{Ecoli} porque como vemos en la figura 5.4, las soluciones si pueden converger a buenos valores.
+
+La versión que reintroduce la mejor solución, soluciona el problema de perder la mejor solución encontrada, mejora las soluciones encontradas, pero no es capaz de solventar el problema de la falta de explotación sobre todo en \emph{Ecoli}.
+
+La versión con búsqueda local podemos ver que es igual de efectiva que en los conjuntos \emph{Iris} y \emph{Rand}, consiguiendo que todas las soluciones para \emph{Newthyroid} converjan al optimo conocido y mejorando enormemente las soluciones que aporta MVO para \emph{Ecoli} ya que estas soluciones tienen bastante más calidad que las aportadas por otros algoritmos hechos en las prácticas.
+
+Como es lógico, la versión que combina ambas mejoras, es capaz de aportar las mejores soluciones para \emph{Ecoli} --- ya que para \emph{Newthyroid} converge al óptimo---.
+
 
 \begin{figure}[H]
    \centering
@@ -49,3 +66,7 @@ El código utilizado para encontrar semillas se encuentra en la función \textbf
 \end{figure}
 
 \subsection{Conclusión}
+
+Finalmente como conclusión, he de decir que el rendimiento de MVO ha sido más bajo del esperado, siendo necesarias varias mejoras para que este algoritmo aporte soluciones que puedan competir con las aportadas por las metaheurísticas con las que hemos trabajado durante las prácticas.
+
+El mayor problema de MVO a mi parecer, es la posibilidad de perder una buena solución y que la explotación de las soluciones no es la suficiente para que las soluciones puedan converger a soluciones que sean de calidad.
