@@ -35,4 +35,4 @@ En la práctica 3 se aplican las técnicas de búsqueda local suave y enfriamien
 
 En la práctica final se aplica una metaheurística basada en *multiversos* para la búsqueda de soluciones.
 
-[Práctica Final](https://github.com/blancabgz/MH/tree/master/Practicas/PracticaFinal)
+[Práctica Final](https://github.com/Alexmnzlms/MH/tree/master/Practicas/PracticaFinal)
