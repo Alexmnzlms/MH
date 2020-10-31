@@ -27,12 +27,12 @@ En la práctica 2 se utilizan técnicas de búsqueda basadas en poblaciones.
 
 ### Práctica 3
 
-En la práctica 3 se aplica una metaheurística basada en *multiversos* para la búsqueda de soluciones.
+En la práctica 3 se aplican las técnicas de búsqueda local suave y enfriamiento simulado. 
 
 [Práctica 3](https://github.com/Alexmnzlms/MH/tree/master/Practicas/Practica3)
 
-
-
 ### Práctica final
 
-[Práctica final](https://github.com/Alexmnzlms/MH/tree/master/Practicas/PracticaFinal)
+En la práctica final se aplica una metaheurística basada en *multiversos* para la búsqueda de soluciones.
+
+[Práctica Final](https://github.com/blancabgz/MH/tree/master/Practicas/PracticaFinal)
